@@ -1,6 +1,5 @@
-# TeamOmega
+After installing all the modules, 
 
-1. Naveen Jetty
-2. Chaitra Thippana
-3. Vidya Sagar Kalvakunta
-4. Suraj Songire
+1. hit npm start
+
+2. the local server will run on port displayed on console
