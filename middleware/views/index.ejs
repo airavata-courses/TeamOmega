@@ -1,1 +1,22 @@
-<p>Welcome to: <%= title %><p>
+<html>
+
+<script src="https://cdn.auth0.com/js/lock/10.0/lock.min.js"></script>
+<script type="text/javascript">
+	var tosend = <%- JSON.stringify(tosend) %>;
+	var lock = new Auth0Lock(tosend.env.AUTH0_CLIENT_ID, tosend.env.AUTH0_DOMAIN , { auth: {
+          redirectUrl: tosend.env.AUTH0_CALLBACK_URL
+        , responseType: 'code'
+        , params: {
+          scope: 'openid name email picture'
+        }
+      }});
+    function signin() {
+    	
+    	alert(tosend.title);
+		lock.show();
+    }
+</script>
+<p>Welcome to: Team Omega<p>
+<button onclick="signin()"> Login </button>
+
+</html>
