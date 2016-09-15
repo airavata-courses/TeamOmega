@@ -21,10 +21,10 @@ var Lock = React.createClass({
   }
 });
 
-class App extends Component {
-  render() {
-    return (
-      <div>
+var LandingPage = React.createClass({
+  render: function(){
+    return(
+    <div>
        <header className="hero-area" id="home">
       <div className="container">
           <div className="col-md-12">
@@ -46,6 +46,14 @@ class App extends Component {
        </div>
     </header>
     </div>
+    );
+  }
+});
+
+class App extends Component {
+  render() {
+    return (
+      <LandingPage />
     );
   }
 }
