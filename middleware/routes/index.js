@@ -14,16 +14,16 @@ router.get('/', function(req, res, next) {
     title: 'Express',
     env: env
   }
-  res.render('index', {tosend : toSend});
+  res.render('login', {tosend : toSend});
 });
 
-router.get('/login',
-  function(req, res){
-    var toSend = {
+router.get('/login', function(req, res, next) {
+  var toSend = {
+    title: 'Express',
     env: env
   }
-    res.render('login', { tosend: toSend });
-  });
+  res.render('login', {tosend : toSend});
+});
 
 router.get('/logout', function(req, res){
   req.logout();

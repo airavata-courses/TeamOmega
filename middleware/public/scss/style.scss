@@ -1,0 +1,68 @@
+$base: #fff; $text: #666; $accent: #3366dd;
+body {
+  background: darken($base, 8%);
+  font-size: 10pt;
+  color: $text;
+}
+#date_menu {
+  position: absolute;
+  top: 100px; left: 50%;
+  clear: both;
+  width: 300px;
+  transform: translateX(-50%);
+  ::selection { background: transparent; }
+  .drop {
+    position: relative;
+    float: left;
+    height: 30px;
+    background: $base;
+    .title {
+      cursor: pointer;
+      clear: both;
+      height: 30px;
+      border-right: 1px solid darken($base, 8%);
+      display: block;
+      transition: background 150ms ease;
+      font-weight: 600;
+      line-height: 30px;
+      text-indent: 10px;
+      &:hover { background: darken($base, 3%); }
+      i {
+        float: right;
+        width: 30px; height: 30px;
+        color: $accent;
+        text-align: center;
+        line-height: 30px;
+        text-indent: 0;
+      }
+    }
+    ul {
+      position: absolute;
+      top: 30px; left: 0; right: 0;
+      max-height: (30px * 6) + 1px;
+      border: 1px solid darken($base, 8%);
+      border-left: 0; border-bottom: 0;
+      background: $base;
+      overflow: auto;
+      &::-webkit-scrollbar { display: none; }
+      &.closed { display: none; }
+      li {
+        cursor: pointer;
+        height: 30px;
+        transition: all 150ms ease;
+        text-indent: 10px;
+        line-height: 30px;
+        &:hover {
+          background: $accent;
+          color: $base;
+        }
+      }
+    }
+    &.month { width: 150px; }
+    &.day { width: 75px; }
+    &.year { width: 75px;
+      .title { border: 0; }
+      ul { border-right: 0; }
+    }
+  }
+}

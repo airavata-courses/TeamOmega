@@ -1,58 +1,66 @@
 var express = require('express');
 var passport = require('passport');
 var router = express.Router();
+var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
+
+
+
 var url = require('url');
 
 var http = require('http');
 
-
-
-var optionsget = {
-    host : 'localhost', // here only the domain name
-    // (no http/https !)
-    port : 5000,
-    path : '/getpath', // the rest of the url with parameters if needed
-    method : 'GET' // do GET
-};
-
-
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('home');
+router.get('/',ensureLoggedIn, function(req, res, next) {
+  res.render('index');
 });
 
-router.get('/submit', function(req, res, next) {
+router.post('/submit', function(req, response, next) {
 
-	console.log("Inside submit")
+	var url = construct_url(req.body)
 	
-	http.get("http://127.0.0.1:5000/getpath", function(res) {
+	http.get(url, function(res) {
 
 	    console.log("statusCode: ", res.statusCode);
-	    // uncomment it for header details
-	//  console.log("headers: ", res.headers);
- 		console.log(res);
- 
-	    /*res.on('data', function(d) {
+
+	    res.on('data', function(d) {
 	        console.info('GET result:\n');
 	        process.stdout.write(d);
 	        console.info('\n\nCall completed');
-	    });*/
+	        response.write(d);
+	    });
  
 	});
 
-	/*reqGet.end();
-	reqGet.on('error', function(e) {
-	    console.error(e);
-	});*/
-/*
-
-	var queryObj = url.parse(req.url,true).query;
-	var queryLength = Object.keys(queryObj).length;
-
-	res.send(req.query);
-
-*/
-
 });
+
+
+var construct_url = function(body){
+
+	var months = {
+		"January" : "01",
+		"February" : "02",
+		"March" : "03",
+		"April" : "04",
+		"May" : "05",
+		"June" : "06",
+		"July" : "07",
+		"August" : "08",
+		"September" : "09",
+		"October" : "10",
+		"November" : "11",
+		"December" : "12"
+	}
+
+	var base_url = "http://127.0.0.1:5000/getpath?";
+	
+	var year = body.year;
+	var month = months[body.month];
+	var day = body.day;
+
+	var new_url = base_url+"year="+year+"&&"+"month="+month+"&&"+"day="+day;
+
+	console.log(new_url);
+	return (new_url);
+}
 
 module.exports = router;
