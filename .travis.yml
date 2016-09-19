@@ -3,7 +3,7 @@ jdk:
   - oraclejdk8
 sudo: false
 install: true
-
+services: mongodb
 script:
   - cd "registry-api" && mvn -e clean install
 notifications:
