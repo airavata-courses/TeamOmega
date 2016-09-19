@@ -1,4 +1,2 @@
-ls -al
-pwd
-cd registry-api
+cd regsitry-api
 mvn -e clean install
