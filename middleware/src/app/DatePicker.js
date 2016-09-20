@@ -1,6 +1,7 @@
 import DatePicker from 'react-toolbox/lib/date_picker';
 import Autocomplete from 'react-toolbox/lib/autocomplete';
 import TimePicker from 'react-toolbox/lib/time_picker';
+import SubmitButton from './SubmitButton.js'
 // And then just use global variable.
 import React from 'react';
 
@@ -31,7 +32,7 @@ class DatePickerIn extends React.Component {
 
   handleDateChange = (value) => {
     var d = value;
-    var date_format = "year="+d.getFullYear()+"&&"+"month="+d.getMonth()+"&&"+"day="+d.getDate();
+    var date_format = "year="+d.getFullYear()+"&&"+"month="+(d.getMonth()+1)+"&&"+"day="+d.getDate();
     this.setState({date2: d, date_url: date_format, locDisabled: "false"});
     
     fetch('/home/submit',{method: "POST",  headers: {
@@ -54,9 +55,25 @@ class DatePickerIn extends React.Component {
     console.log(this.state.time);
   }
 
+  handleSubmit = () => {
+    fetch('/home/submit',{method: "POST",  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+   body: JSON.stringify({date: this.state.date_url, location: this.state.location})
+
+ })
+    .then(function(res) {
+        return res.text();
+    }).then(function(body) {
+        console.log(body);
+    });
+
+  }
+
 
   handleLocationChange = (value) => {
-     this.setState({location: value,timeDisabled:"false"});
+     this.setState({location: value,submitDisabled:"false"});
     
   };
 
@@ -89,7 +106,14 @@ class DatePickerIn extends React.Component {
           source={locationsArray}
           value={this.state.location}
         />
-        
+        <SubmitButton
+          accent
+          raised
+          primary
+          disabled = {!this.state.submitDisabled}
+          label = "Submit" 
+          onClick={this.handleSubmit}
+        />
       </section>
     );
   }
