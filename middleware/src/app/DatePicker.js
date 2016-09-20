@@ -32,7 +32,19 @@ class DatePickerIn extends React.Component {
 
   handleDateChange = (value) => {
     var d = value;
+<<<<<<< HEAD
     var date_format = "year="+d.getFullYear()+"&&"+"month="+(d.getMonth()+1)+"&&"+"day="+d.getDate();
+=======
+    var month = d.getMonth();
+    var day = d.getDate();
+    if(day<10){
+      day = '0'+day.toString()
+    }
+    if(month<10){
+      month = '0'+month.toString()
+    }
+    var date_format = "year="+d.getFullYear()+"&&"+"month="+month+"&&"+"day="+day;
+>>>>>>> c08292b41fcb0a1ad7d425f8225d0c79e2647888
     this.setState({date2: d, date_url: date_format, locDisabled: "false"});
     
     fetch('/home/submit',{method: "POST",  headers: {
@@ -45,6 +57,7 @@ class DatePickerIn extends React.Component {
     .then(function(res) {
         return res.text();
     }).then(function(body) {
+        console.log("Here....");
         console.log(body);
     });
 

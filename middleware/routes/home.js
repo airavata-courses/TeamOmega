@@ -5,7 +5,7 @@ const path = require('path');
 
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
-
+var fs = require('fs');
 
 var url = require('url');
 
@@ -20,22 +20,46 @@ router.get('/', function(req, res, next) {
 
 router.post('/submit', function(req, response, next) {
 
-	//var url = construct_url(req.body)
-
-	console.log(req.body);	
-/*	http.get(url, function(res) {
+	var url = "http://127.0.0.1:5000/getpath?"+req.body.date.toString()
+	
+	console.log(url);
+	
+	http.get(url, function(res) {
 
 	    console.log("statusCode: ", res.statusCode);
 
 	    res.on('data', function(d) {
-	        console.info('GET result:\n');
-	        process.stdout.write(d);
-	        console.info('\n\nCall completed');
-	        response.write(d);
+
+	    	//Reading station codes from files
+
+	    	fs.readFile('data.json', function(err,data){
+	    		var fileData = JSON.parse(data.toString())
+				console.info('GET result:\n');
+				//process.stdout.write(d);
+				console.info('\n\nCall completed');
+				var x = d.toString();
+				var array = JSON.parse(x);
+				array = array["station"]
+
+				console.log(Object.keys(fileData).length)
+				for(var index in fileData){
+					if(array.indexOf(index)<0){
+						delete fileData[index]
+					}
+					else{
+						console.log(index);
+					}
+				}
+
+				response.send(fileData);
+				});
+
+
+
 	    });
  
 	});
-*/
+
 });
 
 
