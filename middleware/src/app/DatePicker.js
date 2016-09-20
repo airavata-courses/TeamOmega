@@ -27,11 +27,26 @@ const min_datetime = new Date(1991, 11, 11);
 
 
 class DatePickerIn extends React.Component {
-  state = {date2: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: ''}
+  state = {date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: ''}
 
   handleDateChange = (value) => {
-    this.setState({date2: value,locDisabled: "false"});
-    console.log(this.state.date2);
+    var d = value;
+    var date_format = "year="+d.getFullYear()+"&&"+"month="+d.getMonth()+"&&"+"day="+d.getDate();
+    this.setState({date2: d, date_url: date_format, locDisabled: "false"});
+    
+    fetch('/home/submit',{method: "POST",  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+   body: JSON.stringify({date: date_format})
+
+ })
+    .then(function(res) {
+        return res.text();
+    }).then(function(body) {
+        console.log(body);
+    });
+
   }
 
   handleTimeChange = (time) => {
@@ -41,14 +56,8 @@ class DatePickerIn extends React.Component {
 
 
   handleLocationChange = (value) => {
-    this.setState({location: value,timeDisabled:"false"});
-    console.log(this.state.location);
-    fetch('/home/submit',{method: "POST", json: {date: "XYZ"}})
-    .then(function(res) {
-        return res.text();
-    }).then(function(body) {
-        console.log(body);
-    });
+     this.setState({location: value,timeDisabled:"false"});
+    
   };
 
   render () {
