@@ -5,15 +5,13 @@ import SubmitButton from './SubmitButton.js'
 // And then just use global variable.
 import React from 'react';
 
+var Loading = require('react-loading');
+
+
 
 import 'whatwg-fetch';
 // And then just use global variable.
-var locationsArray = {
-  'ES-es': 'Spain',
-  'TH-th': 'Thailand',
-  'EN-gb': 'England',
-  'EN-en': 'USA'
-};
+var locationsArray = { };
 
 
 // if you are on node v0.10, set a Promise library first, eg.
@@ -28,13 +26,11 @@ const min_datetime = new Date(1991, 11, 11);
 
 
 class DatePickerIn extends React.Component {
-  state = {date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: ''}
+  state = {date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: '',loading:0}
 
   handleDateChange = (value) => {
     var d = value;
-<<<<<<< HEAD
-    var date_format = "year="+d.getFullYear()+"&&"+"month="+(d.getMonth()+1)+"&&"+"day="+d.getDate();
-=======
+
     var month = d.getMonth();
     var day = d.getDate();
     if(day<10){
@@ -44,8 +40,7 @@ class DatePickerIn extends React.Component {
       month = '0'+month.toString()
     }
     var date_format = "year="+d.getFullYear()+"&&"+"month="+month+"&&"+"day="+day;
->>>>>>> c08292b41fcb0a1ad7d425f8225d0c79e2647888
-    this.setState({date2: d, date_url: date_format, locDisabled: "false"});
+    this.setState({date2: d, date_url: date_format,location: ''});
     
     fetch('/home/submit',{method: "POST",  headers: {
     'Accept': 'application/json',
@@ -57,9 +52,17 @@ class DatePickerIn extends React.Component {
     .then(function(res) {
         return res.text();
     }).then(function(body) {
-        console.log("Here....");
-        console.log(body);
+        locationsArray = {}
+       var body1 = JSON.parse(body);
+      for (var key in body1) {
+        if (body1.hasOwnProperty(key)) {
+
+          locationsArray[key]=body1[key][3];
+        }
+      }
     });
+    this.setState({locDisabled:"false"});
+
 
   }
 
@@ -69,6 +72,7 @@ class DatePickerIn extends React.Component {
   }
 
   handleSubmit = () => {
+     this.setState({loading:1});
     fetch('/home/submit',{method: "POST",  headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
@@ -78,6 +82,7 @@ class DatePickerIn extends React.Component {
  })
     .then(function(res) {
         return res.text();
+
     }).then(function(body) {
         console.log(body);
     });
@@ -85,9 +90,10 @@ class DatePickerIn extends React.Component {
   }
 
 
+
+
   handleLocationChange = (value) => {
      this.setState({location: value,submitDisabled:"false"});
-    
   };
 
   render () {
@@ -110,15 +116,17 @@ class DatePickerIn extends React.Component {
           onChange={this.handleTimeChange}
           value={this.state.time}
         />
-        <Autocomplete
-          direction="down"
-          label="Select Location"
-          disabled={!this.state.locDisabled}
-          multiple={false}
-          onChange={this.handleLocationChange}
-          source={locationsArray}
-          value={this.state.location}
-        />
+        
+       <Autocomplete
+                  direction="down"
+                  label="Select Location"
+                  disabled={!this.state.locDisabled}
+                  multiple={false}
+                  onChange={this.handleLocationChange}
+                  source={locationsArray}
+                  value={this.state.location}
+                />
+   
         <SubmitButton
           accent
           raised
@@ -127,8 +135,9 @@ class DatePickerIn extends React.Component {
           label = "Submit" 
           onClick={this.handleSubmit}
         />
+        { this.state.loading  ? <Loading type='cylon' color='#00796B' /> : null }
       </section>
-    );
+      );
   }
 }
 
