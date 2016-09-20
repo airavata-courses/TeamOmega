@@ -2,7 +2,6 @@ language: python
 python:
   - "2.7"
 cache: pip
-before
 install:
   - cd Data_Ingestor
   - pip install virtualenv
