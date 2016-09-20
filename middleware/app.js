@@ -8,6 +8,24 @@ var session = require('express-session');
 var dotenv = require('dotenv');
 var passport = require('passport');
 var Auth0Strategy = require('passport-auth0');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
+const config = require('./webpack.config');
+const internalIp = require('internal-ip');
+const webpack = require('webpack');
+
+const app = express();
+const compiler = webpack(config);
+
+const middleware = webpackDevMiddleware(compiler, {
+  noInfo: true,
+  publicPath: config.output.publicPath,
+  silent: false,
+  stats: { color: true }
+});
+
+app.use(middleware);
+app.use(webpackHotMiddleware(compiler));
 
 dotenv.load();
 
@@ -39,7 +57,6 @@ passport.deserializeUser(function(user, done) {
   done(null, user);
 });
 
-var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

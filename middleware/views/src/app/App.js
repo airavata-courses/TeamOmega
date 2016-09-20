@@ -1,0 +1,38 @@
+import React from 'react';
+import 'react-toolbox/lib/commons.scss';           // Import common styles
+import PurpleAppBar from './PurpleAppBar.js';      // AppBar with simple overrides
+import SuccessButton from './SuccessButton.js';    // A button with complex overrides
+import { Button } from 'react-toolbox/lib/button'; // Bundled component import
+import AutocompleteTest from './AutocompleteTest.js';
+import { Card, CardMedia, CardTitle, CardText, CardActions } from 'react-toolbox/lib/card';
+import DatePickerIn from './DatePicker.js';
+import TimePickerTest from './TimePickerTest.js';
+
+const SearchCards = () => (
+	<div className="mdl-grid">
+   		<div className="mdl-layout-spacer"></div>
+   			<div className="mdl-cell mdl-cell--4-col">
+ 			  <Card raised="true" style={{width: "auto"}}>
+        <CardTitle title="Search service"  subtitle="Select the date and location"/>
+    <CardText><DatePickerIn /></CardText>
+   <CardMedia
+      image="https://placeimg.com/800/450/nature"
+    />
+  </Card>
+  </div>
+   		<div className="mdl-layout-spacer"></div>
+  </div>
+);
+
+const App = () => (
+  <div>
+    <PurpleAppBar />
+    <section style={{ padding: 20 }}>
+    <SearchCards />
+      
+      
+    </section>
+  </div>
+);
+
+export default App;

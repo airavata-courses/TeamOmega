@@ -1,6 +1,8 @@
 var express = require('express');
 var passport = require('passport');
 var router = express.Router();
+const path = require('path');
+
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
 
@@ -10,15 +12,18 @@ var url = require('url');
 var http = require('http');
 
 /* GET home page. */
-router.get('/',ensureLoggedIn, function(req, res, next) {
-  res.render('index');
+router.get('/', function(req, res, next) {
+  console.log(path.join(__dirname, '../src/www/index.html'));
+  res.sendFile(path.join(__dirname, '../src/www/index.html'));
+
 });
 
 router.post('/submit', function(req, response, next) {
 
-	var url = construct_url(req.body)
-	
-	http.get(url, function(res) {
+	//var url = construct_url(req.body)
+
+	console.log(req.body);	
+/*	http.get(url, function(res) {
 
 	    console.log("statusCode: ", res.statusCode);
 
@@ -30,7 +35,7 @@ router.post('/submit', function(req, response, next) {
 	    });
  
 	});
-
+*/
 });
 
 
