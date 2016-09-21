@@ -5,7 +5,7 @@ import theme from './PurpleAppBar.scss';
 
 const PurpleAppBar = ({ children, ...other }) => (
   <AppBar {...other} theme={theme}>
-     <h3>  Omega </h3>
+     <h3><i className="mdi mdi-weather-lightning"></i>  Omega </h3>
     {children}
   </AppBar>
 );

@@ -2,8 +2,10 @@ import DatePicker from 'react-toolbox/lib/date_picker';
 import Autocomplete from 'react-toolbox/lib/autocomplete';
 import TimePicker from 'react-toolbox/lib/time_picker';
 import SubmitButton from './SubmitButton.js'
+import theme from './timepicker_fix.scss';
 // And then just use global variable.
 import React from 'react';
+
 
 var Loading = require('react-loading');
 
@@ -121,6 +123,7 @@ class DatePickerIn extends React.Component {
           value={this.state.date2} 
         />
         <TimePicker
+          theme={theme}
           label='Select Time'
           format='ampm'
           hint="optional"
