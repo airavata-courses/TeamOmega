@@ -5,9 +5,9 @@ files:
     destination: /home/ec2-user
 hooks:
   BeforeInstall:
-    - location: build.sh
+    - location: regsitry-api/build.sh
       runas: root
   ApplicationStart:
-    - location: run.sh
+    - location: regsitry-api/run.sh
       timeout: 3600
       runas: root
