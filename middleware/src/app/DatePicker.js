@@ -40,7 +40,7 @@ class DatePickerIn extends React.Component {
       month = '0'+month.toString()
     }
     var date_format = d.getFullYear()+"/"+month+"/"+day+"/";
-    this.setState({date2: d, date_url: date_format,location: '',submitDisabled: ''});
+    this.setState({date2: d, date_url: date_format,location: '',submitDisabled: '',locDisabled:''});
     
     fetch('/home/submit',{method: "POST",  headers: {
     'Accept': 'application/json',
