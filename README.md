@@ -6,3 +6,7 @@
 
 ###Run the server
     mvn exec:java
+
+### Prerequisites:
+    maven
+    jdk 1.8
