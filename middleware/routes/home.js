@@ -3,6 +3,9 @@ var passport = require('passport');
 var router = express.Router();
 const path = require('path');
 
+var fetch = require('node-fetch');
+
+
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
 var fs = require('fs');
@@ -20,76 +23,47 @@ router.get('/', function(req, res, next) {
 
 router.post('/submit', function(req, response, next) {
 
-	var url = "http://127.0.0.1:5000/getpath?"+req.body.date.toString()
+	fetch('http://localhost:5000/get_loc',{method: "POST",  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+   body: JSON.stringify({date: req.body.date})
+
+ })
+    .then(function(res) {
+        return res.text();
+
+    }).then(function(body) {
+    	console.log("Received response from data ingestor");
+    	console.log(body);
+    	response.send(body);
+        
+    });
+
 	
-	console.log(url);
-	
-	http.get(url, function(res) {
-
-	    console.log("statusCode: ", res.statusCode);
-
-	    res.on('data', function(d) {
-
-	    	//Reading station codes from files
-
-	    	fs.readFile('data.json', function(err,data){
-	    		var fileData = JSON.parse(data.toString())
-				console.info('GET result:\n');
-				//process.stdout.write(d);
-				console.info('\n\nCall completed');
-				var x = d.toString();
-				var array = JSON.parse(x);
-				array = array["station"]
-
-				console.log(Object.keys(fileData).length)
-				for(var index in fileData){
-					if(array.indexOf(index)<0){
-						delete fileData[index]
-					}
-					else{
-						console.log(index);
-					}
-				}
-
-				response.send(fileData);
-				});
-
-
-
-	    });
- 
-	});
-
 });
 
+router.post('/submit_loc', function(req, response, next) {
 
-var construct_url = function(body){
+	fetch('http://localhost:5000/get_url',{method: "POST",  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+   body: JSON.stringify({loc:req.body.loc , timest:req.body.timest})
 
-	var months = {
-		"January" : "01",
-		"February" : "02",
-		"March" : "03",
-		"April" : "04",
-		"May" : "05",
-		"June" : "06",
-		"July" : "07",
-		"August" : "08",
-		"September" : "09",
-		"October" : "10",
-		"November" : "11",
-		"December" : "12"
-	}
+ })
+    .then(function(res) {
+        return res.text();
 
-	var base_url = "http://127.0.0.1:5000/getpath?";
-	
-	var year = body.year;
-	var month = months[body.month];
-	var day = body.day;
+    }).then(function(body) {
 
-	var new_url = base_url+"year="+year+"&&"+"month="+month+"&&"+"day="+day;
+    	
+    	console.log(body);
 
-	console.log(new_url);
-	return (new_url);
-}
+    	//call another function which will retrieve the file
+    	response.send(body);
+        
+    });
+});
 
 module.exports = router;
