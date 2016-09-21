@@ -3,6 +3,9 @@ var passport = require('passport');
 var router = express.Router();
 const path = require('path');
 
+var fetch = require('node-fetch');
+
+
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
 var fs = require('fs');
@@ -19,8 +22,44 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/submit', function(req, response, next) {
+	console.log(req);
 
-	var url = "http://127.0.0.1:5000/getpath?"+req.body.date.toString()
+	fetch('http://localhost:5000/get_loc',{method: "POST",  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+   body: JSON.stringify({date: req.body.date})
+
+ })
+    .then(function(res) {
+        return res.text();
+
+    }).then(function(body) {
+    	console.log("Received response from data ingestor");
+    	response.send(body);
+        
+    });
+
+	/*var post_options = {
+      host: 'localhost',
+      port: '5000',
+      path: '/get_loc',
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Length': Buffer.byteLength(req.body)
+      }
+  };
+
+  // Set up the request
+  var post_req = http.request(post_options, function(res) {
+  	console.log("here");		
+	res.setEncoding('utf8');
+	res.on('data', function (chunk) {
+  		console.log('Response: ' + chunk);
+	});
+  });*/
+	/*var url = "http://127.0.0.1:5000/getpath?"+req.body.date.toString()
 	
 	console.log(url);
 	
@@ -58,7 +97,9 @@ router.post('/submit', function(req, response, next) {
 
 	    });
  
-	});
+	});*/
+
+
 
 });
 

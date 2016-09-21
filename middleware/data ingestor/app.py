@@ -9,9 +9,13 @@ di_run = data_parser.DataIngestor()
 
 di_run.start()
 
+print "start"
+
 @app.route('/get_loc', methods=['POST'])
 def get_location():
-	loc_url = request.form['date']
+	print("Printting json--->",request.json)
+	loc_url = request.json['date']
+	print("Printing Lock URLl",loc_url)
 	data = di_run.get_stationlist(root_prefix = loc_url, type=3)
 	data = di_run.parse_json(data)
 	return jsonify(data)
