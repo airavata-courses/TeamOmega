@@ -73,11 +73,23 @@ class DatePickerIn extends React.Component {
 
   handleSubmit = () => {
      this.setState({loading:1});
-    fetch('/home/submit',{method: "POST",  headers: {
+     var location = this.state.date_url+this.state.location+"/";
+     var timestamp = [this.state.time.getHours(), this.state.time.getSeconds(), this.state.time.getMinutes()];
+     var time1 = '';
+      for (var item in timestamp){
+        if (item < 10){
+          time1+=("0"+String(item));
+        }
+        else{
+          time1+=(String(item));
+        }
+      }
+
+    fetch('/home/submit_loc',{method: "POST",  headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   },
-   body: JSON.stringify({date: this.state.date_url, location: this.state.location})
+   body: JSON.stringify({loc:location , timest:time1})
 
  })
     .then(function(res) {

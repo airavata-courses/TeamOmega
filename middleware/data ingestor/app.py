@@ -20,6 +20,12 @@ def get_location():
 	data = di_run.parse_json(data)
 	return jsonify(data)
 
+@app.route('/get_url', methods=['POST'])
+def get_timeurl():
+	loc_url = request.json['loc']
+	timest = int(request.json['timest'])
+	return jsonify(di_run.timeparse(loc_url,timest=timest))
+
 
 
 
