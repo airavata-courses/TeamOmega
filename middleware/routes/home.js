@@ -22,7 +22,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/submit', function(req, response, next) {
-	console.log(req);
+	
 
 	fetch('http://localhost:5000/get_loc',{method: "POST",  headers: {
     'Accept': 'application/json',
@@ -40,69 +40,34 @@ router.post('/submit', function(req, response, next) {
         
     });
 
-	/*var post_options = {
-      host: 'localhost',
-      port: '5000',
-      path: '/get_loc',
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Content-Length': Buffer.byteLength(req.body)
-      }
-  };
-
-  // Set up the request
-  var post_req = http.request(post_options, function(res) {
-  	console.log("here");		
-	res.setEncoding('utf8');
-	res.on('data', function (chunk) {
-  		console.log('Response: ' + chunk);
-	});
-  });*/
-	/*var url = "http://127.0.0.1:5000/getpath?"+req.body.date.toString()
-	
-	console.log(url);
-	
-	http.get(url, function(res) {
-
-	    console.log("statusCode: ", res.statusCode);
-
-	    res.on('data', function(d) {
-
-	    	//Reading station codes from files
-
-	    	fs.readFile('data.json', function(err,data){
-	    		var fileData = JSON.parse(data.toString())
-				console.info('GET result:\n');
-				//process.stdout.write(d);
-				console.info('\n\nCall completed');
-				var x = d.toString();
-				var array = JSON.parse(x);
-				array = array["station"]
-
-				console.log(Object.keys(fileData).length)
-				for(var index in fileData){
-					if(array.indexOf(index)<0){
-						delete fileData[index]
-					}
-					else{
-						console.log(index);
-					}
-				}
-
-				response.send(fileData);
-				});
-
-
-
-	    });
- 
-	});*/
-
 
 
 });
 
+router.post('/submit_loc', function(req, response, next) {
+	
+
+	fetch('http://localhost:5000/get_url',{method: "POST",  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json'
+  },
+   body: JSON.stringify({loc:req.body.loc , timest:req.body.timest})
+
+ })
+    .then(function(res) {
+        return res.text();
+
+    }).then(function(body) {
+    	console.log("Received url from data ingestor");
+    	console.log(body);
+    	console.log(typeof(body))
+    	response.send(body);
+        
+    });
+
+
+
+});
 
 var construct_url = function(body){
 
