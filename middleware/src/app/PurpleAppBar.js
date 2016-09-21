@@ -4,8 +4,8 @@ import Logo from './Logo.js';
 import theme from './PurpleAppBar.scss';
 
 const PurpleAppBar = ({ children, ...other }) => (
-  <AppBar {...other} theme={theme}>
-     <h3><i className="mdi mdi-weather-lightning"></i>  Omega </h3>
+  <AppBar leftIcon="<i className="mdi mdi-weather-lightning"></i>" {...other} theme={theme}>
+     <h3>  Omega </h3>
     {children}
   </AppBar>
 );

@@ -39,7 +39,7 @@ class DatePickerIn extends React.Component {
     if(month<10){
       month = '0'+month.toString()
     }
-    var date_format = "year="+d.getFullYear()+"&&"+"month="+month+"&&"+"day="+day;
+    var date_format = d.getFullYear()+"/"+month+"/"+day+"/";
     this.setState({date2: d, date_url: date_format,location: ''});
     
     fetch('/home/submit',{method: "POST",  headers: {

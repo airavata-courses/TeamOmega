@@ -22,7 +22,7 @@ const SearchCards = () => (
 );
 
 const App = () => (
-  <div>
+  <div className="landing">
     <PurpleAppBar />
     <section style={{ padding: 20 }}>
     <SearchCards />
