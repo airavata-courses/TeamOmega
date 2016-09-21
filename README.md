@@ -1,6 +1,6 @@
 # TeamOmega
 
-###BUild the package
+###Build the package
     cd regsitry-api
     mvn package
 
