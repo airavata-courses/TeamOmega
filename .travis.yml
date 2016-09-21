@@ -7,7 +7,7 @@ services: mongodb
 script:
   - ./build.sh
 before_deploy:
-  - zip -r regsitry-api.zip regsitry-api || true
+  - zip -r regsitry-api.zip regsitry-api appspec.yml build.sh run.sh || true
   - mkdir -p "dpl_cd_upload"
   - mv regsitry-api.zip dpl_cd_upload/regsitry-api.zip || true
 deploy:
