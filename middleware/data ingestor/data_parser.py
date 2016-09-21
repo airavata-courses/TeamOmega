@@ -27,9 +27,9 @@ class DataIngestor(object):
             key_name = key.name.encode('utf-8')
             if key_name != 'index.html' and len(key_name)<=42:
                 if type == 3:
-                    station_code = key_name.split('/')[type]
-                if (type ==3 and len(station_code) == 4) or (type ==4 ):
-                    station_list.append(station_code)
+                    key_name = key_name.split('/')[type]
+                if (type ==3 and len(key_name) == 4) or (type ==4 ):
+                    station_list.append(key_name)
         return station_list
 
     def parse_json(self, station_list):
