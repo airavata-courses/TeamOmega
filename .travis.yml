@@ -5,7 +5,7 @@ sudo: false
 install: true
 services: mongodb
 script:
-  - ./build.sh
+  - ./regsitry-api/build.sh
 before_deploy:
   - zip -r regsitry-api.zip regsitry-api appspec.yml build.sh run.sh || true
   - mkdir -p "dpl_cd_upload"
