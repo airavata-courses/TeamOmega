@@ -5,9 +5,13 @@ files:
     destination: /home/ec2-user
 hooks:
   BeforeInstall:
-    - location: regsitry-api/build.sh
+    - location: regsitry-api/src/main/resources/scripts/before-install.sh
       runas: root
   ApplicationStart:
-    - location: regsitry-api/run.sh
+    - location: regsitry-api/SGA_Apex_REST_API_WAR/src/main/resources/scripts/install.sh
       timeout: 3600
+      runas: root
+  ValidateService:
+    - location: regsitry-api/src/main/resources/scripts/validate-service.sh
+      timeout: 180
       runas: root
