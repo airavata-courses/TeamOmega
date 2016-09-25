@@ -5,7 +5,7 @@ sudo: false
 install: true
 
 script:
-  - cd clustering && mvn clean install -DskipTests=true
+  - cd clustering &&mvn clean install -DskipTests=true
  
 before_deploy:
   - cd ..
