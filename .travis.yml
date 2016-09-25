@@ -6,7 +6,7 @@ install: true
 
 script:
   - cd clustering && mvn clean install -DskipTests=true
-  - ./build.sh
+ 
 before_deploy:
   - cd ..
   - zip -r clustering.zip clustering appspec.yml || true
