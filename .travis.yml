@@ -5,7 +5,7 @@ sudo: false
 install: true
 
 script:
-  - cd detection && mvn -e clean insatall
+  - cd detection &&mvn clean install -DskipTests=true
  
 before_deploy:
   - cd ..
