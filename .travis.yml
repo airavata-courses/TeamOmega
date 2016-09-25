@@ -1,0 +1,46 @@
+language: java
+jdk:
+  - oraclejdk8
+sudo: false
+install: true
+
+script:
+  - cd detection && mvn -e clean insatall
+  - ./build.sh
+before_deploy:
+  - cd ..
+  - zip -r detection.zip detection appspec.yml || true
+  - mkdir -p "dpl_cd_upload"
+  - mv detection.zip dpl_cd_upload/detection.zip || true
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
+    secret_access_key: $AWS_SECRET_KEY
+    local_dir: dpl_cd_upload
+    bucket: sga-team-omega
+    region: us-west-2
+    skip_cleanup: true
+    acl: public_read
+    detect_encoding: true
+    on:
+      repo: airavata-courses/TeamOmega
+      all_branches: true
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: sga-team-omega
+    key: detection.zip
+    bundle_type: zip
+    application: SGA_TeamOmega
+    deployment_group: SGA_TeamOmega
+    region: us-west-2
+    on:
+      repo: airavata-courses/TeamOmega
+      all_branches: true
+after_deploy:
+  - echo "Performing after deploy procedures..."
+
+notifications:
+  email:
+    recipients:
+      - cthippan@iu.edu
