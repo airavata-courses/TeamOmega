@@ -6,7 +6,7 @@ install: true
 
 script:
   - cd detection && mvn -e clean insatall
-  - ./build.sh
+ 
 before_deploy:
   - cd ..
   - zip -r detection.zip detection appspec.yml || true
