@@ -1,4 +1,4 @@
-cd '/home/ec2-user/TeamOmega/data_ingestor'
+cd '/home/ec2-user/TeamOmega/middleware'
 
 echo "Installing weather prediction service..."
 
