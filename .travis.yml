@@ -1,19 +1,15 @@
 language: node_js
-
 node_js:
-- "4.4.2"
-
+  - "4.4.2"
 install:
   - cd middleware
-  - npm install --silent 
-
+  - npm install --silent
 before_deploy:
   - rm -r node_modules
   - cd ..
   - zip -r devel-branch.zip middleware data_ingestor appspec.yml || true
   - mkdir -p "dpl_cd_upload"
   - mv devel-branch.zip dpl_cd_upload/devel-branch.zip || true
-
 deploy:
   - provider: s3
     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
