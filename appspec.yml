@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ec2-user
+    destination: /home/ec2-user/TeamOmega
 hooks:
   BeforeInstall: 
     - location: data_ingestor/startup_scripts/before-install.sh
