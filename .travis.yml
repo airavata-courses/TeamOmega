@@ -10,6 +10,7 @@ install:
   
 
 before_deploy:
+  - rm -r node_modules
   - cd ..
   - zip -r development.zip middleware data_ingestor appspec.yml || true
   - mkdir -p "TeamOmega"
