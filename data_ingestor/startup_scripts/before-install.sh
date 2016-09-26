@@ -14,7 +14,7 @@ if [ "$?" -ne 0 ]; then
 fi
 
 
-python check_gunicorn.py
+python /data_ingestor/startup_scripts/check_gunicorn.py
 if [[ $? = 0 ]]; then
     echo "gunicorn is already installed"
 else
@@ -23,7 +23,7 @@ else
 fi
 
 
-python check_virtualenv.py
+python /data_ingestor/startup_scripts/check_virtualenv.py
 if [[ $? = 0 ]]; then
     echo "virtualenv is already installed"
 else

@@ -7,10 +7,10 @@ cache:
   directories:
     - node_modules
 script:
-  - npm install --silent
+  # - npm install --silent
 before_deploy:
   - ls -al
-  - rm -r node_modules
+  # - rm -r node_modules
   - cd ..
   - zip -r devel-branch.zip middleware data_ingestor appspec.yml || true
   - mkdir -p "dpl_cd_upload"
