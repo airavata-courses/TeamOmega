@@ -5,7 +5,7 @@ node_js:
 
 install:
   - cd middleware
-  - npm install
+  - npm install --silent
 
   
 
