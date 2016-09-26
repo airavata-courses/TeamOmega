@@ -7,11 +7,15 @@ hooks:
   BeforeInstall: 
     - location: data_ingestor/startup_scripts/before-install.sh
       runas: root
+      timeout: 300
     - location: middleware/startup_scripts/before-install.sh
       runas: root
+      timeout: 300
   ApplicationStart:
     - location: data_ingestor/startup_scripts/install.sh
       runas: root
+      timeout: 180
     - location: middleware/startup_scripts/install.sh
       runas: root
+      timeout: 180
 runas: root
