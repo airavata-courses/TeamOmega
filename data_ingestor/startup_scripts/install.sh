@@ -1,4 +1,4 @@
-cd '/home/ec2-user/data_ingestor'
+cd '/home/ec2-user/TeamOmega/data_ingestor'
 
 if [ ! -d "$venv"]; then
 	echo "initializing virtualenv"
