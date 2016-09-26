@@ -6,7 +6,7 @@ node_js:
 install:
   - cd middleware
   - npm install
-  - npm start
+
   
 
 before_deploy:
