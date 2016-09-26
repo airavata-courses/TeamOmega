@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo 'check if python is installed'
 python --version
 if [ "$?" -ne 0 ]; then

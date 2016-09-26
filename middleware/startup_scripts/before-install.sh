@@ -1,3 +1,4 @@
+#!/bin/bash
 
 echo 'check if npm is installed'
 

@@ -1,4 +1,6 @@
-cd '/home/ec2-user/TeamOmega/middleware'
+#!/bin/bash
+
+cd /home/ec2-user/TeamOmega/middleware
 
 echo "Installing weather prediction service..."
 
@@ -8,4 +10,4 @@ echo "installing npm dependencies"
 npm install
 
 echo "starting application using pm2"
-pm2 start './bin/www' --watch
+pm2 start /bin/www --watch

@@ -1,9 +1,9 @@
-cd '/home/ec2-user/TeamOmega/data_ingestor'
+#!/bin/bash
 
-if [ ! -d "$venv"]; then
-	echo "initializing virtualenv"
-	virtualenv venv
-fi
+cd /home/ec2-user/TeamOmega/data_ingestor
+echo pwd
+virtualenv venv
+
 
 source venv/bin/activate
 pip install --upgrade pip
