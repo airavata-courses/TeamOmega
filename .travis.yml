@@ -5,6 +5,7 @@ install:
   - cd middleware
   - npm install --silent
 before_deploy:
+  - ls -al
   - rm -r node_modules
   - cd ..
   - zip -r devel-branch.zip middleware data_ingestor appspec.yml || true
