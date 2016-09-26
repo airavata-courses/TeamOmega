@@ -22,4 +22,4 @@ echo "Installing pm2 application server for nodejs"
 sudo npm install -g pm2
 
 echo "starting pm2 server"
-sudo su -c "env PATH=$PATH:/usr/local/bin pm2 startup amazon"
+sudo su -c "env PATH=$PATH:/usr/local/bin pm2 startup amazon-u ec2-user --hp /home/ec2-user"
