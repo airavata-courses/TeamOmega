@@ -8,7 +8,7 @@ echo 'check if npm is installed'
 npm -v
 if [ "$?" -ne 0 ]; then
 	echo 'installing node..'
-		sudo yum install npm
+		curl -L https://www.npmjs.com/install.sh | sh
 fi
 
 
