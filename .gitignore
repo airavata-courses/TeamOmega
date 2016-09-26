@@ -1,6 +1,7 @@
 node_modules
 .env
 .pyc
+venv
 
 # Optional npm cache directory
 .npm

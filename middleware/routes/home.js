@@ -29,7 +29,7 @@ router.get('/', function(req, res, next) {
 router.post('/submit', function(req, response, next) {
 	
 
-	fetch('http://localhost:5000/get_loc',{method: "POST",  headers: {
+	fetch('http://localhost:4000/get_loc',{method: "POST",  headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   },
@@ -54,7 +54,7 @@ router.post('/submit', function(req, response, next) {
 router.post('/submit_loc', function(req, response, next) {
 	
 
-	fetch('http://localhost:5000/get_url',{method: "POST",  headers: {
+	fetch('http://localhost:4000/get_url',{method: "POST",  headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   },

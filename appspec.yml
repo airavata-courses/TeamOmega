@@ -1,0 +1,17 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ec2-user
+hooks:
+  BeforeInstall: 
+    - location: data_ingestor/startup_scripts/before-install.sh
+      runas: root
+    - location: middleware/startup_scripts/before-install.sh
+      runas: root
+  ApplicationStart:
+    - location: data_ingestor/startup_scripts/install.sh
+      runas: root
+    - location: middleware/startup_scripts/install.sh
+      runas: root
+runas: root
