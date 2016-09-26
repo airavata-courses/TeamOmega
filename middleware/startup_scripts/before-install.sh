@@ -3,8 +3,8 @@ echo 'check if npm is installed'
 npm -v
 echo 'installing node..'
 # sudo curl -L https://www.npmjs.com/install.sh | sh
-sudo yum install npm --enablerepo=epel
-sudo npm install npm@latest -g
+sudo yum install npm -y --enablerepo=epel
+sudo npm install npm@latest -y -g
 
 
 # echo 'check if node is installed'
