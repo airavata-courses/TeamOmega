@@ -4,9 +4,8 @@ node_js:
 - "4.4.2"
 
 script:
-  - cd middleware/startup_scripts
-  - ./before-install.sh
-  - ./install.sh
+  - cd middleware
+  - npm install
   
 
 before_deploy:
@@ -19,7 +18,8 @@ deploy:
     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
     secret_access_key: $AWS_SECRET_KEY
     local_dir: TeamOmega
-    bucket: sga-team-omega
+    bucket: sga-team-omega  - ./before-install.sh
+
     region: us-west-2
     skip_cleanup: true
     acl: public_read
