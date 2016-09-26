@@ -31,14 +31,6 @@ else
     pip install virtualenv
 fi
 
-cd '~/TeamOmega/data_ingestor'
-
-if [ ! -d "$venv"]; then
-	echo "initializing virtualenv"
-	virtualenv venv
-fi
-
-source venv/bin/activate
 
 
 
