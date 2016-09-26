@@ -18,4 +18,3 @@ hooks:
     - location: middleware/startup_scripts/install.sh
       runas: root
       timeout: 180
-runas: root
