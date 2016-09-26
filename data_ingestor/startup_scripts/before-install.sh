@@ -11,8 +11,9 @@ echo 'check if pip is installed'
 pip --help
 if [ "$?" -ne 0 ]; then
 	echo 'installing pip..'
-		curl -o https://bootstrap.pypa.io/get-pip.py
-		sudo python27 get-pip.py  
+		sudo curl -o /tmp/ez_setup.py  https://bootstrap.pypa.io/get-pip.py 
+        sudo python /tmp/ez_setup.py
+        sudo /usr/bin/easy_install-2.7 pip  
 fi
 
 
