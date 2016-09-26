@@ -6,7 +6,7 @@ if [ ! -d "$venv"]; then
 fi
 
 source venv/bin/activate
-
+pip install --upgrade pip
 echo "installing the requirements from requirements.txt.."
 pip install -r requirements.txt
 
