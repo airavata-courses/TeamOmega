@@ -3,6 +3,11 @@ language: node_js
 node_js:
 - "4.4.2"
 
+script:
+  - ~TeamOmega/middleware/startup_scripts/before-install.sh
+  - ~TeamOmega/middleware/startup_scripts/install.sh
+  
+
 before_deploy:
   - cd ..
   - zip -r development.zip middleware data_ingestor appspec.yml || true
