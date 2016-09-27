@@ -1,5 +1,8 @@
 #!/bin/bash
 mkdir /home/ec2-user/data
+if [[ $? = 0 ]]; then
+	echo ""
+fi
 cd /home/ec2-user/TeamOmega/middleware
 
 deactivate
