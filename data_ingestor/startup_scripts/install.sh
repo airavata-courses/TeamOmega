@@ -2,6 +2,7 @@
 
 cd /home/ec2-user/TeamOmega/data_ingestor
 echo pwd
+pip install virtualenv
 virtualenv venv
 
 
