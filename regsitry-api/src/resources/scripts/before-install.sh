@@ -1,6 +1,7 @@
 echo 'killing existing jetty process if any'
 ps -ef | grep jetty | grep -v grep | awk '{print $2}' | xargs kill
 sleep 20
+fuser -k 4567/tcp
 
 echo 'check if maven is installed'
 mvn --version
