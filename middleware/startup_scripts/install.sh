@@ -20,3 +20,4 @@ sudo node bin/www > stdout.txt 2> stderr.txt &
 
 if [ "$?" -ne 0 ]; then
 	echo "Already running"
+fi
