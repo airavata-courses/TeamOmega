@@ -11,5 +11,12 @@ fi
 
 
 source venv/bin/activate
-pip install
+pip install --upgrade pip
+echo "installing the requirements from requirements.txt.."
+pip install -r requirements.txt
+pip install gunicorn
+echo "starting data_ingestor on guincorn.."
+gunicorn -b 0.0.0.0:4000 wsgi --daemon&
+if  [ "$?" -ne 0 ]; then
+	echo ""
 fi
