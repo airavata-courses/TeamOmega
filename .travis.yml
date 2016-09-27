@@ -32,7 +32,7 @@ deploy:
     key: clustering.zip
     bundle_type: zip
     application: SGA_TeamOmega
-    deployment_group: SGA_TeamOmega
+    deployment_group: SGA_TeamOmega_SC
     region: us-west-2
     on:
       repo: airavata-courses/TeamOmega
