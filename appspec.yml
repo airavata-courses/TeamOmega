@@ -1,0 +1,17 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ec2-user/detection
+hooks:
+  BeforeInstall:
+    - location: detection/src/resources/scripts/before-install.sh
+      runas: root
+  ApplicationStart:
+    - location: detection/src/resources/scripts/install.sh
+      timeout: 3600
+      runas: root
+  ValidateService:
+    - location: detection/src/resources/scripts/validate_service.sh
+      timeout: 180
+runas: root
