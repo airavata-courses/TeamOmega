@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ ! -d "$/home/ec2-user/data" -ne 0 ]; then
+if [ ! -d "$/home/ec2-user/data" ]; then
 	echo "Creating data dir"
 	mkdir /home/ec2-user/data
 fi
