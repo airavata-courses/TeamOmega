@@ -26,9 +26,10 @@ const datetime = new Date();
 var time = new Date();
 const min_datetime = new Date(1991, 11, 11);
 
+var icon_prefix = "mdi mdi-weather-";
 
 class DatePickerIn extends React.Component {
-  state = {date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: '',loading:0}
+  state = {date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: '',loading:0, forecast: ''}
 
   handleDateChange = (value) => {
     var d = value;
@@ -42,7 +43,7 @@ class DatePickerIn extends React.Component {
       month = '0'+month.toString()
     }
     var date_format = d.getFullYear()+"/"+month+"/"+day+"/";
-    this.setState({date2: d, date_url: date_format,location: '',submitDisabled: '',locDisabled:''});
+    this.setState({date2: d, date_url: date_format,location: '',submitDisabled: '',locDisabled:'', forecast:''});
     console.log(date_format);
     fetch('/home/submit',{method: "POST",  headers: {
     'Accept': 'application/json',
@@ -99,6 +100,10 @@ class DatePickerIn extends React.Component {
 
     }).then(function(body) {
         console.log(body);
+        var body1 = JSON.parse(body);
+        var icon_url = icon_prefix+body['forecast'];
+        this.setState({forecast:icon_url});
+
     });
 
   }
@@ -151,6 +156,7 @@ class DatePickerIn extends React.Component {
           onClick={this.handleSubmit}
         />
         { this.state.loading  ? <Loading type='cylon' color='#00796B' /> : null }
+        {this.state.forecast ? <h3><i className=this.state.forecast></i> </h3> : null }
       </section>
       );
   }
