@@ -13,7 +13,7 @@ echo "Installing weather prediction service..."
 echo "installing npm dependencies"
 
 npm install
-sudo node bin/www > stdout.txt 2> stderr.txt &
+sudo node bin/www > /home/ec2-user/stdout.txt 2> /home/ec2-user/stderr.txt &
 # sudo pm2 kill
 # echo "starting application using pm2"
 # sudo pm2 start bin/www --watch -p 3000
