@@ -4,7 +4,7 @@ cd /home/ec2-user/TeamOmega/data_ingestor
 echo pwd
 pip install guincorn
 virtualenv venv
-if [[ $? = 0 ]]; then
+if [ "$?" -ne 0 ]; then
     pip install virtualenv
     virtualenv venv
 fi
@@ -17,6 +17,6 @@ pip install -r requirements.txt
 pip install gunicorn
 echo "starting data_ingestor on guincorn.."
 gunicorn -b 0.0.0.0:4000 wsgi --daemon&
-if [[ $? = 0 ]]; then
+if  [ "$?" -ne 0 ]; then
 	echo ""
 fi
