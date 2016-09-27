@@ -12,7 +12,7 @@ cache:
 before_deploy:
   - ls -al
   - cd ..
-  - zip -r devel-branch.zip middleware data_ingestor appspec.yml -x "middleware/node_modules/\*" "data_ingestor/venv\*" || true
+  - zip -r devel-branch.zip middleware data_ingestor appspec.yml -x middleware/node_modules/**\* || true
   - mkdir -p "dpl_cd_upload"
   - mv devel-branch.zip dpl_cd_upload/devel-branch.zip || true
 deploy:
