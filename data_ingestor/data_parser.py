@@ -17,7 +17,7 @@ class DataIngestor(object):
         self.bucket = self.s3conn.get_bucket('noaa-nexrad-level2',validate=False)
    
     def load_jsonData(self):
-        with open('data.json', 'r') as data_file:    
+        with open('/home/ec2-user/TeamOmega/data_ingestor/data.json', 'r') as data_file:    
             self.json_data = json.load(data_file)
 
     

@@ -112,7 +112,7 @@ router.post('/submit_loc', function(req, response, next) {
 var sendFinalUrl = function(req,sess, callback){  
 
     console.log("In function send Final");
-    var file_path = "/home/suraj/data/file"+String(sess)+".zip";    
+    var file_path = "/home/ec2-user/data/file"+String(sess)+".zip";    
     var file = fs.createWriteStream(file_path);
     var request = http.get('http://localhost:5678/kmlfile', function(response) {
       response.pipe(file);

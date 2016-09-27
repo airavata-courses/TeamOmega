@@ -2,7 +2,7 @@
 
 cd /home/ec2-user/TeamOmega/data_ingestor
 echo pwd
-
+pip install guincorn
 virtualenv venv
 if [[ $? = 0 ]]; then
     pip install virtualenv
@@ -14,5 +14,9 @@ source venv/bin/activate
 pip install --upgrade pip
 echo "installing the requirements from requirements.txt.."
 pip install -r requirements.txt
-
-echo "starting data_ingestor on pm2 server.."
+pip install gunicorn
+echo "starting data_ingestor on guincorn.."
+gunicorn -b 0.0.0.0:4000 wsgi --daemon&
+if [[ $? = 0 ]]; then
+	echo ""
+fi

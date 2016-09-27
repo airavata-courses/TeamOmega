@@ -163,7 +163,7 @@ class DatePickerIn extends React.Component {
         />
 
         {this.state.loading  ? <Loading type='cylon' color='#00796B' /> : null }
-        {this.state.forecast ? <div><h1><i className={this.state.forecast}></i> </h1> <h3>{fct1}</h3></div>: null }
+        {this.state.forecast ? <div><h1><i className={this.state.forecast}></i> </h1> <h3>{fct}</h3></div>: null }
       </section>
       );
   }

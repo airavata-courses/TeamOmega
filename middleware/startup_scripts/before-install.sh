@@ -22,11 +22,11 @@ fi
 # sudo n 4.4.2
 # sudo ln -sf /usr/local/n/versions/node/4.4.2/bin/node /usr/bin/node
 
-pm2 update
-if [ "$?" -ne 0 ]; then
-	echo "Installing pm2 application server for nodejs"
-	sudo npm install pm2@latest -g
-	sudo su -c "env PATH=$PATH:/usr/local/bin pm2 startup amazon -u ec2-user --hp /home/ec2-user"
-fi
+# pm2 update
+# if [ "$?" -ne 0 ]; then
+# 	echo "Installing pm2 application server for nodejs"
+# 	sudo npm install pm2@latest -g
+# 	sudo su -c "env PATH=$PATH:/usr/local/bin pm2 startup amazon -u ec2-user --hp /home/ec2-user"
+# fi
 # echo "starting pm2 server"
 
