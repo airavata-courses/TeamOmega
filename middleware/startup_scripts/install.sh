@@ -1,7 +1,8 @@
 #!/bin/bash
-mkdir /home/ec2-user/data
-if [ "$?" -ne 0 ]; then
-	echo ""
+
+if [ ! -d "$/home/ec2-user/data" -ne 0 ]; then
+	echo "Creating data dir"
+	mkdir /home/ec2-user/data
 fi
 cd /home/ec2-user/TeamOmega/middleware
 
