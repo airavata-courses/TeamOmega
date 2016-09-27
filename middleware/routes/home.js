@@ -40,7 +40,7 @@ router.post('/submit', function(req, response, next) {
       console.log("response received..."+res)
   });
 
-	fetch('http://localhost:5000/get_loc',{method: "POST",  headers: {
+	fetch('http://localhost:4000/get_loc',{method: "POST",  headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   },
@@ -76,7 +76,7 @@ router.post('/submit_loc', function(req, response, next) {
   });
 
 
-	fetch('http://localhost:5000/get_url',{method: "POST",  headers: {
+	fetch('http://localhost:4000/get_url',{method: "POST",  headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   },
@@ -114,7 +114,7 @@ var sendFinalUrl = function(req,sess, callback){
     console.log("In function send Final");
     var file_path = "/home/suraj/data/file"+String(sess)+".zip";    
     var file = fs.createWriteStream(file_path);
-    var request = http.get('http://52.43.210.8:5678/kmlfile', function(response) {
+    var request = http.get('http://localhost:5678/kmlfile', function(response) {
       response.pipe(file);
       console.log("Calling function send zip forward");
       
@@ -153,16 +153,16 @@ var sendFinalUrl = function(req,sess, callback){
 //function for getting file from storm detector
 var sendZipForward = function(file_path, callback){  
 
-    var url = 'http://52.43.210.8:5789/kml?path=' +file_path;
+    var url = 'http://localhost:5789/kml?path=' +file_path;
 
-    var items = ["cloudy","hail", "fog", "lightning", "lightning-rainy", "night","partlycloudy", "pouring", "rainy", "snowy", "sunny"]
+    var items = ["cloudy","hail", "lightning",  "night","partlycloudy", "pouring", "rainy", "snowy", "sunny"]
 
     var item = items[Math.floor(Math.random()*items.length)]; 
 
-    callback(item);
     console.log("Inside function send zip forward");
     fetch(url,{method:"get"}).then(function(res) {
-          
+          callback(item);
+
           return res.text();
 
       })

@@ -26,10 +26,12 @@ const datetime = new Date();
 var time = new Date();
 const min_datetime = new Date(1991, 11, 11);
 
+var fct = "";
 var icon_prefix = "mdi mdi-weather-";
+var icon_url = "";
 
 class DatePickerIn extends React.Component {
-  state = {date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: '',loading:0, forecast: ''}
+  state = {fct1: '',date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: '',loading:0, forecast: 0}
 
   handleDateChange = (value) => {
     var d = value;
@@ -101,11 +103,15 @@ class DatePickerIn extends React.Component {
     }).then(function(body) {
         console.log(body);
         var body1 = JSON.parse(body);
-        var icon_url = icon_prefix+body['forecast'];
-        this.setState({forecast:icon_url});
+        icon_url = icon_prefix+body1['forecast'];
+        fct = body1['forecast'];
+        console.log(icon_url);
+        
 
     });
-
+    this.setState({loading:0,forecast:icon_url,fct1:fct});
+    console.log(this.state.fct1+"FDS");
+    console.log(fct);
   }
 
 
@@ -155,8 +161,9 @@ class DatePickerIn extends React.Component {
           label = "Submit" 
           onClick={this.handleSubmit}
         />
-        { this.state.loading  ? <Loading type='cylon' color='#00796B' /> : null }
-        {this.state.forecast ? <h3><i className={this.state.forecast}></i> </h3> : null }
+
+        {this.state.loading  ? <Loading type='cylon' color='#00796B' /> : null }
+        {this.state.forecast ? <div><h1><i className={this.state.forecast}></i> </h1> <h3>{fct1}</h3></div>: null }
       </section>
       );
   }
