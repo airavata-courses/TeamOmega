@@ -6,9 +6,6 @@ if [ ! -d "$/home/ec2-user/data" ]; then
 fi
 cd /home/ec2-user/TeamOmega/middleware
 
-deactivate
-if [ "$?" -ne 0 ]; then
-	echo "Already deactivated"
 
 echo "Installing weather prediction service..."
 
