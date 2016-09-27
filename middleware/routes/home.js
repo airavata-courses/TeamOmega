@@ -14,6 +14,7 @@ var url = require('url');
 
 var http = require('http');
 
+var db = require('./dboperations.js')
 
 //Initial Page
 /* GET home page. */
@@ -28,6 +29,15 @@ router.get('/', function(req, res, next) {
 //After Selecting Date
 router.post('/submit', function(req, response, next) {
 	
+  var insert_data = {
+      "username" : req.sessionID,
+      "timestamp" : req.sessionID,
+      "description" : req.sessionID
+  }
+
+  db.insertDB(insert_data, function(res){
+      console.log("response received..."+res)
+  });
 
 	fetch('http://localhost:4000/get_loc',{method: "POST",  headers: {
     'Accept': 'application/json',
@@ -54,6 +64,17 @@ router.post('/submit', function(req, response, next) {
 router.post('/submit_loc', function(req, response, next) {
 	
 
+  var insert_data = {
+      "username" : req.sessionID,
+      "timestamp" : req.sessionID,
+      "description" : req.sessionID
+  }
+
+  db.insertDB(insert_data, function(res){
+      console.log(res)
+  });
+
+
 	fetch('http://localhost:4000/get_url',{method: "POST",  headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
@@ -67,6 +88,13 @@ router.post('/submit_loc', function(req, response, next) {
     }).then(function(body) {
     	console.log("Received url from data ingestor");
     	console.log(body);
+
+      sendFinalUrl(body, function(kml){
+
+        console.log("response from storm detector"+kml);
+
+      });
+
     	console.log(typeof(body))
     	response.send(body);
         
@@ -75,5 +103,46 @@ router.post('/submit_loc', function(req, response, next) {
 
 
 });
+
+
+
+//function for getting file from storm detector
+var sendFinalUrl = function(req, callback){  
+
+    var insert_data = {
+        "username" : req.sessionID,
+        "timestamp" : req.sessionID,
+        "description" : req.sessionID
+    }
+
+    db.insertDB(insert_data, function(res){
+        console.log(res)
+    });
+
+
+    fetch('<<<<<<<<<<<put url here>>>>>>>>>>>>',{method: "POST",  headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+     body: JSON.stringify(req)
+
+   })
+      .then(function(res) {
+          return res.text();
+
+      }).then(function(body) {
+        console.log("Received url from storm detector");
+        console.log(body);
+
+        callback(body);
+
+        console.log(typeof(body))
+        response.send(body);
+          
+      });
+
+
+}
+
 
 module.exports = router;

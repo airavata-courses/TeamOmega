@@ -10,6 +10,8 @@ var env = {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+
+  console.log("Coming to initial login");
   var toSend = {
     title: 'Express',
     env: env

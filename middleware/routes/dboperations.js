@@ -41,7 +41,7 @@ router.get('/', function(req, res, next) {
 
 exports.insertDB = function(data, callback){
 
-  fetch('http://localhost:4567/add-log',{method: "POST",  headers: {
+  fetch('http://52.42.119.121:4567/add-log',{method: "POST",  headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
@@ -64,7 +64,7 @@ exports.insertDB = function(data, callback){
 
 exports.getDB = function(callback){
 
-  fetch('http://localhost:4567/').then(function(res) {
+  fetch('http://52.42.119.121:4567/').then(function(res) {
         return res.json();
     }).then(function(json) {
         callback(json);
