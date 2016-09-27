@@ -3,15 +3,16 @@ node_js:
   - "4.4.2"
 install:
   - cd middleware
+script:
+  - npm install --silent
 cache:
   directories:
     - node_modules
-script:
-  - npm install --silent
+
 before_deploy:
   - ls -al
   - cd ..
-  - zip -r devel-branch.zip middleware data_ingestor appspec.yml -x "node_modules" -x "venv" || true
+  - zip -r devel-branch.zip middleware data_ingestor appspec.yml -x "middleware/node_modules/\*" "data_ingestor/venv\*" || true
   - mkdir -p "dpl_cd_upload"
   - mv devel-branch.zip dpl_cd_upload/devel-branch.zip || true
 deploy:
