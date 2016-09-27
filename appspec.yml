@@ -14,7 +14,7 @@ hooks:
   ApplicationStart:
     - location: data_ingestor/startup_scripts/install.sh
       runas: root
-      timeout: 180
+      timeout: 240
     - location: middleware/startup_scripts/install.sh
       runas: root
-      timeout: 180
+      timeout: 240
