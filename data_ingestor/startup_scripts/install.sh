@@ -16,5 +16,3 @@ echo "installing the requirements from requirements.txt.."
 pip install -r requirements.txt
 
 echo "starting data_ingestor on pm2 server.."
-pm2 kill
-pm2 start wsgi.py --watch

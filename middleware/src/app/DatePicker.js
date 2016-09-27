@@ -156,7 +156,7 @@ class DatePickerIn extends React.Component {
           onClick={this.handleSubmit}
         />
         { this.state.loading  ? <Loading type='cylon' color='#00796B' /> : null }
-        {this.state.forecast ? <h3><i className=this.state.forecast></i> </h3> : null }
+        {this.state.forecast ? <h3><i className={this.state.forecast}></i> </h3> : null }
       </section>
       );
   }
