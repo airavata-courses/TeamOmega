@@ -14,6 +14,8 @@ if [ "$?" -ne 0 ]; then
 	sudo yum install npm -y --enablerepo=epel
 	sudo npm install npm@latest -y -g
 fi
+sudo fuser -k 3000/tcp
+
 
 # sudo curl --silent --location https://rpm.nodesource.com/setup_4.x | bash -
 # sudo yum -y install nodejs
