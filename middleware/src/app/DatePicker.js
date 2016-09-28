@@ -31,11 +31,11 @@ var icon_prefix = "mdi mdi-weather-";
 var icon_url = "";
 
 class DatePickerIn extends React.Component {
-  state = {fct1: '',date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: '',loading:0, forecast: 0}
+  state = {fct1: '',date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: '',loading:0, forecast: 0,locArray:{}}
 
   handleDateChange = (value) => {
     var d = value;
-
+    var _this = this;
     var month = d.getMonth();
     var day = d.getDate();
     if(day<10){
@@ -58,6 +58,7 @@ class DatePickerIn extends React.Component {
         return res.text();
     }).then(function(body) {
         locationsArray = {};
+
        var body1 = JSON.parse(body);
       for (var key in body1) {
         if (body1.hasOwnProperty(key)) {
@@ -65,9 +66,10 @@ class DatePickerIn extends React.Component {
           locationsArray[key]=body1[key][3];
         }
       }
+    _this.setState({locDisabled:"false",locArray:locationsArray});  
     });
-    this.setState({locDisabled:"false"});
-
+    
+    
 
   }
 
@@ -78,6 +80,7 @@ class DatePickerIn extends React.Component {
 
   handleSubmit = () => {
      this.setState({loading:1});
+     var _this = this;
      var location = this.state.date_url+this.state.location+"/";
      var timestamp = [this.state.time.getHours(), this.state.time.getSeconds(), this.state.time.getMinutes()];
      var time1 = '';
@@ -106,10 +109,10 @@ class DatePickerIn extends React.Component {
         icon_url = icon_prefix+body1['forecast'];
         fct = body1['forecast'];
         console.log(icon_url);
-        
+        _this.setState({loading:0,forecast:icon_url,fct1:fct});
 
     });
-    this.setState({loading:0,forecast:icon_url,fct1:fct});
+    
     console.log(this.state.fct1+"FDS");
     console.log(fct);
   }
@@ -123,7 +126,7 @@ class DatePickerIn extends React.Component {
 
   render () {
     return (
-      <section>
+      <section >
 
         <DatePicker 
           label='Select a Date' 
@@ -149,10 +152,9 @@ class DatePickerIn extends React.Component {
                   disabled={!this.state.locDisabled}
                   multiple={false}
                   onChange={this.handleLocationChange}
-                  source={locationsArray}
+                  source={this.state.locArray}
                   value={this.state.location}
                 />
-   
         <SubmitButton
           accent
           raised
