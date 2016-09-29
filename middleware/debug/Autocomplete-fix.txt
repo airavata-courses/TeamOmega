@@ -1,0 +1,15 @@
+
+lib/Autocomplete.js
+[112]
+
+ _this.select(event, target);
+
+
+
+[126-130]
+
+}, _this.select = function (event, target) {
+        _events2.default.pauseEvent(event);
+        var values = _this.values(_this.props.value);
+        const newValue = target === void 0 ? event.target.id : target;
+        _this.handleChange([newValue].concat(_toConsumableArray(values.keys())), event);
