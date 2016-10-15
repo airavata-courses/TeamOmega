@@ -1,7 +1,4 @@
 language: node_js
-branches:
-  only:
-    - Milestone-1-Middleware
 node_js:
   - "4.4.2"
 install:
