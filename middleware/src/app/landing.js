@@ -39,8 +39,10 @@ var LoggedIn = React.createClass({
   render: function() {
     if (this.state.profile) {
       return (
+        <div>
         <img src={this.state.profile.picture} />
         <h2>Welcome {this.state.profile.nickname}</h2>
+        </div>
       );
     } else {
       return (
@@ -52,7 +54,6 @@ var LoggedIn = React.createClass({
 
 var Lock = React.createClass({
   componentWillMount: function() {
-    ...
     // Set the state with a property that has the token
     this.setState({idToken: this.getIdToken()})
   },

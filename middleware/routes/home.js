@@ -3,6 +3,8 @@ var router = express.Router();
 var path = require('path');
 var fetch = require('node-fetch');
 
+var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
+
 /* Initial index page for weather report. */
 router.get('/', renderIndexPage);
 
@@ -16,6 +18,7 @@ router.post('/submit_loc', submitLOC);
 
 /* Initial index page for weather report. */
 function renderIndexPage(req, res, next) {
+	
 	var index_page = path.join(__dirname, '../src/www/index.html');
 	console.log(index_page);
 	res.sendFile(index_page);
@@ -35,11 +38,14 @@ function submitDate(req, res, next) {
 	db.insertDB(insert_data, function(res){
 	  console.log("response received..."+res)
 	});*/
+
+
+
 	fetch('http://52.43.210.8:4000/get_loc',{method: "POST",  headers: {
 	'Accept': 'application/json',
 	'Content-Type': 'application/json'
 	},
-		body: JSON.stringify({date: req.body.date})
+		body: JSON.stringify({date: req.body.date, sessionID: req.sessionID, requestID: req.id})
 
 	})
 	.then(function(res) {
@@ -66,11 +72,13 @@ function submitLOC(req, res, next) {
 	  console.log("response received..."+res)
 	});*/
 
+	console.log(req.id);
+
 	fetch('http://52.43.210.8:4000/get_url',{method: "POST",  headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
 	  },
-	   body: JSON.stringify({loc:req.body.loc , timest:req.body.timest})
+	   body: JSON.stringify({loc:req.body.loc , timest:req.body.timest, sessionID: req.sessionID, requestID: req.id})
 
 	 })
 	    .then(function(res) {
@@ -79,7 +87,6 @@ function submitLOC(req, res, next) {
 	    }).then(function(body) {
 	    	console.log("Received url from data ingestor");
 	    	res.send(body);
-	    	console.log(res.body);
 	      /*sendFinalUrl(body,req.sessionID, function(object){
 
 	        //console.log("response from storm detector"+kml);

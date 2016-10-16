@@ -2,6 +2,8 @@ var express = require('express');
 var passport = require('passport');
 var router = express.Router();
 
+var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
+
 //setting up dot env file and loading it
 var dotenv = require('dotenv');
 dotenv.load();
@@ -19,11 +21,17 @@ var login_page_link = ['/','/login']
 router.get(login_page_link, function(req, res, next) {
 
   console.log("Coming to initial login");
-  var toSend = {
+  if(ensureLoggedIn==true){
+    res.send("already logged in!");
+  }
+  else{
+    var toSend = {
     title: 'Express',
     env: env
   }
-  res.render('login', {tosend : toSend});
+  res.render('login', {tosend : toSend});  
+  }
+  
 });
 
 

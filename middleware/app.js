@@ -4,6 +4,9 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
+var addRequestId = require('express-request-id')();
+
 
 var routes = require('./routes/index');
 var home = require('./routes/home');
@@ -53,13 +56,32 @@ app.set('view engine', 'ejs');
 
 
 
+
+//SESSION MANAGEMENT
+
+ 
+app.use(addRequestId);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(session({
+  secret: 'shhhhhhhhh',
+  resave: true,
+  saveUninitialized: true
+}));
+
+
+//SESSION MANAGEMENT ENDS HERE
+
+
+
+
 //AUTHENTICATION PART STARTS HERE
 
 
 //passport auth0 setup
 var passport = require('passport');
 var Auth0Strategy = require('passport-auth0');
-
 
 
 
@@ -93,9 +115,6 @@ app.use(passport.session());
 
 
 //AUTHICATION PART ENDS HERE
-
-
-
 
 
 
