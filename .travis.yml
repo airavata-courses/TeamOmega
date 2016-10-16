@@ -15,33 +15,33 @@ before_deploy:
   - zip -r devel-branch.zip middleware data_ingestor appspec.yml -x middleware/node_modules/**\* || true
   - mkdir -p "dpl_cd_upload"
   - mv devel-branch.zip dpl_cd_upload/devel-branch.zip || true
-deploy:
-  - provider: s3
-    access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
-    secret_access_key: $AWS_SECRET_KEY
-    local_dir: dpl_cd_upload
-    bucket: sga-team-omega
-    region: us-west-2
-    skip_cleanup: true
-    acl: public_read
-    detect_encoding: true
-    on:
-      repo: airavata-courses/TeamOmega
-      all_branches: true
-  - provider: codedeploy
-    access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
-    secret_access_key: $AWS_SECRET_KEY
-    bucket: sga-team-omega
-    key: devel-branch.zip
-    bundle_type: zip
-    application: SGA_TeamOmega
-    deployment_group: SGA_TeamOmega
-    region: us-west-2
-    on:
-      repo: airavata-courses/TeamOmega
-      all_branches: true
-after_deploy:
-  - echo "Performing after deploy procedures..."
+# deploy:
+#   - provider: s3
+#     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
+#     secret_access_key: $AWS_SECRET_KEY
+#     local_dir: dpl_cd_upload
+#     bucket: sga-team-omega
+#     region: us-west-2
+#     skip_cleanup: true
+#     acl: public_read
+#     detect_encoding: true
+#     on:
+#       repo: airavata-courses/TeamOmega
+#       all_branches: true
+#   - provider: codedeploy
+#     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
+#     secret_access_key: $AWS_SECRET_KEY
+#     bucket: sga-team-omega
+#     key: devel-branch.zip
+#     bundle_type: zip
+#     application: SGA_TeamOmega
+#     deployment_group: SGA_TeamOmega
+#     region: us-west-2
+#     on:
+#       repo: airavata-courses/TeamOmega
+#       all_branches: true
+# after_deploy:
+#   - echo "Performing after deploy procedures..."
 notifications:
   email:
     recipients:

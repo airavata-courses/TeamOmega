@@ -13,7 +13,7 @@ print "start"
 
 @app.route('/get_loc', methods=['POST'])
 def get_location():
-	#print("Printting json--->",request.json)
+	print("Printting json--->",request.json)
 	loc_url = request.json['date']
 	#print("Printing Lock URLl",loc_url)
 	data = di_run.get_stationlist(root_prefix = loc_url, type=3)

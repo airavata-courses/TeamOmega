@@ -61,6 +61,11 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production UV_THREADPOOL_SIZE=100 webpack --config webpack.config",
     "deploy": "gh-pages -d build",
+    "test": "mocha -R spec ./test/testserver.js",
     "start": "node ./bin/www"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0"
   }
 }
