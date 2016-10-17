@@ -5,5 +5,5 @@ import App from './App.js';
 import Lock from './landing.js';
 
 
-ReactDOM.render(<Lock />, document.getElementById('app'));
+ReactDOM.render(<App />, document.getElementById('app'));
 

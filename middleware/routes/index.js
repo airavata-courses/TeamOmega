@@ -2,6 +2,9 @@ var express = require('express');
 var passport = require('passport');
 var router = express.Router();
 
+
+
+
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
 //setting up dot env file and loading it
@@ -19,24 +22,38 @@ var env = {
 var login_page_link = ['/','/login']
 /* GET login page. */
 router.get(login_page_link, function(req, res, next) {
-
-  console.log("Coming to initial login");
-  if(ensureLoggedIn==true){
-    res.send("already logged in!");
-  }
-  else{
-    var toSend = {
-    title: 'Express',
-    env: env
-  }
-  res.render('login', {tosend : toSend});  
-  }
+    var cookie = req.cookies.email;
+    console.log("Printing....cookies....", cookie);
+    if (cookie === undefined)
+    {
+      // no: set a new cookie
+      /*var randomNumber=Math.random().toString();
+      randomNumber=randomNumber.substring(2,randomNumber.length);
+      res.cookie('cookieName',randomNumber, { maxAge: 900000, httpOnly: true });
+      console.log('cookie created successfully');
+      */
+      console.log("Coming to initial login");
   
+      var toSend = {
+        title: 'Express',
+        env: env
+      }
+      res.render('login', {tosend : toSend});  
+    } 
+    else
+    {
+      // yes, cookie was already present 
+      console.log('cookie exists', cookie);
+      res.redirect('/home');
+    } 
+    //next(); // <-- important!
+ 
 });
 
 
 //Log Out page
 router.get('/logout', function(req, res){
+  res.clearCookie('email');
   req.logout();
   res.redirect('/');
 });
@@ -46,6 +63,9 @@ router.get('/logout', function(req, res){
 router.get('/callback',
   passport.authenticate('auth0', { failureRedirect: '/url-if-something-fails' }),
   function(req, res) {
+    var email = req.session.passport.user.emails[0].value;
+    console.log(email);
+    res.cookie('email',email, { maxAge: 900000, httpOnly: true });
     res.redirect(req.session.returnTo || '/home');
   });
 

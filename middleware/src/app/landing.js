@@ -55,7 +55,9 @@ var LoggedIn = React.createClass({
 var Lock = React.createClass({
   componentWillMount: function() {
     // Set the state with a property that has the token
+    this.lock = new Auth0Lock('IGFzIUYJOkGqTKAChSynSXFjxVDJreTE', 'surajsongire1.auth0.com');
     this.setState({idToken: this.getIdToken()})
+
   },
   createLock: function() {
     this.lock = new Auth0Lock('IGFzIUYJOkGqTKAChSynSXFjxVDJreTE', 'surajsongire1.auth0.com');

@@ -4,7 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var session = require('express-session');
+var session = require('express-session'); 
 var addRequestId = require('express-request-id')();
 
 
@@ -66,6 +66,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({
   secret: 'shhhhhhhhh',
+  cookie: { maxAge: 60000 },
   resave: true,
   saveUninitialized: true
 }));
@@ -166,7 +167,13 @@ app.use(function(err, req, res, next) {
 
 
 
+app.get('/peak', function(req,res){
 
+
+  console.log("coming in peak");
+  res.render("sample2");
+
+});
 
 
 
