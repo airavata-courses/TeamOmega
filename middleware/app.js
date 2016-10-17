@@ -14,6 +14,7 @@ var home = require('./routes/home');
 
 var app = express();
 
+
 //webpack config
 
 const webpackDevMiddleware = require('webpack-dev-middleware');
@@ -65,10 +66,16 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(session({
+  // genid: function(req){
+  //   return genuuid();
+  // },
   secret: 'shhhhhhhhh',
   cookie: { maxAge: 60000 },
-  resave: true,
-  saveUninitialized: true
+  resave: false,
+  saveUninitialized: true,
+  rolling: false,
+  isAuthenticated: false
+
 }));
 
 
@@ -164,18 +171,6 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
-
-
-app.get('/peak', function(req,res){
-
-
-  console.log("coming in peak");
-  res.render("sample2");
-
-});
-
-
 
 
 module.exports = app;

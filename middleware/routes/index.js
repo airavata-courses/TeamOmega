@@ -24,7 +24,7 @@ var login_page_link = ['/','/login']
 router.get(login_page_link, function(req, res, next) {
     var cookie = req.cookies.email;
     console.log("Printing....cookies....", cookie);
-    if (cookie === undefined)
+    if (!req.session.isAuthenticated)
     {
       // no: set a new cookie
       /*var randomNumber=Math.random().toString();
@@ -54,6 +54,7 @@ router.get(login_page_link, function(req, res, next) {
 //Log Out page
 router.get('/logout', function(req, res){
   res.clearCookie('email');
+  req.session.destroy();
   req.logout();
   res.redirect('/');
 });
@@ -63,6 +64,7 @@ router.get('/logout', function(req, res){
 router.get('/callback',
   passport.authenticate('auth0', { failureRedirect: '/url-if-something-fails' }),
   function(req, res) {
+    req.session.isAuthenticated = true;
     var email = req.session.passport.user.emails[0].value;
     console.log(email);
     res.cookie('email',email, { maxAge: 900000, httpOnly: true });

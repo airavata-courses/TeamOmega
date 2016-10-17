@@ -5,6 +5,10 @@ import SubmitButton from './SubmitButton.js'
 import theme from './timepicker_fix.scss';
 // And then just use global variable.
 import React from 'react';
+import ReactDOM from 'react-dom';
+
+import io from 'socket.io-client';
+
 
 
 var Loading = require('react-loading');
@@ -30,10 +34,37 @@ var fct = "";
 var icon_prefix = "mdi mdi-weather-";
 var icon_url = "";
 
+
+var Soc = React.createClass({
+  getInitialState: function(){
+    return{
+      comments: ""
+    };
+  },
+  componentDidMount: function(){
+    this.socket = io();
+    this.socket.on('comments', function(comment){
+      this.setState({comments:comment});
+    });
+  },
+  render: function(){
+    return(
+
+      <div>
+        {this.state.comments}
+      </div>
+
+    );
+  }
+});
+
+
+
 class DatePickerIn extends React.Component {
   state = {fct1: '',date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: '',loading:0, forecast: 0,locArray:{}}
 
   handleDateChange = (value) => {
+
     var d = value;
     var _this = this;
     var month = d.getMonth();
@@ -128,7 +159,7 @@ class DatePickerIn extends React.Component {
   render () {
     return (
       <section >
-
+      <Soc />
         <DatePicker 
           label='Select a Date' 
           sundayFirstDayOfWeek 

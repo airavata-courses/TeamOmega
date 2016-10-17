@@ -2,10 +2,12 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 var fetch = require('node-fetch');
-
+var server = require('../bin/www');
 
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
+
+var io = require('socket.io')(server);
 
 /* Initial index page for weather report. */
 router.get('/', renderIndexPage);
@@ -14,7 +16,18 @@ router.get('/', renderIndexPage);
 router.post('/submit', submitDate);
 
 /* this submits the final location */
-router.post('/submit_loc',ensureLoggedIn, submitLOC);
+router.post('/submit_loc', submitLOC);
+
+
+io.on('connection', function(socket){
+  console.log('a user connected');
+  socket.emit('comments',"Your socket message from server..");
+});
+
+
+//socket.emit('comments',"Your socket message from server..from outside the io.on connection");
+
+
 
 
 
@@ -25,10 +38,15 @@ function renderIndexPage(req, res, next) {
 	//req.session.last = "abcde";
 	//req.session.save();
 	//console.log(session);
-
-	var index_page = path.join(__dirname, '../src/www/index.html');
+	if(req.session.isAuthenticated){
+		var index_page = path.join(__dirname, '../src/www/index.html');
 	
-	res.sendFile(index_page);
+		res.sendFile(index_page);
+
+	}
+	else{
+		res.redirect('/');
+	}
 
 }
 
@@ -46,9 +64,14 @@ function submitDate(req, res, next) {
 	});*/
 
 	console.log("after submiting date..........................");
-	var cookies = req.cookies.email;
+	var cookies = req.cookies;
+	console.log("Cookies------------------->")
 	console.log(cookies);
  	
+	io.sockets.emit('comments',"abcde");
+
+
+
 	fetch('http://52.43.210.8:4000/get_loc',{method: "POST",  headers: {
 	'Accept': 'application/json',
 	'Content-Type': 'application/json'

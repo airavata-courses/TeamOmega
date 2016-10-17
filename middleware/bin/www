@@ -25,7 +25,7 @@ var ip_add = '0.0.0.0';
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+var server = http.Server(app);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -96,4 +96,4 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
-module.exports = server
+module.exports = server;
