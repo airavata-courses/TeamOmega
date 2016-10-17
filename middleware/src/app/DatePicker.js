@@ -44,10 +44,11 @@ class DatePickerIn extends React.Component {
     if(month<10){
       month = '0'+month.toString()
     }
+    console.log(document.cookie);
     var date_format = d.getFullYear()+"/"+month+"/"+day+"/";
     this.setState({date2: d, date_url: date_format,location: '',submitDisabled: '',locDisabled:'', forecast:'',locArray:{}});
     console.log(date_format);
-    fetch('/home/submit',{method: "POST",  headers: {
+    fetch('/home/submit',{method: "POST", credentials: 'same-origin', headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   },
@@ -93,7 +94,7 @@ class DatePickerIn extends React.Component {
         }
       }
 
-    fetch('/home/submit_loc',{method: "POST",  headers: {
+    fetch('/home/submit_loc',{ method: "POST", credentials: 'same-origin', headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   },

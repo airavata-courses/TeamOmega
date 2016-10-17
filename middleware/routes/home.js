@@ -27,7 +27,7 @@ function renderIndexPage(req, res, next) {
 	//console.log(session);
 
 	var index_page = path.join(__dirname, '../src/www/index.html');
-	console.log(index_page);
+	
 	res.sendFile(index_page);
 
 }
@@ -46,7 +46,7 @@ function submitDate(req, res, next) {
 	});*/
 
 	console.log("after submiting date..........................");
-	var cookies = req;
+	var cookies = req.cookies.email;
 	console.log(cookies);
  	
 	fetch('http://52.43.210.8:4000/get_loc',{method: "POST",  headers: {
@@ -80,8 +80,8 @@ function submitLOC(req, res, next) {
 	  console.log("response received..."+res)
 	});*/
 
-	var session = req.session;
-
+	var cookies = req.cookies.email;
+	console.log(cookies);
 	//console.log(session)
 
 	fetch('http://52.43.210.8:4000/get_url',{method: "POST",  headers: {
