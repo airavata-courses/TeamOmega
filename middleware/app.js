@@ -139,7 +139,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-console.log(app.email);
 app.use('/home', home);
 
 // catch 404 and forward to error handler

@@ -33,8 +33,35 @@ const min_datetime = new Date(1991, 11, 11);
 var fct = "";
 var icon_prefix = "mdi mdi-weather-";
 var icon_url = "";
-var room = "def";
+var email = getCookie("email");
+var room = guid();
+///generate unique uuid
+function guid() {
+  return email +"-"+ s4() + s4() ;
+}
 
+function s4() {
+  return Math.floor((1 + Math.random()) * 0x10000)
+    .toString(16)
+    .substring(1);
+}
+console.log(room);
+
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return  decodeURIComponent(c.substring(name.length,c.length));
+        }
+    }
+    return "";
+}
 
 var Soc = React.createClass({
   getInitialState: function(){
@@ -43,13 +70,19 @@ var Soc = React.createClass({
     };
   },
   componentDidMount: function(){
+
     this.socket = io();
     var _this=this;
+    this.socket.on('connect', function() {
+    // Connected, let's sign-up for to receive messages for this room
+     _this.socket.emit('room', room);
+    });
+
     this.socket.on('message', function(comment){
       _this.setState({comments:comment});
     });
     this.socket.on('room', function(comment){
-      room = comment;
+      console.log(comment);
     });
   },
   render: function(){
@@ -80,9 +113,8 @@ class DatePickerIn extends React.Component {
     if(month<10){
       month = '0'+month.toString()
     }
-    console.log(document.cookie);
     var date_format = d.getFullYear()+"/"+month+"/"+day+"/";
-    this.setState({date2: d, date_url: date_format,location: '',submitDisabled: '',locDisabled:'', forecast:'',locArray:{}});
+    this.setState({forecast:0,date2: d, date_url: date_format,location: '',submitDisabled: '',locDisabled:'', forecast:'',locArray:{}});
     console.log(date_format);
     fetch('/home/submit',{method: "POST", credentials: 'same-origin', headers: {
     'Accept': 'application/json',
@@ -116,7 +148,7 @@ class DatePickerIn extends React.Component {
   }
 
   handleSubmit = () => {
-     this.setState({loading:1});
+     this.setState({loading:1,forecast:0});
      var _this = this;
      var location = this.state.date_url+this.state.location+"/";
      var timestamp = [this.state.time.getHours(), this.state.time.getSeconds(), this.state.time.getMinutes()];
@@ -134,7 +166,7 @@ class DatePickerIn extends React.Component {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   },
-   body: JSON.stringify({loc:location , timest:time1})
+   body: JSON.stringify({room:room, loc:location , timest:time1})
 
  })
     .then(function(res) {
@@ -164,7 +196,7 @@ class DatePickerIn extends React.Component {
   render () {
     return (
       <section >
-      <Soc />
+      
         <DatePicker 
           label='Select a Date' 
           sundayFirstDayOfWeek 
@@ -203,6 +235,8 @@ class DatePickerIn extends React.Component {
 
         {this.state.loading  ? <Loading type='cylon' color='#00796B' /> : null }
         {this.state.forecast ? <div><h1><i className={this.state.forecast}></i> </h1> <h3>{fct}</h3></div>: null }
+
+        <Soc />
       </section>
       );
   }

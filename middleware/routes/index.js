@@ -66,9 +66,10 @@ router.get('/callback',
   function(req, res) {
     req.session.isAuthenticated = true;
     var email = req.session.passport.user.emails[0].value;
-    console.log(email);
-    res.cookie('email',email, { maxAge: 900000, httpOnly: true });
+    // console.log(req.session.passport.user);
+    res.cookie('email',email, { maxAge: 900000, httpOnly: false });
     res.redirect(req.session.returnTo || '/home');
+
   });
 
 

@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 var fetch = require('node-fetch');
-var count = 1;
 
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
@@ -39,15 +38,6 @@ function renderIndexPage(req, res, next) {
 		res.redirect('/');
 	}
 
-}
-function createRoom(email){
-	console.log("In function createRoom");
-	io.sockets.on('connection', function (socket) {
-	  socket.on('join', function (data) {
-	    socket.join(email); // We are using room of socket io
-	    console.log("join group" ,cookies);
-	  });
-	});
 }
 
 /* submit date and get response from the server.. */	
@@ -167,10 +157,12 @@ module.exports = function(io1){
 	io = io1;
 	io.sockets.on('connection', function(socket){
 	  console.log('a user connected in export module');
-	  var room = "room"+String(count);
-	  socket.join(room);
-	  count+=1;
-	  io.to(room).emit('room',room);
+	 
+	  socket.on('room', function(room) {
+        socket.join(room);
+        io.to(room).emit('room',room);
+    	});
+	  
 	});
 	
 	return router;
