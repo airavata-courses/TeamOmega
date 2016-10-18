@@ -4,8 +4,8 @@ jdk:
 sudo: true
 install: true
 services: mongodb
-before_install:
-  - sudo service mongod start
+before_script:
+  - sudo /etc/init.d/mongod start
 script:
   - cd regsitry-api
   - ./build.sh
