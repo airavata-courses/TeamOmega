@@ -5,7 +5,8 @@ sudo: true
 install: true
 services: mongodb
 before_script:
-  - sudo /etc/init.d/mongod start
+  - sleep 15
+  - mongo mydb_test --eval 'db.addUser("travis","test);'
 script:
   - cd regsitry-api
   - ./build.sh
