@@ -1,9 +1,11 @@
 language: java
 jdk:
   - oraclejdk8
-sudo: false
+sudo: true
 install: true
 services: mongodb
+before_install:
+  - sudo service mongod start
 script:
   - cd regsitry-api
   - ./build.sh
