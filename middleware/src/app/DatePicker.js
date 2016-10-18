@@ -33,6 +33,7 @@ const min_datetime = new Date(1991, 11, 11);
 var fct = "";
 var icon_prefix = "mdi mdi-weather-";
 var icon_url = "";
+var room = "def";
 
 
 var Soc = React.createClass({
@@ -46,6 +47,9 @@ var Soc = React.createClass({
     var _this=this;
     this.socket.on('message', function(comment){
       _this.setState({comments:comment});
+    });
+    this.socket.on('room', function(comment){
+      room = comment;
     });
   },
   render: function(){
@@ -84,7 +88,7 @@ class DatePickerIn extends React.Component {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   },
-   body: JSON.stringify({date: date_format})
+   body: JSON.stringify({room:room, date: date_format})
 
  })
     .then(function(res) {

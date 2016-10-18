@@ -2,13 +2,12 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 var fetch = require('node-fetch');
-
+var count = 1;
 
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
 
 var io;		//this variable to get the socket object from the module.exports at bottom of this code..
-
 /* Initial index page for weather report. */
 router.get('/', renderIndexPage);
 
@@ -41,6 +40,15 @@ function renderIndexPage(req, res, next) {
 	}
 
 }
+function createRoom(email){
+	console.log("In function createRoom");
+	io.sockets.on('connection', function (socket) {
+	  socket.on('join', function (data) {
+	    socket.join(email); // We are using room of socket io
+	    console.log("join group" ,cookies);
+	  });
+	});
+}
 
 /* submit date and get response from the server.. */	
 function submitDate(req, res, next) {
@@ -54,17 +62,19 @@ function submitDate(req, res, next) {
 	db.insertDB(insert_data, function(res){
 	  console.log("response received..."+res)
 	});*/
+	
 
 	console.log("after submiting date..........................");
-	var cookies = req.cookies;
-	console.log("Cookies------------------->")
-	console.log(cookies);
- 	
-	//io.emit('comments',"abcde");
-	//console.log(io1);
+	var email = req.cookies.email;
+	console.log("Cookies------------------->",email);
 	
-	io.emit('message',"Sending date to Data Ingester..");
-	io.emit('status',0);
+  		
+
+	//io.emit('comments',"abcde");
+
+	var curr_room = req.body.room;
+	io.to(curr_room).emit("Request sent to Data Ingestor");
+	io.to(curr_room).emit('status',0);
 	/*io1.on('connection', function(socket){
 	  console.log('a user connected');
 	  socket.emit('comments',"Message IO1");
@@ -75,21 +85,16 @@ function submitDate(req, res, next) {
 	'Accept': 'application/json',
 	'Content-Type': 'application/json'
 	},
-		body: JSON.stringify({date: req.body.date, sessionID: req.sessionID, requestID: req.id})
+		body: JSON.stringify({room:curr_room, date: req.body.date, sessionID: req.sessionID, requestID: req.id})
 
 	})
 	.then(function(res) {
-		console.log("Response status...");
-		console.log(res.status);
-		if(int(res.status)!=200){
-			console.log("error response from data ingestor: ", res.status);
-			io.emit('message',"Error response from Data Ingestor....");
-			io.emit('status',-1);
-		}
+	
 		return res.text();
 
 	}).then(function(body) {
 		console.log("Received response from data ingestor");
+		io.to(curr_room).emit('message',"Received response from Data Ingestor....");
 		res.send(body);    
 	}).catch(function(error) {
 	  // Treat network errors without responses as 500s.
@@ -101,8 +106,8 @@ function submitDate(req, res, next) {
 	  // }
 
 	  	console.log("error response from data ingestor: ", res.status);
-		io.emit('message',"Error response from Data Ingestor....");
-		io.emit('status',-1);
+		io.to(curr_room).emit('message',"Error response from Data Ingestor....");
+		io.to(curr_room).emit('status',-1);
 
 	});
 }
@@ -121,6 +126,9 @@ function submitLOC(req, res, next) {
 	db.insertDB(insert_data, function(res){
 	  console.log("response received..."+res)
 	});*/
+	var curr_room = req.body.room;
+	io.to(curr_room).emit("Request sent to Data Ingestor");
+	io.to(curr_room).emit('status',0);
 
 	var cookies = req.cookies.email;
 	console.log(cookies);
@@ -130,7 +138,7 @@ function submitLOC(req, res, next) {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
 	  },
-	   body: JSON.stringify({loc:req.body.loc , timest:req.body.timest, sessionID: req.sessionID, requestID: req.id})
+	   body: JSON.stringify({room:curr_room ,loc:req.body.loc , timest:req.body.timest, sessionID: req.sessionID, requestID: req.id})
 
 	 })
 	    .then(function(res) {
@@ -157,9 +165,12 @@ function submitLOC(req, res, next) {
 //accepting the io object
 module.exports = function(io1){
 	io = io1;
-	io.on('connection', function(socket){
+	io.sockets.on('connection', function(socket){
 	  console.log('a user connected in export module');
-	  //socket.emit('comments',"Message after modification..");
+	  var room = "room"+String(count);
+	  socket.join(room);
+	  count+=1;
+	  io.to(room).emit('room',room);
 	});
 	
 	return router;
