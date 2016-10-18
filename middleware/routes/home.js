@@ -2,12 +2,12 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 var fetch = require('node-fetch');
-var server = require('../bin/www');
+
 
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
 
-var io = require('socket.io')(server);
+var io;		//this variable to get the socket object from the module.exports at bottom of this code..
 
 /* Initial index page for weather report. */
 router.get('/', renderIndexPage);
@@ -18,21 +18,13 @@ router.post('/submit', submitDate);
 /* this submits the final location */
 router.post('/submit_loc', submitLOC);
 
-
-io.on('connection', function(socket){
-  console.log('a user connected');
-  socket.emit('comments',"Your socket message from server..");
-});
-
-
 //socket.emit('comments',"Your socket message from server..from outside the io.on connection");
 
-
-
-
+//console.log(io);
 
 /* Initial index page for weather report. */
 function renderIndexPage(req, res, next) {
+
 	//var session = req.session;
 
 	//req.session.last = "abcde";
@@ -68,9 +60,16 @@ function submitDate(req, res, next) {
 	console.log("Cookies------------------->")
 	console.log(cookies);
  	
-	io.sockets.emit('comments',"abcde");
-
-
+	//io.emit('comments',"abcde");
+	//console.log(io1);
+	
+	io.emit('message',"Sending date to Data Ingester..");
+	io.emit('status',0);
+	/*io1.on('connection', function(socket){
+	  console.log('a user connected');
+	  socket.emit('comments',"Message IO1");
+	});
+*/
 
 	fetch('http://52.43.210.8:4000/get_loc',{method: "POST",  headers: {
 	'Accept': 'application/json',
@@ -80,11 +79,31 @@ function submitDate(req, res, next) {
 
 	})
 	.then(function(res) {
-    	return res.text();
+		console.log("Response status...");
+		console.log(res.status);
+		if(int(res.status)!=200){
+			console.log("error response from data ingestor: ", res.status);
+			io.emit('message',"Error response from Data Ingestor....");
+			io.emit('status',-1);
+		}
+		return res.text();
 
 	}).then(function(body) {
 		console.log("Received response from data ingestor");
 		res.send(body);    
+	}).catch(function(error) {
+	  // Treat network errors without responses as 500s.
+	  // const status = error.response ? error.response.status : 500
+	  // if (status === 404) {
+	  //   // Not found handler.
+	  // } else {
+	  //   // Other errors.
+	  // }
+
+	  	console.log("error response from data ingestor: ", res.status);
+		io.emit('message',"Error response from Data Ingestor....");
+		io.emit('status',-1);
+
 	});
 }
 
@@ -135,4 +154,13 @@ function submitLOC(req, res, next) {
 }
 
 
-module.exports = router;
+//accepting the io object
+module.exports = function(io1){
+	io = io1;
+	io.on('connection', function(socket){
+	  console.log('a user connected in export module');
+	  //socket.emit('comments',"Message after modification..");
+	});
+	
+	return router;
+};

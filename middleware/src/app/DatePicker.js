@@ -43,8 +43,9 @@ var Soc = React.createClass({
   },
   componentDidMount: function(){
     this.socket = io();
-    this.socket.on('comments', function(comment){
-      this.setState({comments:comment});
+    var _this=this;
+    this.socket.on('message', function(comment){
+      _this.setState({comments:comment});
     });
   },
   render: function(){

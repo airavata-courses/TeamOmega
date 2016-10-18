@@ -6,10 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session'); 
 var addRequestId = require('express-request-id')();
-
-
-var routes = require('./routes/index');
-var home = require('./routes/home');
+var io = require('socket.io')();
 
 
 var app = express();
@@ -49,12 +46,15 @@ dotenv.load();
 
 
 
-
+app.io = io;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+
+var routes = require('./routes/index');
+var home = require('./routes/home')(app.io);
 
 
 
@@ -171,6 +171,5 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
 
 module.exports = app;
