@@ -35,9 +35,11 @@ var icon_prefix = "mdi mdi-weather-";
 var icon_url = "";
 var email = getCookie("email");
 var room = guid();
+
+var req_no = 0;
 ///generate unique uuid
 function guid() {
-  return email +"-"+ s4() + s4() ;
+  return email +"-"+ s4() + s4() + s4() + s4();
 }
 
 function s4() {
@@ -120,7 +122,7 @@ class DatePickerIn extends React.Component {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   },
-   body: JSON.stringify({room:room, date: date_format})
+   body: JSON.stringify({room:room, date: date_format,type:0,timest:this.state.time})
 
  })
     .then(function(res) {
@@ -161,12 +163,12 @@ class DatePickerIn extends React.Component {
           time1+=(String(item));
         }
       }
-
-    fetch('/home/submit_loc',{ method: "POST", credentials: 'same-origin', headers: {
+      req_no += 1;
+    fetch('/home/submit',{ method: "POST", credentials: 'same-origin', headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   },
-   body: JSON.stringify({room:room, loc:location , timest:time1})
+   body: JSON.stringify({room:room, loc:location , timest:time1,req_no:req_no})
 
  })
     .then(function(res) {

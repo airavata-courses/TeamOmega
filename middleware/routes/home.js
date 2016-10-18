@@ -7,27 +7,20 @@ var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
 
 var io;		//this variable to get the socket object from the module.exports at bottom of this code..
+
+
 /* Initial index page for weather report. */
 router.get('/', renderIndexPage);
 
 /* submit date and get response from the server.. */
 router.post('/submit', submitDate);
 
-/* this submits the final location */
-router.post('/submit_loc', submitLOC);
 
-//socket.emit('comments',"Your socket message from server..from outside the io.on connection");
-
-//console.log(io);
 
 /* Initial index page for weather report. */
 function renderIndexPage(req, res, next) {
 
-	//var session = req.session;
 
-	//req.session.last = "abcde";
-	//req.session.save();
-	//console.log(session);
 	if(req.session.isAuthenticated){
 		var index_page = path.join(__dirname, '../src/www/index.html');
 	
@@ -54,28 +47,21 @@ function submitDate(req, res, next) {
 	});*/
 	
 
-	console.log("after submiting date..........................");
-	var email = req.cookies.email;
-	console.log("Cookies------------------->",email);
-	
-  		
-
-	//io.emit('comments',"abcde");
-
 	var curr_room = req.body.room;
 	io.to(curr_room).emit("Request sent to Data Ingestor");
 	io.to(curr_room).emit('status',0);
-	/*io1.on('connection', function(socket){
-	  console.log('a user connected');
-	  socket.emit('comments',"Message IO1");
-	});
-*/
-
-	fetch('http://52.43.210.8:4000/get_loc',{method: "POST",  headers: {
+	
+	if (req.body.type == 0){
+		var suff = "get_loc";
+	}
+	else{
+		var suff = "get_url";
+	}
+	fetch('http://52.43.210.8:4000/'+suff,{method: "POST",  headers: {
 	'Accept': 'application/json',
 	'Content-Type': 'application/json'
 	},
-		body: JSON.stringify({room:curr_room, date: req.body.date, sessionID: req.sessionID, requestID: req.id})
+		body: JSON.stringify({room:curr_room, date: req.body.date ,timest:req.body.timest})
 
 	})
 	.then(function(res) {
@@ -105,51 +91,7 @@ function submitDate(req, res, next) {
 
 
 
-/* submit Loacation response from the server.. */	
-function submitLOC(req, res, next) {
-	/*var insert_data = {
-	  "username" : req.sessionID,
-	  "timestamp" : req.sessionID,
-	  "description" : req.sessionID
-	}
 
-	db.insertDB(insert_data, function(res){
-	  console.log("response received..."+res)
-	});*/
-	var curr_room = req.body.room;
-	io.to(curr_room).emit("Request sent to Data Ingestor");
-	io.to(curr_room).emit('status',0);
-
-	var cookies = req.cookies.email;
-	console.log(cookies);
-	//console.log(session)
-
-	fetch('http://52.43.210.8:4000/get_url',{method: "POST",  headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-	  },
-	   body: JSON.stringify({room:curr_room ,loc:req.body.loc , timest:req.body.timest, sessionID: req.sessionID, requestID: req.id})
-
-	 })
-	    .then(function(res) {
-	        return res.text();
-
-	    }).then(function(body) {
-	    	console.log("Received url from data ingestor");
-	    	res.send(body);
-	      /*sendFinalUrl(body,req.sessionID, function(object){
-
-	        //console.log("response from storm detector"+kml);
-
-	        //sendFinalUrl(kml);
-	        console.log(object);
-	        response.send(JSON.stringify({forecast: object}));
-	      });*/
-
-        
-    });
-
-}
 
 
 //accepting the io object
