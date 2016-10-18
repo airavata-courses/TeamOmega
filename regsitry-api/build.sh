@@ -1,1 +1,2 @@
-mvn test
+mvn dependency:resolve
+mvn verify
