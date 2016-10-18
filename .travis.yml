@@ -6,7 +6,6 @@ install: true
 services: mongodb
 before_script:
   - sleep 15
-  - mongo mydb_test --eval 'db.addUser("travis","test);'
 script:
   - cd regsitry-api
   - ./build.sh
