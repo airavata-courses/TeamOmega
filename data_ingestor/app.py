@@ -1,6 +1,9 @@
 from flask import Flask,Response,request,jsonify
 import json
 import data_parser
+import time
+import msg_q as q
+
 
 
 app = Flask(__name__)
@@ -15,25 +18,46 @@ print "start"
 def get_location():
 	print("Printting json--->",request.json)
 	loc_url = request.json['date']
+	room = request.json['room']
+
 	#print("Printing Lock URLl",loc_url)
 	data = di_run.get_stationlist(root_prefix = loc_url, type=3)
-	data = di_run.parse_json(data)
+	data = di_run.parse_json(data);
+
+	#print(jsonify(data));
+
+	# r = requests.post("http://localhost:3000/home/service-response", data = {
+	# 	"room" : room,
+	# 	"data" : data
+	# 	});
+
+	# print("status_code: "+ r.status_code);
 	return jsonify(data)
 
 @app.route('/get_url', methods=['POST'])
 def get_timeurl():
-	print "get time url"
-	loc_url = request.json['loc']
+	print("Printting json--->",request.json)
+	loc_url = request.json['date']
 	timest = int(request.json['timest'])
-	new_url = di_run.timeparse(loc_url,timest=timest)
-	final_url = { "final_url" : str(new_url)}
-	return jsonify(final_url)
+	room = request.json['room']
+
+	q.process_data((loc_url,timest, room, time.time()))
+
+	return jsonify({"msg" : "Data added to the queue.."})
+
 
 
 
 @app.route('/')
 def hello_world():
 	return "<h1> Hello, Data Ingestor is running</h1>"
+
+
+
+# Tell RQ what Redis connection to use
+
+
+
 
 
 if __name__ == '__main__':

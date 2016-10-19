@@ -168,7 +168,7 @@ class DatePickerIn extends React.Component {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   },
-   body: JSON.stringify({room:room, loc:location , timest:time1,req_no:req_no})
+   body: JSON.stringify({room:room, date:location , timest:time1,req_no:req_no})
 
  })
     .then(function(res) {
