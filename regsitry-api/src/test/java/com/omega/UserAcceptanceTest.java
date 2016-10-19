@@ -24,6 +24,7 @@ public class UserAcceptanceTest {
     @BeforeClass
     public static void beforeClass(){
         Api.main(null);
+        Spark.awaitInitialization();
     }
 
     @AfterClass
