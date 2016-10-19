@@ -1,23 +1,36 @@
 from Queue import Queue
-from threading import Thread
+import thread
 import time
 import requests
 import data_parser
 
+SLEEP = 10
 q = Queue()
 	
+di_run = data_parser.DataIngestor()
+
+di_run.start()
+
 
 def process_data(req_data):
-	q.put(req_data);
-	return 1
+	thread.start_new_thread(worker,(req_data))
 
 
-class workerThread(req):
+def worker(v1,v2,v3,v4):
+	print("Worker running for the task")
 
-	new_url = di_run.timeparse(req[0],timest=req[1])
+	print v1,v2
+
+	wait_time = time.time()-v4
+	
+	if wait_time<SLEEP:
+		time.sleep(SLEEP-wait_time)
+
+	new_url = di_run.timeparse(v1,timest=v2)
 	data1 = {
-	"room" : req[3],
+	"room" : v3,
 	"final_url" : str(new_url)
 	}
-	r = requests.post("http://localhost:3000/home/service-response", data = jsonify(data1))
-
+	r = requests.post("http://localhost:3000/home/service-response", data = data1)
+	print r.status_code
+	return 1

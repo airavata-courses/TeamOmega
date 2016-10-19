@@ -72,8 +72,9 @@ function submitDate(req, res, next) {
 		return res.text();
 
 	}).then(function(body) {
-		console.log("Received response from data ingestor");
-		io.to(curr_room).emit('message',"Received response from Data Ingestor....");
+		var body1= JSON.parse(body);
+		console.log("Received response from data ingestor", body1["msg"]);
+		io.to(curr_room).emit('message',body1["msg"]);
 		res.send(body);    
 	}).catch(function(error) {
 	  // Treat network errors without responses as 500s.
@@ -107,9 +108,9 @@ function process_response(req , res){
 	console.log("room: ", room);
 	console.log("username: ", username);
 	console.log("sessionNumber: ", sessionNumber);
-	console.log("data: ", typeof(req.body.data));
+	console.log("data: ", typeof(req.body.final_url));
 
-	io.to(room).emit("message", req.body.data);
+	io.to(room).emit("message", req.body.final_url);
 
 
 }

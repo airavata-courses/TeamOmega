@@ -16,7 +16,6 @@ print "start"
 
 @app.route('/get_loc', methods=['POST'])
 def get_location():
-	print("Printting json--->",request.json)
 	loc_url = request.json['date']
 	room = request.json['room']
 
@@ -25,7 +24,7 @@ def get_location():
 	data = di_run.parse_json(data);
 
 	#print(jsonify(data));
-
+	data["msg"]="Station codes from dataingestor"
 	# r = requests.post("http://localhost:3000/home/service-response", data = {
 	# 	"room" : room,
 	# 	"data" : data
@@ -36,7 +35,6 @@ def get_location():
 
 @app.route('/get_url', methods=['POST'])
 def get_timeurl():
-	print("Printting json--->",request.json)
 	loc_url = request.json['date']
 	timest = int(request.json['timest'])
 	room = request.json['room']
