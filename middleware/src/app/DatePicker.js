@@ -11,7 +11,12 @@ import io from 'socket.io-client';
 
 
 
+
 var Loading = require('react-loading');
+
+import { withGoogleMap, GoogleMap, Circle } from "react-google-maps";
+
+
 
 
 
@@ -35,6 +40,8 @@ var icon_prefix = "mdi mdi-weather-";
 var icon_url = "";
 var email = getCookie("email");
 var room = guid();
+
+var gps_coord = {};
 
 var req_no = 0;
 ///generate unique uuid
@@ -64,6 +71,30 @@ function getCookie(cname) {
     }
     return "";
 }
+
+// Wrap all `react-google-maps` components with `withGoogleMap` HOC
+var SimpleMapExampleGoogleMap = withGoogleMap(props => (
+ 
+  <GoogleMap
+    zoom={8}
+    
+    center={props.center}
+    >
+    <Circle
+        center={props.center}
+        radius={37000}
+        options={{
+          fillColor: `red`,
+          fillOpacity: 0.20,
+          strokeColor: `red`,
+          strokeOpacity: 1,
+          strokeWeight: 1,
+        }}
+      />
+  </GoogleMap>
+  ));
+
+
 
 var Soc = React.createClass({
   getInitialState: function(){
@@ -101,7 +132,7 @@ var Soc = React.createClass({
 
 
 class DatePickerIn extends React.Component {
-  state = {fct1: '',date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: '',loading:0, forecast: 0,locArray:{}}
+  state = {gps:{lat:39.1703827,lng:-86.5164435} ,fct1: '',date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: '',loading:0, forecast: 0,locArray:{}}
 
   handleDateChange = (value) => {
 
@@ -129,11 +160,12 @@ class DatePickerIn extends React.Component {
         return res.text();
     }).then(function(body) {
         locationsArray = {};
+        gps_coord = {};
 
       var body1 = JSON.parse(body);
       for (var key in body1) {
         if (body1.hasOwnProperty(key)) {
-
+          gps_coord[key] = {lat:parseFloat(body1[key][1]),lng:parseFloat(body1[key][0]) };
           locationsArray[key]=body1[key][3];
         }
       }
@@ -192,7 +224,7 @@ class DatePickerIn extends React.Component {
 
 
   handleLocationChange = (value) => {
-     this.setState({location: value,submitDisabled:"false"});
+     this.setState({gps:gps_coord[value],location: value,submitDisabled:"false"});
   };
 
   render () {
@@ -239,6 +271,15 @@ class DatePickerIn extends React.Component {
         {this.state.forecast ? <div><h1><i className={this.state.forecast}></i> </h1> <h3>{fct}</h3></div>: null }
 
         <Soc />
+        {console.log(this.state.gps)}
+          <SimpleMapExampleGoogleMap center={this.state.gps}
+        containerElement={
+          <div style={{ height: `400px` }} />
+        }
+        mapElement={
+          <div style={{ height: `400px` }} />
+        }
+      />
       </section>
       );
   }

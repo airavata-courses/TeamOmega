@@ -16,7 +16,6 @@ router.get('/', renderIndexPage);
 router.post('/submit', submitDate);
 
 
-
 /* Initial index page for weather report. */
 function renderIndexPage(req, res, next) {
 
@@ -57,20 +56,16 @@ function submitDate(req, res, next) {
 	else{
 		var suff = "get_url";
 	}
-	fetch('http://52.43.210.8:4000/'+suff,{method: "POST",  headers: {
-	'Accept': 'application/json',
-	'Content-Type': 'application/json'
-	},
+	fetch('http://52.43.210.8:4000/'+suff,{method: "POST",  headers: { 'Accept': 'application/json','Content-Type': 'application/json'},
 		body: JSON.stringify({room:curr_room, date: req.body.date ,timest:req.body.timest})
-
 	})
 	.then(function(res) {
-	
 		return res.text();
-
 	}).then(function(body) {
+		
 		console.log("Received response from data ingestor");
 		io.to(curr_room).emit('message',"Received response from Data Ingestor....");
+		io.to(curr_room).emit('status',1);
 		res.send(body);    
 	}).catch(function(error) {
 	  // Treat network errors without responses as 500s.
