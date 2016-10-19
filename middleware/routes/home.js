@@ -15,6 +15,9 @@ router.get('/', renderIndexPage);
 /* submit date and get response from the server.. */
 router.post('/submit', submitDate);
 
+//posting from a microservice
+
+router.post('/service-response', process_response);
 
 /* Initial index page for weather report. */
 function renderIndexPage(req, res, next) {
@@ -56,16 +59,20 @@ function submitDate(req, res, next) {
 	else{
 		var suff = "get_url";
 	}
-	fetch('http://52.43.210.8:4000/'+suff,{method: "POST",  headers: { 'Accept': 'application/json','Content-Type': 'application/json'},
+
+	fetch('http://0.0.0.0:4000/'+suff,{method: "POST",  headers: {
+	'Accept': 'application/json',
+	'Content-Type': 'application/json'
+	},
 		body: JSON.stringify({room:curr_room, date: req.body.date ,timest:req.body.timest})
 	})
 	.then(function(res) {
 		return res.text();
 	}).then(function(body) {
-		
-		console.log("Received response from data ingestor");
-		io.to(curr_room).emit('message',"Received response from Data Ingestor....");
-		io.to(curr_room).emit('status',1);
+
+		var body1= JSON.parse(body);
+		console.log("Received response from data ingestor", body1["msg"]);
+		io.to(curr_room).emit('message',body1["msg"]);
 		res.send(body);    
 	}).catch(function(error) {
 	  // Treat network errors without responses as 500s.
@@ -84,10 +91,27 @@ function submitDate(req, res, next) {
 }
 
 
+//new function to accept the response from the microservice
+
+function process_response(req , res){
+
+//implement JWT methods here
+	
+	console.log("coming to process response..");
+
+	var room = req.body.room;
+	var username = room.split('-')[0];
+	var sessionNumber = room.split('-')[1];
+
+	console.log("room: ", room);
+	console.log("username: ", username);
+	console.log("sessionNumber: ", sessionNumber);
+	console.log("data: ", typeof(req.body.final_url));
+
+	io.to(room).emit("message", req.body.final_url);
 
 
-
-
+}
 
 //accepting the io object
 module.exports = function(io1){
