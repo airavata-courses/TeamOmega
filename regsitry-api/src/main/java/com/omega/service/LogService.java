@@ -20,11 +20,7 @@ public class LogService {
 
     public String addData(Log log){
         datastore.save(log);
-        Map<String, String> data = new HashMap<String, String>();
-        data.put("status","Successful");
-        Gson gson = new Gson();
-//        String jresponse = gson.toJson(data);
-//        return gson.toJson(data);
+        System.out.println("Adding Log: "+log.toString());
         return "Added log";
     }
 

@@ -26,4 +26,8 @@ public class Log {
         this.timestamp = timestamp;
         this.description = description;
     }
+
+    public String toString(){
+        return "Username: "+username+" timestamp: "+timestamp+" description: "+description;
+    }
 }
