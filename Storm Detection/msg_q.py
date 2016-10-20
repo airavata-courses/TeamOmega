@@ -37,7 +37,9 @@ class jobThread(object):
 		kml = self.sd_run.detection(req[0])
 		data1 = {
 		"room" : req[1],
-		"kml" : str(kml)
+		"kml" : str(kml),
+		"type" : 3,
+		"msg": "Storm Detection processing complete.."
 		}
 		r = requests.post("http://localhost:3000/home/service-response", data = data1)
 		print r.status_code,"exit thread"		

@@ -8,7 +8,7 @@ from threading import Thread
 
 class jobThread(object):
 	"""docstring for jobThread"""
-	def __init__(self, sleep=10):
+	def __init__(self, sleep=2):
 		super(jobThread, self).__init__()
 		self.sleep = sleep
 		self.dt_run = data_parser.DataIngestor()
@@ -32,7 +32,9 @@ class jobThread(object):
 		new_url = self.dt_run.timeparse(req[0],timest=req[1])
 		data1 = {
 		"room" : req[2],
-		"final_url" : str(new_url)
+		"final_url" : str(new_url),
+		"type" : "2",
+		"msg": "Data Ingestor processing complete.."
 		}
 		r = requests.post("http://localhost:3000/home/service-response", data = data1)
 		print r.status_code,"exit thread"		

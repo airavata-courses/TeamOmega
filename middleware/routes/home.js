@@ -109,62 +109,73 @@ function submitDate(req, res, next) {
 
 //new function to accept the response from the microservice
 
-function process_response(req , res, next){
+function process_response(req , res){
 
-		var room = req.body.room;
+		//console.log("room: ", req);
+		//var body1= JSON.parse(req.body);
+		// var room = body1.room;
+		// var type = int(body1.type);
+		// console.log(room);
+		// var msg = body1["msg"];
 
-		io.to(room).emit('status',1);
-		io.to(room).emit('message',req.body["msg"]);
-		if(req.body.type == 4){
-			
-			io.to(room).emit('icon',req.body["icon"]);
-			next();
+		// console.log(room,type,msg);
+		// io.to(room).emit('status',1);
+		// io.to(room).emit('message',msg);
+
+		// // console.log("BODY>>>>>>>>>>>....", req.body);
+
+		// // console.log("BODY>TYPE type....", typeof(type),type);
+
+		// if(type == 4){
+		// 	console.log("Should not be here....", type);
+		// 	// io.to(room).emit('icon',req.body["icon"]);
+		// 	//next();
 		
-		}
+		// }
 
-		//implement JWT methods here
-		if(req.body.type == 2){
-			var suff = "5678/get_kml";
-			var service = "storm detection";			//for strom detector
-		}
-		else{
-			var suff = "5789/get_kml"
-			var service = "storm clustering";			//for storm clustering
-		}
+		// //implement JWT methods here
+		// else if(type == 2){
+		// 	console.log("inside type 2");
+		// 	var suff = "5678/get_kml";
+		// 	var service = "storm detection";			//for strom detector
+		// }
+		// else{
+		// 	var suff = "5789/get_kml"
+		// 	var service = "storm clustering";			//for storm clustering
+		// }
 
-		console.log("coming to process response..");
+		// console.log("coming to process response..");
 
 		
-		//passing first response to next request
-	    fetch('http://localhost:'+suff,{method: "POST",  headers: {
-		'Accept': 'application/json',
-		'Content-Type': 'application/json'
-		},
-			body: JSON.stringify(body)
-		})
-		.then(function(res) {
-			return res.text();
-		}).then(function(body) {
+		// //passing first response to next request
+	 // //    fetch('http://localhost:'+suff,{method: "POST",  headers: {
+		// // 'Accept': 'application/json',
+		// // 'Content-Type': 'application/json'
+		// // },
+		// // 	body: JSON.stringify(body)
+		// // })
+		// // .then(function(body) {
 
-			var body1= JSON.parse(body);
-			console.log("Received response...", body1["msg"]);
-			io.to(room).emit('message',body1["msg"]);
-			res.send(body);
+		// // 	var body1= JSON.parse(body);
+		// // 	console.log("Received response...", body1["msg"]);
+		// // 	io.to(room).emit('message',body1["msg"]);
+		// // 	//res.send(body);
 
 
-		}).catch(function(error) {
+		// // }).catch(function(error) {
 		  	
-		  	console.log("error response from: ", res.status);
-			io.to(room).emit('message',"Error response from ", service);
-			io.to(room).emit('status',-1);
+		// //   	console.log("error response from: ", res.status);
+		// // 	io.to(room).emit('message',"Error response from ", service);
+		// // 	io.to(room).emit('status',-1);
 
-		});
+		// // });
 
+
+		// //res.sendStatus(200);
 
 		res.sendStatus(200);
 }
 
-	res.sendStatus(200);
 
 
 
