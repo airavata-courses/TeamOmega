@@ -164,6 +164,8 @@ function process_response(req , res, next){
 		res.sendStatus(200);
 }
 
+	res.sendStatus(200);
+
 
 
 //accepting the io object
