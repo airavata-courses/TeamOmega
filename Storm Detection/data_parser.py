@@ -51,7 +51,7 @@ class StormDetection(object):
         
         return min(time_list, key=lambda x:abs(x[0]-timest))[1]
     
-    def stormdetection(self,url):
+    def detection(self,url):
         kml = simplekml.Kml()
     # parse the incomming json element and pass them in place of coords below
     # jsondata = json.load(urllib2.urlopen('url'))
