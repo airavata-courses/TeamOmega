@@ -1,5 +1,6 @@
 from boto import connect_s3
 import json
+import simplekml
 
 class StormDetection(object):
     """docstring for DataIngestor"""
@@ -49,6 +50,17 @@ class StormDetection(object):
         time_list = [(int(item.split("_")[1]),item) for item in time_list]
         
         return min(time_list, key=lambda x:abs(x[0]-timest))[1]
+    
+    def stormdetection(self,url):
+        kml = simplekml.Kml()
+    # parse the incomming json element and pass them in place of coords below
+    # jsondata = json.load(urllib2.urlopen('url'))
+
+    # print(jsondata[#coordinates])
+        kml.newpoint(name="StationName", coords=[(18.432314, -33.988862)])  # lon, lat, optional height
+
+        return kml.kml()
+
 
     
 if __name__ == '__main__':
