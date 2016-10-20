@@ -53,9 +53,6 @@ class StormDetection(object):
     
     def detection(self,url):
         kml = simplekml.Kml()
-    # parse the incomming json element and pass them in place of coords below
-    # jsondata = json.load(urllib2.urlopen('url'))
-
    
         kml.newpoint(name="StationName", coords=[(18.432314, -33.988862)])  # lon, lat, optional height
 
@@ -65,7 +62,7 @@ class StormDetection(object):
     
 if __name__ == '__main__':
     
-    d = DataIngestor()   
+    d = StormDetection()   
 
     d.start()
 
