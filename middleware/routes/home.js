@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 var fetch = require('node-fetch');
+var db = require("./dboperations");
 
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
@@ -38,29 +39,44 @@ function renderIndexPage(req, res, next) {
 /* submit date and get response from the server.. */	
 function submitDate(req, res, next) {
 
-	/*var insert_data = {
-	  "username" : req.sessionID,
-	  "timestamp" : req.sessionID,
-	  "description" : req.sessionID
-	}
 
-	db.insertDB(insert_data, function(res){
-	  console.log("response received..."+res)
-	});*/
-	
+
 
 	var curr_room = req.body.room;
+
+
 	io.to(curr_room).emit("Request sent to Data Ingestor");
 	io.to(curr_room).emit('status',0);
 	
 	if (req.body.type == 0){
 		var suff = "get_loc";
+		var d = "get location"
 	}
 	else{
 		var suff = "get_url";
+		var d = "get url"
 	}
 
-	fetch('http://0.0.0.0:4000/'+suff,{method: "POST",  headers: {
+
+	//Inserting data to registry
+	var desc = "Request sent to Data Ingestor to "+ d;  
+	
+
+	var insert_data = {
+	  "username" : req.cookies.email,
+	  "timestamp" : new Date().getTime(),
+	  "description" : desc
+	}
+
+	
+	//log the process
+	db.insertDB(insert_data, function(res){
+	  console.log("response received..."+res)
+	});
+	//registry part over
+
+
+	fetch('http://localhost:4000/'+suff,{method: "POST",  headers: {
 	'Accept': 'application/json',
 	'Content-Type': 'application/json'
 	},
@@ -93,25 +109,62 @@ function submitDate(req, res, next) {
 
 //new function to accept the response from the microservice
 
-function process_response(req , res){
+function process_response(req , res, next){
 
-//implement JWT methods here
-	
-	console.log("coming to process response..");
+		var room = req.body.room;
 
-	var room = req.body.room;
-	var username = room.split('-')[0];
-	var sessionNumber = room.split('-')[1];
+		io.to(room).emit('status',1);
+		io.to(room).emit('message',req.body["msg"]);
+		if(req.body.type == 4){
+			
+			io.to(room).emit('icon',req.body["icon"]);
+			next();
+		
+		}
 
-	console.log("room: ", room);
-	console.log("username: ", username);
-	console.log("sessionNumber: ", sessionNumber);
-	console.log("data: ", typeof(req.body.final_url));
+		//implement JWT methods here
+		if(req.body.type == 2){
+			var suff = "5678/get_kml";
+			var service = "storm detection";			//for strom detector
+		}
+		else{
+			var suff = "5789/get_kml"
+			var service = "storm clustering";			//for storm clustering
+		}
 
-	io.to(room).emit("message", req.body.final_url);
+		console.log("coming to process response..");
+
+		
+		//passing first response to next request
+	    fetch('http://localhost:'+suff,{method: "POST",  headers: {
+		'Accept': 'application/json',
+		'Content-Type': 'application/json'
+		},
+			body: JSON.stringify(body)
+		})
+		.then(function(res) {
+			return res.text();
+		}).then(function(body) {
+
+			var body1= JSON.parse(body);
+			console.log("Received response...", body1["msg"]);
+			io.to(room).emit('message',body1["msg"]);
+			res.send(body);
 
 
+		}).catch(function(error) {
+		  	
+		  	console.log("error response from: ", res.status);
+			io.to(room).emit('message',"Error response from ", service);
+			io.to(room).emit('status',-1);
+
+		});
+
+
+		res.sendStatus(200);
 }
+
+
 
 //accepting the io object
 module.exports = function(io1){
