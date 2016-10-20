@@ -18,7 +18,7 @@ mq = msg_q.jobThread()
 def get_timeurl():
 	final_url = request.json['final_url']
 	room = request.json['room']
-	mq.process_data((loc_url, room, time.time()))
+	mq.process_data((final_url, room, time.time()))
 	return jsonify({"msg" : "Data added to the queue in Storm Detector"})
 
 
