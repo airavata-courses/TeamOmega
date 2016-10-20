@@ -56,7 +56,7 @@ class StormDetection(object):
     # parse the incomming json element and pass them in place of coords below
     # jsondata = json.load(urllib2.urlopen('url'))
 
-    # print(jsondata[#coordinates])
+   
         kml.newpoint(name="StationName", coords=[(18.432314, -33.988862)])  # lon, lat, optional height
 
         return kml.kml()
