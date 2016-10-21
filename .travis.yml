@@ -1,48 +1,62 @@
 language: node_js
 node_js:
   - "4.4.2"
-install:
+sudo: true
+
+services: 
+  - docker
+before_install:
   - cd middleware
+
+install:
+  - npm install
+
 script:
-  - npm install --silent
-  - npm test
+  - docker run -d -p 4567:4567 sagarkrkv/middleware
+
 cache:
   directories:
     - node_modules
 
-# before_deploy:
-#   - ls -al
-#   - cd ..
-#   - zip -r devel-branch.zip middleware data_ingestor appspec.yml -x middleware/node_modules/**\* || true
-#   - mkdir -p "dpl_cd_upload"
-#   - mv devel-branch.zip dpl_cd_upload/devel-branch.zip || true
-# deploy:
-#   - provider: s3
-#     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
-#     secret_access_key: $AWS_SECRET_KEY
-#     local_dir: dpl_cd_upload
-#     bucket: sga-team-omega
-#     region: us-west-2
-#     skip_cleanup: true
-#     acl: public_read
-#     detect_encoding: true
-#     on:
-#       repo: airavata-courses/TeamOmega
-#       all_branches: true
-#   - provider: codedeploy
-#     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
-#     secret_access_key: $AWS_SECRET_KEY
-#     bucket: sga-team-omega
-#     key: devel-branch.zip
-#     bundle_type: zip
-#     application: SGA_TeamOmega
-#     deployment_group: SGA_TeamOmega
-#     region: us-west-2
-#     on:
-#       repo: airavata-courses/TeamOmega
-#       all_branches: true
-# after_deploy:
-#   - echo "Performing after deploy procedures..."
+after_success:
+  - docker login -u $DOCK_UNAME -p $DOCK_PWD
+  - docker build -t sagarkrkv/middleware .
+  - docker push sagarkrkv/middleware
+
+
+before_deploy:
+  - cd ..
+  - zip -r B1.zip middleware/startup_scripts appspec.yml -x middleware/node_modules/**\* || true
+  - mkdir -p "B1_upload"
+  - mv B1.zip B1_upload/B1.zip || true
+
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
+    secret_access_key: $AWS_SECRET_KEY
+    local_dir: dpl_cd_upload
+    bucket: sga-team-omega
+    region: us-west-2
+    skip_cleanup: true
+    acl: public_read
+    detect_encoding: true
+    on:
+      repo: airavata-courses/TeamOmega
+      all_branches: true
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: sga-team-omega
+    key: B1.zip
+    bundle_type: zip
+    application: SGA_TeamOmega
+    deployment_group: SGA_TeamOmega
+    region: us-west-2
+    on:
+      repo: airavata-courses/TeamOmega
+      all_branches: true
+after_deploy:
+  - echo "Performing after deploy procedures..."
 notifications:
   email:
     recipients:
