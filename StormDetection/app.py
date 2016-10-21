@@ -20,7 +20,6 @@ def get_timeurl():
 	room = request.json['room']
 	ipaddr = request.json['hostIp']
 
-	mq.process_data((loc_url,timest, room, ipaddr,time.time()))
 	mq.process_data((final_url, room,ipaddr ,time.time()))
 	return jsonify({"msg" : "Data added to the queue in Storm Detector"})
 

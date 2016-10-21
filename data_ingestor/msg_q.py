@@ -33,10 +33,11 @@ class jobThread(object):
 		"room" : req[2],
 		"final_url" : str(new_url),
 		"type" : "2",
-		"msg": "Data Ingestor processing complete.."
+		"msg": "Data Ingestor processing complete..",
+		"hostIp": req[3]
 		}
 		try:
-			r = requests.post("http://localhost:3000/home/service-response", data = data1)
+			r = requests.post("http://"+str(req[3])+":3000/home/service-response", data = data1)
 			print r.status_code,"exit thread"		
 		except:
 			print "Node server not reachable.."

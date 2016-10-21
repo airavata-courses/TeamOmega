@@ -31,10 +31,9 @@ def get_timeurl():
 	loc_url = request.json['date']
 	timest = int(request.json['timest'])
 	room = request.json['room']
-	print "==========================="
+	ipaddr = request.json['hostIp']
 
-	mq.process_data((loc_url,timest, room, time.time()))
-	print "--------------------"
+	mq.process_data((loc_url,timest, room, ipaddr,time.time()))
 	return jsonify({"msg" : "Data added to the queue.."})
 
 

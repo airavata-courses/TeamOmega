@@ -39,10 +39,10 @@ class jobThread(object):
 		"kml" : str(kml),
 		"type" : 3,
 		"msg": "Storm Detection processing complete..",
-		"hostIp": req[3]
+		"hostIp": req[2]
 		}
 		try:
-			r = requests.post("http://"+str(req[3])+":3000/home/service-response", data = data1)
+			r = requests.post("http://"+str(req[2])+":3000/home/service-response", data = data1)
 			print r.status_code,"exit thread"		
 		except:
 			print "server not reachable"
