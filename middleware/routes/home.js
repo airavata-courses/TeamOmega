@@ -76,11 +76,11 @@ function submitDate(req, res, next) {
 	//registry part over
 
 
-	fetch('http://localhost:4000/'+suff,{method: "POST",  headers: {
+	fetch('http://'+process.env.IP+':4000/'+suff,{method: "POST",  headers: {
 	'Accept': 'application/json',
 	'Content-Type': 'application/json'
 	},
-		body: JSON.stringify({room:curr_room, date: req.body.date ,timest:req.body.timest})
+		body: JSON.stringify({room:curr_room, date: req.body.date ,timest:req.body.timest, hostIp: process.env.IP})
 	})
 	.then(function(res) {
 		return res.text();
