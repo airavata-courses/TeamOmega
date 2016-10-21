@@ -68,7 +68,7 @@ function submitDate(req, res, next) {
 	  "description" : desc
 	}
 
-	
+	console.log(desc)
 	//log the process
 	db.insertDB(insert_data, function(res){
 	  console.log("response received..."+res)
@@ -89,7 +89,7 @@ function submitDate(req, res, next) {
 		var body1= JSON.parse(body);
 		console.log("Received response from data ingestor", body1["msg"]);
 		io.to(curr_room).emit('message',body1["msg"]);
-		res.send(body);    
+		res.send(body);   
 	}).catch(function(error) {
 	  // Treat network errors without responses as 500s.
 	  // const status = error.response ? error.response.status : 500
@@ -99,11 +99,14 @@ function submitDate(req, res, next) {
 	  //   // Other errors.
 	  // }
 
-	  	console.log("error response from data ingestor: ", res.status);
+	  	//console.log("error response from data ingestor: ", res.status);
 		io.to(curr_room).emit('message',"Error response from Data Ingestor....");
 		io.to(curr_room).emit('status',-1);
-
+		res.send("Error response from Data Ingestor....");
 	});
+
+	
+	
 }
 
 
@@ -112,39 +115,65 @@ function submitDate(req, res, next) {
 function process_response(req , res){
 
 
-
 		//var body1= JSON.parse(req.body);
 		var room = req.body.room;
 		var type = req.body.type;
 		// console.log(room);
 		var msg = req.body["msg"];
 
-		console.log(room,type,msg);
 		io.to(room).emit('status',1);
 		io.to(room).emit('message',msg);
 
-		// console.log("BODY>>>>>>>>>>>....", req.body);
 
-		// // console.log("BODY>TYPE type....", typeof(type),type);
+		if(type == 4){
+			io.to(room).emit('icon',req.body["icon"]);
+			res.sendStatus(200);
 
-		//if(type == 4){
-		// 	console.log("Should not be here....", type);
-		// 	// io.to(room).emit('icon',req.body["icon"]);
-		// 	//next();
-		
-		// }
+		}
+
+		else{
+
 
 		// //implement JWT methods here
 		if(type == 2){
-			console.log("inside type 2");
 			var suff = "5678/get_kml";
 			var service = "storm detection";			//for strom detector
+			var desc = "Response received from: "+ service;  
+	
+
+			var insert_data1 = {
+			  "username" : req.room.split('-')[0],
+			  "timestamp" : new Date().getTime(),
+			  "description" : desc
+			}
 		}
 		else {
 		 	var suff = "5789/get_kml"
 		 	var service = "storm clustering";			//for storm clustering
-		 }
+		 	var desc = "Request sent to: "+ service;  
+	
 
+			var insert_data2 = {
+			  "username" : req.room.split("-")[0],
+			  "timestamp" : new Date().getTime(),
+			  "description" : desc
+			}
+		}
+
+		console.log(insert_data1.description);
+
+		console.log(insert_data2.description);
+		
+		//log the process		
+		db.insertDB(insert_data1, function(res){
+		  console.log("response received..."+res)
+		});
+		db.insertDB(insert_data2, function(res){
+		  console.log("response received..."+res)
+		});
+
+		
+		
 		
 		// //passing first response to next request
 	    fetch('http://localhost:'+suff,{method: "POST",  headers: {
@@ -154,28 +183,27 @@ function process_response(req , res){
 			body: JSON.stringify(req.body)
 		})
 		.then(function(res) {
-		return res.text();
+			
+			return res.text();
 		})
 		.then(function(body) {
 
 			var body2 = JSON.parse(body);
-			console.log("Received response...", body2["msg"]);
 			io.to(room).emit('message',body2["msg"]);
-			//res.send(body);
+			res.sendStatus(200);
 
 
 		}).catch(function(error) {
 		  	
-		  	console.log("error response from: ", error);
+		  	//console.log("error response from: ", error);
 			io.to(room).emit('message',"Error response from ", service);
 			io.to(room).emit('status',-1);
-
+			
+			res.sendStatus(500);
+			
 		});
 
-		
-		// //res.sendStatus(200);
-
-		res.sendStatus(200);
+	}
 }
 
 

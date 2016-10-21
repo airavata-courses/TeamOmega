@@ -5,6 +5,7 @@ install:
   - cd middleware
 script:
   - npm install --silent
+  - npm test
 cache:
   directories:
     - node_modules

@@ -23,7 +23,6 @@ var login_page_link = ['/','/login']
 /* GET login page. */
 router.get(login_page_link, function(req, res, next) {
     var cookie = req.cookies.email;
-    console.log("Printing....cookies....", cookie);
     if (!req.session.isAuthenticated)
     {
       // no: set a new cookie
@@ -42,8 +41,7 @@ router.get(login_page_link, function(req, res, next) {
     } 
     else
     {
-      // yes, cookie was already present 
-      console.log('cookie exists', cookie);
+      // yes, cookie was already present
       res.redirect('/home');
     } 
     //next(); // <-- important!

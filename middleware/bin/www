@@ -107,7 +107,7 @@ io.on('connection', function(socket){
   socket.emit('comments',"Your socket message from server..");
 });
 */
-
+module.exports = server;
 
 //exports = module.exports = {};
 
