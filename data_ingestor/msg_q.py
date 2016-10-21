@@ -1,4 +1,3 @@
-from Queue import Queue
 import time
 import requests
 import data_parser

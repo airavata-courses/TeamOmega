@@ -15,7 +15,7 @@ if [ "$?" -ne 0 ]; then
         sudo python /tmp/ez_setup.py
         sudo /usr/bin/easy_install-2.7 pip  
 fi
-sudo fuser -k 4000/tcp
+sudo fuser -k 5678/tcp
 
 
 # python /data_ingestor/startup_scripts/check_gunicorn.py
