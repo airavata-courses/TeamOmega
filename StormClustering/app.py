@@ -16,10 +16,10 @@ mq = msg_q.jobThread()
 
 @app.route('/get_kml', methods=['POST'])
 def get_timeurl():
-	final_url = request.json['final_url']
+	final_url = request.json['kml']
 	room = request.json['room']
 	mq.process_data((final_url, room, time.time()))
-	return jsonify({"msg" : "Data added to the queue in Storm Detector"})
+	return jsonify({"msg" : "Data added to the queue in Storm Clustering"})
 
 
 
@@ -28,7 +28,7 @@ def get_timeurl():
 
 @app.route('/')
 def hello_world():
-	return "<h1> Hello, Storm Detector is running</h1>"
+	return "<h1> Hello, Storm Clustering is running</h1>"
 
 
 

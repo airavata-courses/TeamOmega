@@ -1,6 +1,7 @@
 from boto import connect_s3
 import json
 import simplekml
+import random
 
 class StormCluster(object):
     """docstring for DataIngestor"""

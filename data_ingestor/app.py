@@ -16,9 +16,10 @@ mq = msg_q.jobThread()
 
 @app.route('/get_loc', methods=['POST'])
 def get_location():
+	#print(request.data)
 	loc_url = request.json['date']
 
-	#print("Printing Lock URLl",loc_url)
+	print("Printing Lock URLl",loc_url)
 	data = mq.get_loc(loc_url)
 
 	data["msg"]="Station codes from dataingestor"

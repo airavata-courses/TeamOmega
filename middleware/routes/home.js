@@ -139,40 +139,44 @@ function process_response(req , res){
 			var suff = "5678/get_kml";
 			var service = "storm detection";			//for strom detector
 			var desc = "Response received from: "+ service;  
-	
+			console.log("Type 2 Body:", req.body);
 
 			var insert_data1 = {
-			  "username" : req.room.split('-')[0],
+			  "username" : req.room,
 			  "timestamp" : new Date().getTime(),
 			  "description" : desc
 			}
+
+
+			console.log(suff)
 		}
 		else {
 		 	var suff = "5789/get_kml"
 		 	var service = "storm clustering";			//for storm clustering
 		 	var desc = "Request sent to: "+ service;  
-	
+			console.log("Type 3 Body:", req.body);
+		
 
 			var insert_data2 = {
-			  "username" : req.room.split("-")[0],
+			  "username" : req.room,
 			  "timestamp" : new Date().getTime(),
 			  "description" : desc
 			}
+
 		}
 
-		console.log(insert_data1.description);
+		// console.log(insert_data1.description);
 
-		console.log(insert_data2.description);
+		// console.log(insert_data2.description);
 		
 		//log the process		
-		db.insertDB(insert_data1, function(res){
-		  console.log("response received..."+res)
-		});
-		db.insertDB(insert_data2, function(res){
-		  console.log("response received..."+res)
-		});
+		// db.insertDB(insert_data1, function(res){
+		//   console.log("response received..."+res)
+		// });
+		// db.insertDB(insert_data2, function(res){
+		//   console.log("response received..."+res)
+		// });
 
-		
 		
 		
 		// //passing first response to next request

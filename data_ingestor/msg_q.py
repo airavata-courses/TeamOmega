@@ -35,8 +35,11 @@ class jobThread(object):
 		"type" : "2",
 		"msg": "Data Ingestor processing complete.."
 		}
-		r = requests.post("http://localhost:3000/home/service-response", data = data1)
-		print r.status_code,"exit thread"		
+		try:
+			r = requests.post("http://localhost:3000/home/service-response", data = data1)
+			print r.status_code,"exit thread"		
+		except:
+			print "Node server not reachable.."
 		return 1
 
 	def get_loc(self, loc_url):

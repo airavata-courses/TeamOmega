@@ -43,8 +43,12 @@ class jobThread(object):
 		"msg": "Storm clustering processing complete..",
 		"icon": icon
 		}
-		r = requests.post("http://localhost:3000/home/service-response", data = data1)
-		print r.status_code,"exit thread"		
+		try:
+			r = requests.post("http://localhost:3000/home/service-response", data = data1)
+			print r.status_code,"exit thread"		
+		except:
+			print "Server not reachable.."
+
 		self.count -= 1
 		return 1
 
