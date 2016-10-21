@@ -23,7 +23,7 @@ router.post('/service-response', process_response);
 /* Initial index page for weather report. */
 function renderIndexPage(req, res, next) {
 
-
+	console.log("Coming here..");
 	if(req.session.isAuthenticated){
 		var index_page = path.join(__dirname, '../src/www/index.html');
 	
