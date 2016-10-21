@@ -38,10 +38,11 @@ class jobThread(object):
 		"room" : req[1],
 		"kml" : str(kml),
 		"type" : 3,
-		"msg": "Storm Detection processing complete.."
+		"msg": "Storm Detection processing complete..",
+		"hostIp": req[3]
 		}
-		try:			
-			r = requests.post("http://localhost:3000/home/service-response", data = data1)
+		try:
+			r = requests.post("http://"+str(req[3])+":3000/home/service-response", data = data1)
 			print r.status_code,"exit thread"		
 		except:
 			print "server not reachable"
