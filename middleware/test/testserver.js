@@ -12,7 +12,7 @@ describe('Testing if server started...', function() {
 		//setTimeout(done, 15000);
 
 
-		this.timeout(15000);
+		this.timeout(5000);
 		chai.request(server)
 			.get('/home')
 			.end(function(err, res){

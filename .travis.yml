@@ -9,10 +9,9 @@ before_install:
   - cd middleware
 
 install:
-  - npm install
+  - npm install --sl
 
-script:
-  - docker run -d -p 4567:4567 sagarkrkv/middleware
+
 
 cache:
   directories:
