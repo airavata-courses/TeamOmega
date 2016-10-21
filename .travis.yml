@@ -16,7 +16,8 @@ cache:
     - node_modules
 
 after_success:
-  - docker login -u $DOCK_UNAME -p $DOCK_PWD
+
+  - docker login -e="$DOCKER_EMAIL" -u="$DOCK_UNAME" -p="$DOCK_PWD"
   - docker build -t sagarkrkv/middleware .
   - docker push sagarkrkv/middleware
 
