@@ -17,8 +17,8 @@ cache:
 
 after_success:
 
-  - docker login -e="$DOCKER_EMAIL" -u="$DOCK_UNAME" -p="$DOCK_PWD"
   - docker build -t sagarkrkv/middleware .
+  - docker login -e="$DOCKER_EMAIL" -u="$DOCK_UNAME" -p="$DOCK_PWD"
   - docker push sagarkrkv/middleware
 
 
@@ -32,7 +32,7 @@ deploy:
   - provider: s3
     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
     secret_access_key: $AWS_SECRET_KEY
-    local_dir: dpl_cd_upload
+    local_dir: B1_upload
     bucket: sga-team-omega
     region: us-west-2
     skip_cleanup: true
