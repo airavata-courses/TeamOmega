@@ -8,8 +8,8 @@ services:
 before_install:
   - cd middleware
 
-install:
-  - npm install --silent
+# install:
+#   - npm install --silent
  
 cache:
   directories:
@@ -23,7 +23,7 @@ after_success:
 
 before_deploy:
   - cd ..
-  - zip -r B1.zip middleware/startup_scripts appspec.yml 
+  - zip -r B1.zip middleware/startup_scripts appspec.yml  || true
   - mkdir -p "B1_upload"
   - mv B1.zip B1_upload/B1.zip || true
 
