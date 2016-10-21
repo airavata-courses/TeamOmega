@@ -17,14 +17,13 @@ cache:
 
 after_success:
 
-  - docker build -t sagarkrkv/middleware .
-  - docker login -e="$DOCKER_EMAIL" -u="$DOCK_UNAME" -p="$DOCK_PWD"
-  - docker push sagarkrkv/middleware
-
+  # - docker build -t sagarkrkv/middleware:latest .
+  # - docker login -e="$DOCKER_EMAIL" -u="$DOCK_UNAME" -p="$DOCK_PWD"
+  # - docker push sagarkrkv/middleware:latest
 
 before_deploy:
   - cd ..
-  - zip -r B1.zip middleware/startup_scripts appspec.yml -x middleware/node_modules/**\* || true
+  - zip -r B1.zip middleware/startup_scripts appspec.yml 
   - mkdir -p "B1_upload"
   - mv B1.zip B1_upload/B1.zip || true
 
