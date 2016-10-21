@@ -11,7 +11,7 @@ class jobThread(object):
 		super(jobThread, self).__init__()
 		self.sleep = sleep
 		self.sd_run = storm_cluster.StormCluster()
-		self.sd_run.start()
+		# self.sd_run.start()
 		self.count = 0
 
 
@@ -33,9 +33,9 @@ class jobThread(object):
 		if wait_time<self.sleep:
 			time.sleep(self.sleep-wait_time)
 		
-		predict = ["cloudy","hail", "lightning",  "night","partlycloudy", "pouring", "rainy", "snowy", "sunny"]
-		kml = self.sd_run.detection(req[0])
-		icon = random.choice(predict)
+		
+		kml,icon = self.sd_run.cluster(req[0])
+		
 		data1 = {
 		"room" : req[1],
 		"kml" : str(kml),
