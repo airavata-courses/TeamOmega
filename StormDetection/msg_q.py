@@ -8,7 +8,6 @@ from threading import Thread
 class jobThread(object):
 	"""docstring for jobThread"""
 	def __init__(self, sleep=10):
-		super(jobThread, self).__init__()
 		self.sleep = sleep
 		self.sd_run = storm_detector.StormDetection()
 		self.sd_run.start()
@@ -29,10 +28,9 @@ class jobThread(object):
 
 
 		wait_time = time.time()-req[-1]
-		
 		if wait_time<self.sleep:
 			time.sleep(self.sleep-wait_time)
-
+		print "thread woke up"
 		kml = self.sd_run.detection(req[0])
 		data1 = {
 		"room" : req[1],

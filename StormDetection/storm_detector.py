@@ -76,11 +76,9 @@ if __name__ == '__main__':
     
     d = StormDetection()   
 
-    d.start()
+    # d.start()
 
-    # s_list= d.get_stationlist(root_prefix = '2011/06/05/', type=3)
+    # # s_list= d.get_stationlist(root_prefix = '2011/06/05/', type=3)
 
-    # print d.parse_json(s_list)
-    print d.timeparse('2011/06/05/KBOX/')
-
-
+    # # print d.parse_json(s_list)
+    # print d.timeparse('2011/06/05/KBOX/')
