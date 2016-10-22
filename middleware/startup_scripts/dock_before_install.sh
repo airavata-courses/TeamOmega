@@ -14,6 +14,13 @@ else
                 sudo service docker start
 fi
 
+echo 'creating network between docker..'
+docker network create my-fancy-network
+
+echo 'creatinga a link between middleware and data_ingestor..'
+docker run -i -t --name sagarkrkv/middleware --link njetty/data_ingestor
+
+
 echo 'Killing any container of the old Docker image'
 docker rm $(docker stop $(docker ps -a -q --filter ancestor=sagarkrkv/middleware --format="{{.ID}}"))
 
