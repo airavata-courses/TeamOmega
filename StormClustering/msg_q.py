@@ -1,7 +1,7 @@
 import time
 import requests
-import storm_detector
-
+import storm_cluster
+import random
 from threading import Thread
 
 
@@ -10,8 +10,8 @@ class jobThread(object):
 	def __init__(self, sleep=10):
 		super(jobThread, self).__init__()
 		self.sleep = sleep
-		self.sd_run = storm_detector.StormDetection()
-		self.sd_run.start()
+		self.sd_run = storm_cluster.StormCluster()
+		# self.sd_run.start()
 		self.count = 0
 
 
@@ -32,27 +32,24 @@ class jobThread(object):
 		
 		if wait_time<self.sleep:
 			time.sleep(self.sleep-wait_time)
-
-		kml = self.sd_run.detection(req[0])
+		
+		
+		kml,icon = self.sd_run.cluster(req[0])
+		
 		data1 = {
 		"room" : req[1],
 		"kml" : str(kml),
-		"type" : 3,
-<<<<<<< HEAD
-		"msg": "Storm Detection processing complete.."
-		}
-		r = requests.post("http://localhost:3000/home/service-response", data = data1)
-		print r.status_code,"exit thread"		
-=======
-		"msg": "Storm Detection processing complete..",
+		"type" : 4,
+		"msg": "Storm clustering processing complete..",
+		"icon": icon,
 		"hostIp": req[2]
 		}
 		try:
 			r = requests.post("http://"+str(req[2])+":3000/home/service-response", data = data1)
 			print r.status_code,"exit thread"		
 		except:
-			print "server not reachable"
->>>>>>> 803d4080751264ba663564edde4c924a496f32e7
+			print "Server not reachable.."
+
 		self.count -= 1
 		return 1
 
