@@ -25,7 +25,7 @@ sudo service docker start
 fi
 
 echo 'Killing any container of the old Docker image'
-if [[ $(sudo docker ps -a -q --filter ancestor=njetty/data_ingestor --format="{{.ID}}") ]]; then
+if [[ $(sudo docker ps -a -q --filter ancestor=njetty/registry --format="{{.ID}}") ]]; then
 	docker rm $(docker stop $(docker ps -a -q --filter ancestor=njetty/registry --format="{{.ID}}"))
 fi
 	
