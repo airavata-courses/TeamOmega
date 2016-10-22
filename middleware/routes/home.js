@@ -136,7 +136,7 @@ function process_response(req , res){
 
 		// //implement JWT methods here
 		if(type == 2){
-			var suff = "5678/get_kml";
+			var suff = ":5678/get_kml";
 			var service = "storm detection";			//for strom detector
 			var desc = "Response received from: "+ service;  
 			console.log("Type 2 Body:", req.body);
@@ -151,7 +151,7 @@ function process_response(req , res){
 			console.log(suff)
 		}
 		else {
-		 	var suff = "5789/get_kml"
+		 	var suff = ":5789/get_kml"
 		 	var service = "storm clustering";			//for storm clustering
 		 	var desc = "Request sent to: "+ service;  
 			console.log("Type 3 Body:", req.body);
@@ -180,7 +180,7 @@ function process_response(req , res){
 		
 		
 		// //passing first response to next request
-	    fetch('http://localhost:'+suff,{method: "POST",  headers: {
+	    fetch('http://'+process.env.IP+suff,{method: "POST",  headers: {
 		'Accept': 'application/json',
 		'Content-Type': 'application/json'
 		},
