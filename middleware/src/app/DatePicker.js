@@ -99,7 +99,9 @@ var SimpleMapExampleGoogleMap = withGoogleMap(props => (
 var Soc = React.createClass({
   getInitialState: function(){
     return{
-      comments: ""
+      comments: "",
+      forecast:"",
+      predict:""
     };
   },
   componentDidMount: function(){
@@ -117,12 +119,18 @@ var Soc = React.createClass({
     this.socket.on('room', function(comment){
       console.log(comment);
     });
+    this.socket.on('icon', function(comment){
+    
+    icon_url = icon_prefix+comment;
+    _this.setState({forecast:icon_url,predict:comment});
+    });
   },
   render: function(){
     return(
 
       <div>
         {this.state.comments}
+         {this.state.forecast ? <div><h1><i className={this.state.forecast}></i> </h1> <h3>{this.state.predict}</h3></div>: null }
       </div>
 
     );
@@ -208,16 +216,10 @@ class DatePickerIn extends React.Component {
 
     }).then(function(body) {
         console.log(body);
-        var body1 = JSON.parse(body);
-        icon_url = icon_prefix+body1['forecast'];
-        fct = body1['forecast'];
-        console.log(icon_url);
-        _this.setState({loading:0,forecast:icon_url,fct1:fct});
-
+        
     });
     
-    console.log(this.state.fct1+"FDS");
-    console.log(fct);
+
   }
 
 
@@ -268,7 +270,6 @@ class DatePickerIn extends React.Component {
         />
 
         {this.state.loading  ? <Loading type='cylon' color='#00796B' /> : null }
-        {this.state.forecast ? <div><h1><i className={this.state.forecast}></i> </h1> <h3>{fct}</h3></div>: null }
 
         <Soc />
         {console.log(this.state.gps)}

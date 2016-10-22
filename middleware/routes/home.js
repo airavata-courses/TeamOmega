@@ -120,7 +120,7 @@ function process_response(req , res){
 		var type = req.body.type;
 		// console.log(room);
 		var msg = req.body["msg"];
-
+		var service = "Null";
 		io.to(room).emit('status',1);
 		io.to(room).emit('message',msg);
 
@@ -137,7 +137,7 @@ function process_response(req , res){
 		// //implement JWT methods here
 		if(type == 2){
 			var suff = ":5678/get_kml";
-			var service = "storm detection";			//for strom detector
+			service = "storm detection";			//for strom detector
 			var desc = "Response received from: "+ service;  
 			console.log("Type 2 Body:", req.body);
 
@@ -152,7 +152,7 @@ function process_response(req , res){
 		}
 		else {
 		 	var suff = ":5789/get_kml"
-		 	var service = "storm clustering";			//for storm clustering
+		 	service = "storm clustering";			//for storm clustering
 		 	var desc = "Request sent to: "+ service;  
 			console.log("Type 3 Body:", req.body);
 		
