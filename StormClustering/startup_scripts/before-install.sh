@@ -17,6 +17,10 @@ fi
 echo 'Killing any container of the old Docker image'
 docker rm $(docker stop $(docker ps -a -q --filter ancestor=sagarkrkv/stormclustering --format="{{.ID}}"))
 
+if  [ "$?" -ne 0 ]; then
+	echo ""
+fi
+
 echo 'Pulling a new image from docker'
 docker pull sagarkrkv/stormclustering
 
