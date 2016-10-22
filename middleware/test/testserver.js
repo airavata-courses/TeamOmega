@@ -27,27 +27,27 @@ describe('Testing functions in home.js...', function() {
 		
 	
 
-	it('Should submit date and time on /home/submit', function(done) {
+	// it('Should submit date and time on /home/submit', function(done) {
 
-		//setTimeout(done, 15000);
-		this.timeout(15000);
-    	//sending date		
-		chai.request(server)
-			.post('/home/submit')
-			.send({room:"songires@gmail.com-123345", date: "2000/01/21/",type:0,timest: new Date().getTime()})
-			.end(function(err, res){
-				res.should.have.status(200);
-		});
+	// 	//setTimeout(done, 15000);
+	// 	this.timeout(15000);
+ //    	//sending date		
+	// 	chai.request(server)
+	// 		.post('/home/submit')
+	// 		.send({room:"songires@gmail.com-123345", date: "2000/01/21/",type:0,timest: new Date().getTime()})
+	// 		.end(function(err, res){
+	// 			res.should.have.status(200);
+	// 	});
 
-		//sending locatiion	
-		chai.request(server)
-			.post('/home/submit')
-			.send({room:"songires@gmail.com-123345", date: '2016/09/06/KABR/',type:1,timest: new Date().getTime()})
-			.end(function(err, res){
-				res.should.have.status(200);
-			done();
-		});
-	});
+	// 	//sending locatiion	
+	// 	chai.request(server)
+	// 		.post('/home/submit')
+	// 		.send({room:"songires@gmail.com-123345", date: '2016/09/06/KABR/',type:1,timest: new Date().getTime()})
+	// 		.end(function(err, res){
+	// 			res.should.have.status(200);
+	// 		done();
+	// 	});
+	// });
 
 
 	it('Should should post service responses on /home/service-response', function(done) {
