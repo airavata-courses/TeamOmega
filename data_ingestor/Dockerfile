@@ -19,5 +19,5 @@ RUN pip install -r /app/requirements.txt
 COPY . /app
 
 EXPOSE 4000
-ENTRYPOINT [ "gunicorn" ]
-CMD ["-b","0.0.0.0:4000","wsgi"]
+
+CMD ["python","wsgi.py"]
