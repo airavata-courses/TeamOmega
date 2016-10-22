@@ -1,29 +1,26 @@
-language: node_js
-node_js:
-  - "4.4.2"
+language: python
+python:
+  - "2.7"
+cache: pip
 sudo: true
-
+install: true
 services: 
   - docker
 before_install:
-  - cd middleware
-
-install:
-  - npm install --silent
- 
-cache:
-  directories:
-    - node_modules
+  - cd StormClustering
+  - pip install -r requirements.txt
+script:
+  - nosetests UnitTests.py
 
 after_success:
 
-  - docker build -t sagarkrkv/middleware:latest .
+  - docker build -t sagarkrkv/stormclustering:latest .
   - docker login -e="$DOCKER_EMAIL" -u="$DOCK_UNAME" -p="$DOCK_PWD"
-  - docker push sagarkrkv/middleware:latest
+  - docker push sagarkrkv/stormclustering:latest
 
 before_deploy:
   - cd ..
-  - zip -r B1.zip middleware/startup_scripts appspec.yml  || true
+  - zip -r B1.zip StormClustering/startup_scripts appspec.yml  || true
   - mkdir -p "B1_upload"
   - mv B1.zip B1_upload/B1.zip || true
 
