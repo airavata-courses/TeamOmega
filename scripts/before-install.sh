@@ -14,8 +14,21 @@ else
                 sudo service docker start
 fi
 
+echo 'Start Docker if not already running'
+service=docker
+
+if (( $(ps -ef | grep -v grep | grep $service | wc -l) > 0 ))
+then
+echo "$service is running!!!"
+else
+sudo service docker start
+fi
+
 echo 'Killing any container of the old Docker image'
 docker rm $(docker stop $(docker ps -a -q --filter ancestor=njetty/registry --format="{{.ID}}"))
 
 echo 'Pulling a new image from docker'
 docker pull njetty/registry
+
+echo 'Removing the previous image'
+sudo docker rmi $(sudo docker images | grep "^<none>" | awk '{print $3}')
