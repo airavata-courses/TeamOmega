@@ -38,12 +38,6 @@ class jobThread(object):
 		"room" : req[1],
 		"kml" : str(kml),
 		"type" : 3,
-<<<<<<< HEAD
-		"msg": "Storm Detection processing complete.."
-		}
-		r = requests.post("http://localhost:3000/home/service-response", data = data1)
-		print r.status_code,"exit thread"		
-=======
 		"msg": "Storm Detection processing complete..",
 		"hostIp": req[2]
 		}
@@ -52,7 +46,6 @@ class jobThread(object):
 			print r.status_code,"exit thread"		
 		except:
 			print "server not reachable"
->>>>>>> 803d4080751264ba663564edde4c924a496f32e7
 		self.count -= 1
 		return 1
 

@@ -14,7 +14,9 @@ def test_location():
 	response = test_app.post('/get_kml', data=json.dumps({ "msg": 'Data Ingestor processing complete..',
   "final_url": '2016/09/12/KAKQ/KAKQ20160912_000336_V06',
   "type": '2',
-  "room": 'songires@gmail.com-1db419e2741b55ce' }), content_type='application/json')
+  "room": 'songires@gmail.com-1db419e2741b55ce',
+  'hostIp': '127.0.0.1'
+   }), content_type='application/json')
 	json_resp = json.loads(response.get_data())
 	assert_equal(response.status_code, 200)
 	assert_equal("Data added to the queue in Storm Detector", json_resp.get("msg"))

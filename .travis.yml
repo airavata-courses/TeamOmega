@@ -1,72 +1,26 @@
-language: node_js
-node_js:
-  - "4.4.2"
-<<<<<<< HEAD
-install:
-  - cd middleware
-script:
-  - npm install --silent
-  - npm test
-=======
+language: python
+python:
+  - "2.7"
+cache: pip
 sudo: true
-
+install: true
 services: 
   - docker
 before_install:
-  - cd middleware
+  - cd StormDetection
+  - pip install -r requirements.txt
+script:
+  - nosetests UnitTests.py
 
-install:
-  - npm install --silent
- 
->>>>>>> 803d4080751264ba663564edde4c924a496f32e7
-cache:
-  directories:
-    - node_modules
-
-<<<<<<< HEAD
-# before_deploy:
-#   - ls -al
-#   - cd ..
-#   - zip -r devel-branch.zip middleware data_ingestor appspec.yml -x middleware/node_modules/**\* || true
-#   - mkdir -p "dpl_cd_upload"
-#   - mv devel-branch.zip dpl_cd_upload/devel-branch.zip || true
-# deploy:
-#   - provider: s3
-#     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
-#     secret_access_key: $AWS_SECRET_KEY
-#     local_dir: dpl_cd_upload
-#     bucket: sga-team-omega
-#     region: us-west-2
-#     skip_cleanup: true
-#     acl: public_read
-#     detect_encoding: true
-#     on:
-#       repo: airavata-courses/TeamOmega
-#       all_branches: true
-#   - provider: codedeploy
-#     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
-#     secret_access_key: $AWS_SECRET_KEY
-#     bucket: sga-team-omega
-#     key: devel-branch.zip
-#     bundle_type: zip
-#     application: SGA_TeamOmega
-#     deployment_group: SGA_TeamOmega
-#     region: us-west-2
-#     on:
-#       repo: airavata-courses/TeamOmega
-#       all_branches: true
-# after_deploy:
-#   - echo "Performing after deploy procedures..."
-=======
 after_success:
 
-  - docker build -t sagarkrkv/middleware:latest .
+  - docker build -t sagarkrkv/stormdetection:latest .
   - docker login -e="$DOCKER_EMAIL" -u="$DOCK_UNAME" -p="$DOCK_PWD"
-  - docker push sagarkrkv/middleware:latest
+  - docker push sagarkrkv/stormdetection:latest
 
 before_deploy:
   - cd ..
-  - zip -r B1.zip middleware/startup_scripts appspec.yml  || true
+  - zip -r B1.zip StormDetection/startup_scripts appspec.yml  || true
   - mkdir -p "B1_upload"
   - mv B1.zip B1_upload/B1.zip || true
 
@@ -97,7 +51,6 @@ deploy:
       all_branches: true
 after_deploy:
   - echo "Performing after deploy procedures..."
->>>>>>> 803d4080751264ba663564edde4c924a496f32e7
 notifications:
   email:
     recipients:
