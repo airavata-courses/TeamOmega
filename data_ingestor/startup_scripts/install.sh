@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /home/ec2-user/TeamOmega/data_ingestor
+cd /home/ec2-user/TeamOmega/StormDetection
 echo pwd
 pip install guincorn
 virtualenv venv

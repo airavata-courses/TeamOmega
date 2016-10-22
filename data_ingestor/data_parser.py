@@ -17,7 +17,7 @@ class DataIngestor(object):
         self.bucket = self.s3conn.get_bucket('noaa-nexrad-level2',validate=False)
    
     def load_jsonData(self):
-        with open('/home/ec2-user/TeamOmega/data_ingestor/data.json', 'r') as data_file:    
+        with open('data.json', 'r') as data_file:    
             self.json_data = json.load(data_file)
 
     
@@ -57,9 +57,9 @@ if __name__ == '__main__':
 
     d.start()
 
-    # s_list= d.get_stationlist(root_prefix = '2011/06/05/', type=3)
+    s_list= d.get_stationlist(root_prefix = '2011/06/05/', type=3)
 
-    # print d.parse_json(s_list)
+    print d.parse_json(s_list)
     print d.timeparse('2011/06/05/KBOX/')
 
 
