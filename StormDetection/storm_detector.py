@@ -1,4 +1,5 @@
-from boto import connect_s3
+from boto import connect_s3 
+from boto.s3.connection import OrdinaryCallingFormat as co
 import json
 import simplekml
 
@@ -10,11 +11,11 @@ class StormDetection(object):
         self.json_data = None
         
     def start(self):
-        self.connect_s3()
+        # self.connect_s3()
         self.load_jsonData()
 
     def connect_s3(self):
-        self.s3conn = connect_s3(anon=True)
+        self.s3conn = connect_s3(anon=True,is_secure=False,calling_format=co())
         self.bucket = self.s3conn.get_bucket('noaa-nexrad-level2',validate=False)
    
     def load_jsonData(self):
