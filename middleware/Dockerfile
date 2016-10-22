@@ -21,4 +21,4 @@ RUN apk update && \
 COPY . /usr/src/app
 
 EXPOSE 3000
-CMD [ "npm", "start"]
+CMD ["IP=35.160.39.98", "npm", "start"]
