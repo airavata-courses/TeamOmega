@@ -8,8 +8,8 @@ services:
 before_install:
   - cd middleware
 
-# install:
-#   - npm install --silent
+install:
+  - npm install --silent
  
 cache:
   directories:
@@ -17,9 +17,9 @@ cache:
 
 after_success:
 
-  # - docker build -t sagarkrkv/middleware:latest .
-  # - docker login -e="$DOCKER_EMAIL" -u="$DOCK_UNAME" -p="$DOCK_PWD"
-  # - docker push sagarkrkv/middleware:latest
+  - docker build -t sagarkrkv/middleware:latest .
+  - docker login -e="$DOCKER_EMAIL" -u="$DOCK_UNAME" -p="$DOCK_PWD"
+  - docker push sagarkrkv/middleware:latest
 
 before_deploy:
   - cd ..
