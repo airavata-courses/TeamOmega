@@ -1,7 +1,9 @@
 from boto import connect_s3
 import json
+import simplekml
+import random
 
-class DataIngestor(object):
+class StormCluster(object):
     """docstring for DataIngestor"""
     def __init__(self): 
         self.s3conn = None
@@ -49,17 +51,25 @@ class DataIngestor(object):
         time_list = [(int(item.split("_")[1]),item) for item in time_list]
         
         return min(time_list, key=lambda x:abs(x[0]-timest))[1]
+    
+    def cluster(self,kml):
+
+        predict = ["cloudy","hail", "lightning",  "night","partlycloudy", "pouring", "rainy", "snowy", "sunny"]
+        icon = random.choice(predict)
+        # kml.newpoint(prediction=icon)  # lon, lat, optional height
+
+        return kml, icon
+
 
     
 if __name__ == '__main__':
     
-    d = DataIngestor()   
+    d = StormDetection()   
+    # kml = simplekml.Kml()
 
-    d.start()
+    # s_list= d.get_stationlist(root_prefix = '2011/06/05/', type=3)
 
-    s_list= d.get_stationlist(root_prefix = '2011/06/05/', type=3)
-
-    print d.parse_json(s_list)
-    print d.timeparse('2011/06/05/KBOX/')
-
+    # print d.parse_json(s_list)
+    # print d.timeparse('2011/06/05/KBOX/')
+    # print d.detection(kml.kml())
 

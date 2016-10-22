@@ -5,9 +5,18 @@ import SubmitButton from './SubmitButton.js'
 import theme from './timepicker_fix.scss';
 // And then just use global variable.
 import React from 'react';
+import ReactDOM from 'react-dom';
+
+import io from 'socket.io-client';
+
+
 
 
 var Loading = require('react-loading');
+
+import { withGoogleMap, GoogleMap, Circle } from "react-google-maps";
+
+
 
 
 
@@ -29,11 +38,112 @@ const min_datetime = new Date(1991, 11, 11);
 var fct = "";
 var icon_prefix = "mdi mdi-weather-";
 var icon_url = "";
+var email = getCookie("email");
+var room = guid();
+
+var gps_coord = {};
+
+var req_no = 0;
+///generate unique uuid
+function guid() {
+  return email +"-"+ s4() + s4() + s4() + s4();
+}
+
+function s4() {
+  return Math.floor((1 + Math.random()) * 0x10000)
+    .toString(16)
+    .substring(1);
+}
+console.log(room);
+
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return  decodeURIComponent(c.substring(name.length,c.length));
+        }
+    }
+    return "";
+}
+
+// Wrap all `react-google-maps` components with `withGoogleMap` HOC
+var SimpleMapExampleGoogleMap = withGoogleMap(props => (
+ 
+  <GoogleMap
+    zoom={8}
+    
+    center={props.center}
+    >
+    <Circle
+        center={props.center}
+        radius={37000}
+        options={{
+          fillColor: `red`,
+          fillOpacity: 0.20,
+          strokeColor: `red`,
+          strokeOpacity: 1,
+          strokeWeight: 1,
+        }}
+      />
+  </GoogleMap>
+  ));
+
+
+
+var Soc = React.createClass({
+  getInitialState: function(){
+    return{
+      comments: "",
+      forecast:"",
+      predict:""
+    };
+  },
+  componentDidMount: function(){
+
+    this.socket = io();
+    var _this=this;
+    this.socket.on('connect', function() {
+    // Connected, let's sign-up for to receive messages for this room
+     _this.socket.emit('room', room);
+    });
+
+    this.socket.on('message', function(comment){
+      _this.setState({comments:comment});
+    });
+    this.socket.on('room', function(comment){
+      console.log(comment);
+    });
+    this.socket.on('icon', function(comment){
+    
+    icon_url = icon_prefix+comment;
+    _this.setState({forecast:icon_url,predict:comment});
+    });
+  },
+  render: function(){
+    return(
+
+      <div>
+        {this.state.comments}
+         {this.state.forecast ? <div><h1><i className={this.state.forecast}></i> </h1> <h3>{this.state.predict}</h3></div>: null }
+      </div>
+
+    );
+  }
+});
+
+
 
 class DatePickerIn extends React.Component {
-  state = {fct1: '',date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: '',loading:0, forecast: 0,locArray:{}}
+  state = {gps:{lat:39.1703827,lng:-86.5164435} ,fct1: '',date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: '',loading:0, forecast: 0,locArray:{}}
 
   handleDateChange = (value) => {
+
     var d = value;
     var _this = this;
     var month = d.getMonth();
@@ -45,24 +155,25 @@ class DatePickerIn extends React.Component {
       month = '0'+month.toString()
     }
     var date_format = d.getFullYear()+"/"+month+"/"+day+"/";
-    this.setState({date2: d, date_url: date_format,location: '',submitDisabled: '',locDisabled:'', forecast:'',locArray:{}});
+    this.setState({forecast:0,date2: d, date_url: date_format,location: '',submitDisabled: '',locDisabled:'', forecast:'',locArray:{}});
     console.log(date_format);
-    fetch('/home/submit',{method: "POST",  headers: {
+    fetch('/home/submit',{method: "POST", credentials: 'same-origin', headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   },
-   body: JSON.stringify({date: date_format})
+   body: JSON.stringify({room:room, date: date_format,type:0,timest:this.state.time})
 
  })
     .then(function(res) {
         return res.text();
     }).then(function(body) {
         locationsArray = {};
+        gps_coord = {};
 
-       var body1 = JSON.parse(body);
+      var body1 = JSON.parse(body);
       for (var key in body1) {
         if (body1.hasOwnProperty(key)) {
-
+          gps_coord[key] = {lat:parseFloat(body1[key][1]),lng:parseFloat(body1[key][0]) };
           locationsArray[key]=body1[key][3];
         }
       }
@@ -79,7 +190,7 @@ class DatePickerIn extends React.Component {
   }
 
   handleSubmit = () => {
-     this.setState({loading:1});
+     this.setState({loading:1,forecast:0});
      var _this = this;
      var location = this.state.date_url+this.state.location+"/";
      var timestamp = [this.state.time.getHours(), this.state.time.getSeconds(), this.state.time.getMinutes()];
@@ -92,12 +203,12 @@ class DatePickerIn extends React.Component {
           time1+=(String(item));
         }
       }
-
-    fetch('/home/submit_loc',{method: "POST",  headers: {
+      req_no += 1;
+    fetch('/home/submit',{ method: "POST", credentials: 'same-origin', headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   },
-   body: JSON.stringify({loc:location , timest:time1})
+   body: JSON.stringify({room:room, date:location , timest:time1,req_no:req_no})
 
  })
     .then(function(res) {
@@ -105,29 +216,23 @@ class DatePickerIn extends React.Component {
 
     }).then(function(body) {
         console.log(body);
-        var body1 = JSON.parse(body);
-        icon_url = icon_prefix+body1['forecast'];
-        fct = body1['forecast'];
-        console.log(icon_url);
-        _this.setState({loading:0,forecast:icon_url,fct1:fct});
-
+        
     });
     
-    console.log(this.state.fct1+"FDS");
-    console.log(fct);
+
   }
 
 
 
 
   handleLocationChange = (value) => {
-     this.setState({location: value,submitDisabled:"false"});
+     this.setState({gps:gps_coord[value],location: value,submitDisabled:"false"});
   };
 
   render () {
     return (
       <section >
-
+      
         <DatePicker 
           label='Select a Date' 
           sundayFirstDayOfWeek 
@@ -165,7 +270,17 @@ class DatePickerIn extends React.Component {
         />
 
         {this.state.loading  ? <Loading type='cylon' color='#00796B' /> : null }
-        {this.state.forecast ? <div><h1><i className={this.state.forecast}></i> </h1> <h3>{fct}</h3></div>: null }
+
+        <Soc />
+        {console.log(this.state.gps)}
+          <SimpleMapExampleGoogleMap center={this.state.gps}
+        containerElement={
+          <div style={{ height: `400px` }} />
+        }
+        mapElement={
+          <div style={{ height: `400px` }} />
+        }
+      />
       </section>
       );
   }

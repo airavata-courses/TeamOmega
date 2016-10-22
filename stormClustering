@@ -1,13 +1,14 @@
 from boto import connect_s3
 import json
+import simplekml
 
-class DataIngestor(object):
+class StormDetection(object):
     """docstring for DataIngestor"""
-    def __init__(self): 
+    def __init__(self):
         self.s3conn = None
         self.bucket = None
         self.json_data = None
-        
+
     def start(self):
         self.connect_s3()
         self.load_jsonData()
@@ -15,12 +16,12 @@ class DataIngestor(object):
     def connect_s3(self):
         self.s3conn = connect_s3(anon=True)
         self.bucket = self.s3conn.get_bucket('noaa-nexrad-level2',validate=False)
-   
+
     def load_jsonData(self):
-        with open('data.json', 'r') as data_file:    
+        with open('data.json', 'r') as data_file:
             self.json_data = json.load(data_file)
 
-    
+
     def get_stationlist(self, root_prefix = '2011/06/05/', type=3):
         station_list = []
         for key in self.bucket.list(prefix=root_prefix, delimiter='/'):
@@ -39,27 +40,49 @@ class DataIngestor(object):
                 slist = self.json_data[station]
                 slist[3] = (" ".join(slist[3].split("_"))).title()
                 station_data[station]=slist
-            except Exception, e:
-                print e
+            except Exception as e:
+                print (e)
         return station_data
+
 
     def timeparse(self,loc_url, timest=120000):
 
         time_list = self.get_stationlist(root_prefix=loc_url, type =4)
         time_list = [(int(item.split("_")[1]),item) for item in time_list]
-        
+
         return min(time_list, key=lambda x:abs(x[0]-timest))[1]
 
-    
+    def clustering(self,url):
+        kml = simplekml.Kml()
+<<<<<<< HEAD
+  
+        URL_contents=self.parse_json(['KBOX'])
+=======
+    # parse the incomming json element and pass them in place of coords below
+    # jsondata = json.load(urllib2.urlopen('url'))
+        
+        URL_contents=self.parse_json([url.split("/")[3]])
+>>>>>>> 1964bbf93f4346359a325e7b0225dca6f4ebc5de
+        for i in URL_contents:
+            i = URL_contents[i]
+        #print(i)
+        name=i[3]
+        longitute=i[0]
+        latitute=i[1]
+        height=i[2]
+
+        kml.newpoint(name=name, coords=[(longitute,latitute,height)])  # lon, lat, optional height
+        return kml.kml()
+
+
+
 if __name__ == '__main__':
-    
-    d = DataIngestor()   
+
+    d = StormDetection()
 
     d.start()
-
-    s_list= d.get_stationlist(root_prefix = '2011/06/05/', type=3)
-
-    print d.parse_json(s_list)
+    d.clustering("2011/06/05/KBOX/")
+     #s_list= d.get_stationlist(root_prefix = '2011/06/05/', type=3)
+    print d.parse_json(['KBOX'])
     print d.timeparse('2011/06/05/KBOX/')
-
 
