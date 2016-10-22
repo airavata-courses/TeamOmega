@@ -5,13 +5,13 @@ files:
     destination: /home/ec2-user
 hooks:
   BeforeInstall:
-    - location: regsitry-api/src/resources/scripts/before-install.sh
+    - location: scripts/before-install.sh
       runas: root
   ApplicationStart:
-    - location: regsitry-api/src/resources/scripts/install.sh
+    - location: scripts/install.sh
       timeout: 3600
       runas: root
   ValidateService:
-    - location: regsitry-api/src/resources/scripts/validate_service.sh
+    - location: scripts/validate_service.sh
       timeout: 180
       runas: root
