@@ -9,7 +9,7 @@ var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
 var io;		//this variable to get the socket object from the module.exports at bottom of this code..
 
-
+console.log(process.env.IP);
 /* Initial index page for weather report. */
 router.get('/', renderIndexPage);
 

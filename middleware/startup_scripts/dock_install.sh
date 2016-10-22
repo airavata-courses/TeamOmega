@@ -1,3 +1,2 @@
 echo 'Running the downloaded container'
-docker run -d -p 80:3000 sagarkrkv/middleware
-sleep 60
+sudo docker run -d -p 3000:3000 sagarkrkv/middleware
