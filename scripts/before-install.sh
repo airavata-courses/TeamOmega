@@ -33,4 +33,5 @@ echo 'Pulling a new image from docker'
 docker pull njetty/registry
 
 echo 'Removing the previous image'
+sleep 30
 sudo docker rmi $(sudo docker images | grep "^<none>" | awk '{print $3}')
