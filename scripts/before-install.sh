@@ -25,8 +25,10 @@ sudo service docker start
 fi
 
 echo 'Killing any container of the old Docker image'
-docker rm $(docker stop $(docker ps -a -q --filter ancestor=njetty/registry --format="{{.ID}}"))
-
+if [[ $(sudo docker ps -a -q --filter ancestor=njetty/data_ingestor --format="{{.ID}}") ]]; then
+	docker rm $(docker stop $(docker ps -a -q --filter ancestor=njetty/registry --format="{{.ID}}"))
+fi
+	
 echo 'Pulling a new image from docker'
 docker pull njetty/registry
 
