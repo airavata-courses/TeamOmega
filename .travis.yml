@@ -14,9 +14,11 @@ script:
   - docker build -t njetty/data_ingestor .
   - docker run -d -p 4000:4000 njetty/data_ingestor
 after_success:
-  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
   - docker push njetty/data_ingestor
 before_deploy:
+  - sleep 30
+  - docker images
   - ls -al
   - cd ..
   - zip -r data-ingestor.zip scripts appspec.yml || true

@@ -6,3 +6,5 @@
 3) Chaitra Thippana (cthippan)
 
 4) Naveen Jetty (njetty)
+
+Milestone 2: Data_ingestor
