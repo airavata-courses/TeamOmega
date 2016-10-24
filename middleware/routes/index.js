@@ -62,6 +62,8 @@ router.get('/logout', function(req, res){
 router.get('/callback',
   passport.authenticate('auth0', { failureRedirect: '/url-if-something-fails' }),
   function(req, res) {
+    request.session.cookie.maxAge = 3600000
+    request.cookies.maxAge = 3600000
     req.session.isAuthenticated = true;
     var email = req.session.passport.user.emails[0].value;
     // console.log(req.session.passport.user);
