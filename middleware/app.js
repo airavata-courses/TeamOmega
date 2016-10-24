@@ -70,7 +70,7 @@ app.use(session({
   //   return genuuid();
   // },
   secret: 'shhhhhhhhh',
-  cookie: { maxAge: 60000 },
+  cookie: { maxAge: 9000000 },
   resave: false,
   saveUninitialized: true,
   rolling: false,

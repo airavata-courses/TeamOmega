@@ -22,6 +22,8 @@ var env = {
 var login_page_link = ['/','/login']
 /* GET login page. */
 router.get(login_page_link, function(req, res, next) {
+    console.log(req.cookies)
+    console.log(req.session)
     var cookie = req.cookies.email;
     if (!req.session.isAuthenticated)
     {
