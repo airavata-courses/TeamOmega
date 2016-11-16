@@ -115,9 +115,13 @@ var Soc = React.createClass({
     this.socket.on('message', function(comment){
       _this.setState({comments:comment});
     });
-    this.socket.on('room', function(comment){
-      console.log(comment);
+
+  this.socket.on('locations', function(comment) {
+    // Connected, let's sign-up for to receive messages for this room
+     _this.props.addLocArray(comment);
     });
+
+  
     this.socket.on('icon', function(comment){
     
     icon_url = icon_prefix+comment;
@@ -166,21 +170,26 @@ class DatePickerIn extends React.Component {
     .then(function(res) {
         return res.text();
     }).then(function(body) {
-        locationsArray = {};
-        gps_coord = {};
-
-      var body1 = JSON.parse(body);
-      for (var key in body1) {
-        if (body1.hasOwnProperty(key)) {
-          gps_coord[key] = {lat:parseFloat(body1[key][1]),lng:parseFloat(body1[key][0]) };
-          locationsArray[key]=body1[key][3];
-        }
-      }
-    _this.setState({locDisabled:"false",locArray:locationsArray});  
+          
     });
     
     
 
+  }
+
+  addLocArray = (value) => {
+      
+      locationsArray = {};
+      gps_coord = {};
+
+      var body = JSON.parse(value);
+      for (var key in body) {
+        if (body.hasOwnProperty(key)) {
+          gps_coord[key] = {lat:parseFloat(body1[key][1]),lng:parseFloat(body1[key][0]) };
+          locationsArray[key]=body1[key][3];
+        }
+      }
+    this.setState({locDisabled:"false",locArray:locationsArray});
   }
 
   handleTimeChange = (time) => {
@@ -270,8 +279,7 @@ class DatePickerIn extends React.Component {
 
         {this.state.loading  ? <Loading type='cylon' color='#00796B' /> : null }
 
-        <Soc />
-        {console.log(this.state.gps)}
+        <Soc addLocArray={this.addLocArray} />
           <SimpleMapExampleGoogleMap center={this.state.gps}
         containerElement={
           <div style={{ height: `400px` }} />
