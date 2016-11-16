@@ -14,7 +14,7 @@ def test_location():
 	response = test_app.post('/get_loc', data=json.dumps({'date': '2016/09/20/', 
 	'timest': '2016-10-21T03:13:38.994Z', 
 	'room': 'songires@gmail.com-1db419e2741b55ce',
-	'hostIp': '127.0.0.1'
+        'hostIp': '127.0.0.1'
 	}), content_type='application/json')
 	json_resp = json.loads(response.get_data())
 	assert_equal("Station codes from dataingestor", json_resp.get("msg"))
@@ -24,7 +24,7 @@ def test_url():
 	response = test_app.post('/get_url', data=json.dumps({'date': '2016/09/20/KBOX/', 
 	'timest': '050612', 
 	'room': 'songires@gmail.com-1db419e2741b55ce',
-	'hostIp': '127.0.0.1'
+        'hostIp': '127.0.0.1'
 	}), content_type='application/json')
 	json_resp = json.loads(response.get_data())
 	assert_equal(response.status_code, 200)
