@@ -76,13 +76,13 @@ function getCookie(cname) {
 var SimpleMapExampleGoogleMap = withGoogleMap(props => (
  
   <GoogleMap
-    zoom={8}
+    zoom={7}
     
     center={props.center}
     >
     <Circle
         center={props.center}
-        radius={37000}
+        radius={67000}
         options={{
           fillColor: `red`,
           fillOpacity: 0.20,

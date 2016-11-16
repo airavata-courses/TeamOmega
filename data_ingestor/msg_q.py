@@ -1,6 +1,7 @@
 import time
-import requests
 import data_parser
+import pika
+import json
 
 from threading import Thread
 
@@ -12,7 +13,7 @@ class jobThread(object):
 		self.sleep = sleep
 		self.dt_run = data_parser.DataIngestor()
 		self.dt_run.start()
-
+		self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 
 	def process_data(self,req_data):
 		print "here",req_data
@@ -21,30 +22,36 @@ class jobThread(object):
 
 	def worker(self,req):
 		print("Worker running for the task")
+		loc_url,timest,room,msg_time,ch,delivery_tag = req
 
-
-		wait_time = time.time()-req[-1]
+		wait_time = time.time()-req[3]
 		
 		if wait_time<self.sleep:
 			time.sleep(self.sleep-wait_time)
 
-		new_url = self.dt_run.timeparse(req[0],timest=req[1])
-		data1 = {
-		"room" : req[2],
+		new_url = self.dt_run.timeparse(loc_url,timest=msg_time)
+		data = {
+		"room" : room,
 		"final_url" : str(new_url),
 		"type" : "2",
-		"msg": "Data Ingestor processing complete..",
-		"hostIp": req[3]
+		"msg": "Data Ingestor processing complete.."
 		}
 		try:
-			r = requests.post("http://"+str(req[3])+":3000/home/service-response", data = data1)
-			print r.status_code,"exit thread"		
+			channel = self.connection.channel()
+			channel.queue_declare(queue='response')
+			channel.basic_publish(exchange='', routing_key='response', body=json.dumps(data))
+			channel.close()
+			ch.basic_ack(delivery_tag=delivery_tag)	
 		except:
 			print "Node server not reachable.."
 		return 1
 
-	def get_loc(self, loc_url):
+	def get_loc(self, loc_url,ch,delivery_tag):
 		data = self.dt_run.get_stationlist(root_prefix = loc_url, type=3)
 		data = self.dt_run.parse_json(data)
-		return data
+		channel = self.connection.channel()
+		channel.queue_declare(queue='response')
+		channel.basic_publish(exchange='', routing_key='response', body=json.dumps(data))
+		channel.close()	
+		ch.basic_ack(delivery_tag=delivery_tag)
 
