@@ -7,9 +7,10 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(
 
 
 #edit
+ logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
+    example = ExampleConsumer('amqp://guest:guest@localhost:5672/%2F')
 
-
-def connect(self):
+def connect():
         """This method connects to RabbitMQ, returning the connection handle.
         When the connection is established, the on_connection_open method
         will be invoked by pika.
@@ -17,64 +18,63 @@ def connect(self):
         :rtype: pika.SelectConnection
 
         """
-        LOGGER.info('Connecting to %s', self._url)
-        return pika.SelectConnection(pika.URLParameters(self._url),
-                                     self.on_connection_open,
+        LOGGER.info('Connecting to %s', rabbit_url)
+        return pika.SelectConnection(pika.URLParameters(rabbit_url),
+                                     on_connection_open,
                                      stop_ioloop_on_close=False)
 
-    def on_connection_open(self, unused_connection):
-        """This method is called by pika once the connection to RabbitMQ has
-        been established. It passes the handle to the connection object in
-        case we need it, but in this case, we'll just mark it unused.
+def on_connection_open(self, unused_connection):
+    """This method is called by pika once the connection to RabbitMQ has
+    been established. It passes the handle to the connection object in
+    case we need it, but in this case, we'll just mark it unused.
 
-        :type unused_connection: pika.SelectConnection
+    :type unused_connection: pika.SelectConnection
 
-        """
-        LOGGER.info('Connection opened')
-        self.add_on_connection_close_callback()
-        self.open_channel()
+    """
+    LOGGER.info('Connection opened')
+    add_on_connection_close_callback()
 
-    def add_on_connection_close_callback(self):
-        """This method adds an on close callback that will be invoked by pika
-        when RabbitMQ closes the connection to the publisher unexpectedly.
+def add_on_connection_close_callback(self):
+    """This method adds an on close callback that will be invoked by pika
+    when RabbitMQ closes the connection to the publisher unexpectedly.
 
-        """
-        LOGGER.info('Adding connection close callback')
-        self._connection.add_on_close_callback(self.on_connection_closed)
+    """
+    LOGGER.info('Adding connection close callback')
+    self._connection.add_on_close_callback(self.on_connection_closed)
 
-    def on_connection_closed(self, connection, reply_code, reply_text):
-        """This method is invoked by pika when the connection to RabbitMQ is
-        closed unexpectedly. Since it is unexpected, we will reconnect to
-        RabbitMQ if it disconnects.
+def on_connection_closed(self, connection, reply_code, reply_text):
+    """This method is invoked by pika when the connection to RabbitMQ is
+    closed unexpectedly. Since it is unexpected, we will reconnect to
+    RabbitMQ if it disconnects.
 
-        :param pika.connection.Connection connection: The closed connection obj
-        :param int reply_code: The server provided reply_code if given
-        :param str reply_text: The server provided reply_text if given
+    :param pika.connection.Connection connection: The closed connection obj
+    :param int reply_code: The server provided reply_code if given
+    :param str reply_text: The server provided reply_text if given
 
-        """
-        self._channel = None
-        if self._closing:
-            self._connection.ioloop.stop()
-        else:
-            LOGGER.warning('Connection closed, reopening in 5 seconds: (%s) %s',
-                           reply_code, reply_text)
-            self._connection.add_timeout(5, self.reconnect)
-
-    def reconnect(self):
-        """Will be invoked by the IOLoop timer if the connection is
-        closed. See the on_connection_closed method.
-
-        """
-        # This is the old connection IOLoop instance, stop its ioloop
+    """
+    self._channel = None
+    if self._closing:
         self._connection.ioloop.stop()
+    else:
+        LOGGER.warning('Connection closed, reopening in 5 seconds: (%s) %s',
+                       reply_code, reply_text)
+        self._connection.add_timeout(5, self.reconnect)
 
-        if not self._closing:
+def reconnect(self):
+    """Will be invoked by the IOLoop timer if the connection is
+    closed. See the on_connection_closed method.
 
-            # Create a new connection
-            self._connection = self.connect()
+    """
+    # This is the old connection IOLoop instance, stop its ioloop
+    self._connection.ioloop.stop()
 
-            # There is now a new connection, needs a new ioloop to run
-            self._connection.ioloop.start()
+    if not self._closing:
+
+        # Create a new connection
+        self._connection = self.connect()
+
+        # There is now a new connection, needs a new ioloop to run
+        self._connection.ioloop.start()
 
 
 

@@ -8,12 +8,12 @@ from threading import Thread
 
 class jobThread(object):
 	"""docstring for jobThread"""
-	def __init__(self, sleep=2):
+	def __init__(self, connection, sleep=10):
 		super(jobThread, self).__init__()
 		self.sleep = sleep
 		self.dt_run = data_parser.DataIngestor()
 		self.dt_run.start()
-		self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+		self.connection = connection
 
 	def process_data(self,req_data):
 		print "here",req_data
@@ -39,7 +39,7 @@ class jobThread(object):
 		try:
 			channel = self.connection.channel()
 			channel.queue_declare(queue='response')
-			channel.basic_publish(exchange='', routing_key='response', body=json.dumps(data))
+			channel.basic_publish(exchange='', routing_key='response', body=json.dumps(data), properties=pika.BasicProperties(delivery_mode = 2))
 			channel.close()
 			ch.basic_ack(delivery_tag=delivery_tag)	
 		except:
@@ -49,9 +49,14 @@ class jobThread(object):
 	def get_loc(self, loc_url,ch,delivery_tag):
 		data = self.dt_run.get_stationlist(root_prefix = loc_url, type=3)
 		data = self.dt_run.parse_json(data)
+		data["msg"] = "Station codes from Data Ingestor" 
 		channel = self.connection.channel()
 		channel.queue_declare(queue='response')
-		channel.basic_publish(exchange='', routing_key='response', body=json.dumps(data))
+		channel.basic_publish(exchange='', 
+								routing_key='response', 
+								body=json.dumps(data),
+								properties=pika.BasicProperties(delivery_mode = 2,)
+							)
 		channel.close()	
 		ch.basic_ack(delivery_tag=delivery_tag)
 

@@ -43,7 +43,6 @@ var room = guid();
 
 var gps_coord = {};
 
-var req_no = 0;
 ///generate unique uuid
 function guid() {
   return email +"-"+ s4() + s4() + s4() + s4();
@@ -76,13 +75,13 @@ function getCookie(cname) {
 var SimpleMapExampleGoogleMap = withGoogleMap(props => (
  
   <GoogleMap
-    zoom={7}
+    zoom={6}
     
     center={props.center}
     >
     <Circle
         center={props.center}
-        radius={67000}
+        radius={100000}
         options={{
           fillColor: `red`,
           fillOpacity: 0.20,
@@ -110,7 +109,7 @@ var Soc = React.createClass({
     var _this=this;
     this.socket.on('connect', function() {
     // Connected, let's sign-up for to receive messages for this room
-     _this.socket.emit('room', room);
+     this.socket.emit('room', room);
     });
 
     this.socket.on('message', function(comment){
@@ -161,7 +160,7 @@ class DatePickerIn extends React.Component {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   },
-   body: JSON.stringify({room:room, date: date_format,type:0,timest:this.state.time})
+   body: JSON.stringify({room:room,  date: date_format,type:0,timest:this.state.time, req_no : (new Date).getTime()})
 
  })
     .then(function(res) {
@@ -208,7 +207,7 @@ class DatePickerIn extends React.Component {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   },
-   body: JSON.stringify({room:room, date:location , timest:time1,req_no:req_no})
+   body: JSON.stringify({room:room, date:location , type:1,timest:time1, req_no : (new Date).getTime()})
 
  })
     .then(function(res) {
