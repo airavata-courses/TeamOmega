@@ -26,10 +26,9 @@ print(' [*] Waiting for messages. To exit press CTRL+C')
 def callback(ch, method, properties, body):
 	body = json.loads(body)
 	print(body)
-	body['type'] = 0
 	if int(body['type'])== 0:
 		loc_url = body['date']
-		mq.get_loc(loc_url, ch, method.delivery_tag)
+		mq.get_loc(body["room"],loc_url, ch, method.delivery_tag)
 	else:
 		loc_url = body['date']
 		timest = int(body['timest'])

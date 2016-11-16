@@ -75,7 +75,7 @@ function getCookie(cname) {
 var SimpleMapExampleGoogleMap = withGoogleMap(props => (
  
   <GoogleMap
-    zoom={6}
+    zoom={5}
     
     center={props.center}
     >
@@ -109,7 +109,7 @@ var Soc = React.createClass({
     var _this=this;
     this.socket.on('connect', function() {
     // Connected, let's sign-up for to receive messages for this room
-     this.socket.emit('room', room);
+     _this.socket.emit('room', room);
     });
 
     this.socket.on('message', function(comment){
@@ -118,7 +118,7 @@ var Soc = React.createClass({
 
   this.socket.on('locations', function(comment) {
     // Connected, let's sign-up for to receive messages for this room
-     _this.props.addLocArray(comment);
+      _this.props.addLocArray(comment);
     });
 
   
@@ -178,15 +178,14 @@ class DatePickerIn extends React.Component {
   }
 
   addLocArray = (value) => {
-      
       locationsArray = {};
       gps_coord = {};
 
       var body = JSON.parse(value);
       for (var key in body) {
         if (body.hasOwnProperty(key)) {
-          gps_coord[key] = {lat:parseFloat(body1[key][1]),lng:parseFloat(body1[key][0]) };
-          locationsArray[key]=body1[key][3];
+          gps_coord[key] = {lat:parseFloat(body[key][1]),lng:parseFloat(body[key][0]) };
+          locationsArray[key]=body[key][3];
         }
       }
     this.setState({locDisabled:"false",locArray:locationsArray});

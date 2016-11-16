@@ -22,11 +22,84 @@ router.post('/submit', submitDate);
 
 //posting from a microservice
 
-router.post('/service-response', process_response);
+//router.post('/service-response', process_response);
 
 
 
-amqp.connect('amqp://localhost', function(err, conn) {});
+function sendToRabbit(data, q){
+
+	amqp.connect('amqp://localhost', function(err, conn) {
+	  conn.createChannel(function(err, ch) {
+	    ch.assertQueue(q, {durable: true});
+	    // Note: on Node 6 Buffer.from(msg) should be used
+	    ch.sendToQueue(q, new Buffer(data), {persistent:true});
+	    console.log(" [x] Sent data");
+	  });
+	});
+
+}
+
+
+
+amqp.connect('amqp://localhost', function(err, conn) {
+  conn.createChannel(function(err, ch) {
+    var q = 'status';
+
+    //ch.assertQueue(q, {durable: false});
+
+    console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
+	ch.consume(q, function(msg) {
+		msg = JSON.parse(msg.content)
+		console.log(" [x] Received: ", msg.msg);
+		var curr_room = msg.room;
+		var status_msg = msg.msg;
+		
+
+		io.to(curr_room).emit('message', status_msg);
+		io.to(curr_room).emit('status',1);
+
+	}, {noAck: true});
+
+
+
+
+  });
+});
+
+
+
+
+amqp.connect('amqp://localhost', function(err, conn) {
+  conn.createChannel(function(err, ch) {
+    var q = 'response';
+    //ch.assertQueue(q, {durable: false});
+  	
+  	console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
+	ch.consume(q, function(msg) {
+		msg = JSON.parse(msg.content)
+		console.log(" [x] Received: ", msg.msg);
+		var curr_room = msg.room;
+		var status_msg = msg.msg;
+
+
+		delete msg.msg;
+		delete msg.room;
+
+
+		io.to(curr_room).emit('message', status_msg);
+		io.to(curr_room).emit('status',1);
+
+		io.to(curr_room).emit('locations',JSON.stringify(msg));
+
+
+	}, {noAck: true});
+
+
+  });
+});
+
+
+
 
 /* Initial index page for weather report. */
 function renderIndexPage(req, res, next) {
@@ -56,67 +129,61 @@ function submitDate(req, res, next) {
 	io.to(curr_room).emit("Request sent to Data Ingestor");
 	io.to(curr_room).emit('status',0);
 	
-	if (req.body.type == 0){
-		var suff = "get_loc";
-		var d = "get location"
-	}
-	else{
-		var suff = "get_url";
-		var d = "get url"
-	}
 
+	// var insert_data = {
+	//   "username" : req.cookies.email,
+	//   "timestamp" : new Date().getTime(),
+	//   "description" : desc
+	// }
 
-	//Inserting data to registry
-	var desc = "Request sent to Data Ingestor to "+ d;  
+	// console.log(desc)
+	// //log the process
+	// db.insertDB(insert_data, function(res){
+	//   console.log("response received..."+res)
+	// });
+	// //registry part over
+
+	var data = JSON.stringify({room:curr_room, date: req.body.date ,timest:req.body.timest,
+								type : req.body.type, req_no : req.body.req_no})
 	
-
-	var insert_data = {
-	  "username" : req.cookies.email,
-	  "timestamp" : new Date().getTime(),
-	  "description" : desc
-	}
-
-	console.log(desc)
-	//log the process
-	db.insertDB(insert_data, function(res){
-	  console.log("response received..."+res)
-	});
-	//registry part over
+	sendToRabbit(data, "dataIngestor");
 
 
-	fetch('http://'+process.env.IP+':4000/'+suff,{method: "POST",  headers: {
-	'Accept': 'application/json',
-	'Content-Type': 'application/json'
-	},
-		body: JSON.stringify({room:curr_room, date: req.body.date ,timest:req.body.timest, hostIp: process.env.IP})
-	})
-	.then(function(res) {
-		return res.text();
-	}).then(function(body) {
+	// fetch('http://'+process.env.IP+':4000/'+suff,{method: "POST",  headers: {
+	// 'Accept': 'application/json',
+	// 'Content-Type': 'application/json'
+	// },
+	// 	body: JSON.stringify({room:curr_room, date: req.body.date ,timest:req.body.timest, hostIp: process.env.IP})
+	// })
+	// .then(function(res) {
+	// 	return res.text();
+	// }).then(function(body) {
 
-		var body1= JSON.parse(body);
-		console.log("Received response from data ingestor", body1["msg"]);
-		io.to(curr_room).emit('message',body1["msg"]);
-		res.send(body);   
-	}).catch(function(error) {
-	  // Treat network errors without responses as 500s.
-	  // const status = error.response ? error.response.status : 500
-	  // if (status === 404) {
-	  //   // Not found handler.
-	  // } else {
-	  //   // Other errors.
-	  // }
+	// 	var body1= JSON.parse(body);
+	// 	console.log("Received response from data ingestor", body1["msg"]);
+	// 	io.to(curr_room).emit('message',body1["msg"]);
+	// 	res.send(body);   
+	// }).catch(function(error) {
+	//   // Treat network errors without responses as 500s.
+	//   // const status = error.response ? error.response.status : 500
+	//   // if (status === 404) {
+	//   //   // Not found handler.
+	//   // } else {
+	//   //   // Other errors.
+	//   // }
 
-	  	//console.log("error response from data ingestor: ", res.status);
-		io.to(curr_room).emit('message',"Error response from Data Ingestor....");
-		io.to(curr_room).emit('status',-1);
-		res.send("Error response from Data Ingestor....");
-	});
+	//   	//console.log("error response from data ingestor: ", res.status);
+	// 	io.to(curr_room).emit('message',"Error response from Data Ingestor....");
+	// 	io.to(curr_room).emit('status',-1);
+	// 	res.send("Error response from Data Ingestor....");
+	// });
 
 	
 	
 }
 
+
+/*
 
 //new function to accept the response from the microservice
 
@@ -220,6 +287,7 @@ function process_response(req , res){
 
 
 
+*/
 
 //accepting the io object
 module.exports = function(io1){

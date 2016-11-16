@@ -46,10 +46,11 @@ class jobThread(object):
 			print "Node server not reachable.."
 		return 1
 
-	def get_loc(self, loc_url,ch,delivery_tag):
+	def get_loc(self, room, loc_url,ch,delivery_tag):
 		data = self.dt_run.get_stationlist(root_prefix = loc_url, type=3)
 		data = self.dt_run.parse_json(data)
-		data["msg"] = "Station codes from Data Ingestor" 
+		data["msg"] = "Station codes from Data Ingestor"
+		data["room"] = room
 		channel = self.connection.channel()
 		channel.queue_declare(queue='response')
 		channel.basic_publish(exchange='', 
