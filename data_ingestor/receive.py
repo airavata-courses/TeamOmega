@@ -25,8 +25,10 @@ print(' [*] Waiting for messages. To exit press CTRL+C')
 
 def callback(ch, method, properties, body):
 	body = json.loads(body)
-	if int(body["type"])== 0:
-		loc_url = body["date"]
+	print(body)
+	body['type'] = 0
+	if int(body['type'])== 0:
+		loc_url = body['date']
 		mq.get_loc(loc_url, ch, method.delivery_tag)
 	else:
 		loc_url = body['date']
@@ -44,7 +46,7 @@ def callback(ch, method, properties, body):
 	}
 
 	message = json.dumps(statusMessage)
-	sendChannel.basic_publish(exchange='',
+	statusChannel.basic_publish(exchange='',
 	                      routing_key='status',
 	                      body=message)
 	print(" [x] Sent message")

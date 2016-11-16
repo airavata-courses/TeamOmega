@@ -7,10 +7,6 @@ var db = require("./dboperations");
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
 
-var amqp = require('amqplib/callback_api');
-
-
-
 var io;		//this variable to get the socket object from the module.exports at bottom of this code..
 
 console.log(process.env.IP);
@@ -23,10 +19,6 @@ router.post('/submit', submitDate);
 //posting from a microservice
 
 router.post('/service-response', process_response);
-
-
-
-amqp.connect('amqp://localhost', function(err, conn) {});
 
 /* Initial index page for weather report. */
 function renderIndexPage(req, res, next) {
