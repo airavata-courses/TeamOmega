@@ -25,13 +25,14 @@ class jobThread(object):
 
 	def worker(self,req):
 		print("Worker running for the task")
+		loc_url,timest,room,msg_time,ch,delivery_tag = req
 
+		wait_time = time.time()-req[3]
 
-		wait_time = time.time()-req[-1]
 		if wait_time<self.sleep:
 			time.sleep(self.sleep-wait_time)
 		print "thread woke up"
-		kml = self.sd_run.detection(req[0])
+		kml = self.sd_run.detection(loc_url)
 		data1 = {
 		"room" : req[1],
 		"kml" : str(kml),
