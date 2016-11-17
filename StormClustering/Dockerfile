@@ -19,5 +19,5 @@ RUN pip install -r /app/requirements.txt
 COPY . /app
 
 EXPOSE 5789
-ENTRYPOINT [ "gunicorn" ]
-CMD ["-b","0.0.0.0:5789","wsgi"]
+ENTRYPOINT [ "python" ]
+CMD ["rabbit.py"]
