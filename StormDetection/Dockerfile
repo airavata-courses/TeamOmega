@@ -20,4 +20,4 @@ COPY . /app
 
 EXPOSE 5678
 
-CMD ["python","wsgi.py"]
+CMD ["python","rabbit.py"]
