@@ -37,3 +37,6 @@ docker pull njetty/data_ingestor
 
 echo 'Removing the previous image'
 sudo docker rmi $(sudo docker images | grep "^<none>" | awk '{print $3}')
+if  ["$?" -ne 0]; then
+        echo "No previous images found"
+fi
