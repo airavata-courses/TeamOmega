@@ -31,7 +31,7 @@ class jobThread(object):
 		print("Worker running for the task")
 		final_url,room,req_no,msg_time,ch,delivery_tag = req
 
-		wait_time = time.time()-req[3]
+		wait_time = time.time()-msg_time
 		if wait_time<self.sleep:
 			time.sleep(self.sleep-wait_time)
 		print "thread woke up"
@@ -45,12 +45,12 @@ class jobThread(object):
 		}
 		try:
 			channel = self.connection.channel()
-			channel.queue_declare(queue='response')
+			channel.queue_declare(queue='response', durable=True)
 			channel.basic_publish(exchange='', routing_key='response', body=json.dumps(data), properties=pika.BasicProperties(delivery_mode = 2))
 			channel.close()
 			ch.basic_ack(delivery_tag=delivery_tag) 	
-		except:
-			print "server not reachable"
+		except Exception, e:
+			print "server not reachable", e
 		self.count -= 1
 		return 1
 
@@ -84,6 +84,9 @@ if __name__ == '__main__':
 		final_url = body['final_url']
 		room = body['room']
 		req_no = body['req_no']
+
+
+		print("received message")
 
 		jb.process_data((final_url,room, req_no, time.time(), ch, method.delivery_tag))
 
