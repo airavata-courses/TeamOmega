@@ -2,7 +2,7 @@ import pika
 import json
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
-        host='localhost'))
+        host='52.43.210.8'))
 
 
 

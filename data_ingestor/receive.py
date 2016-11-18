@@ -4,7 +4,7 @@ import json
 import msg_q
 
 
-FINAL_URL = "localhost"
+FINAL_URL = "52.43.210.8"
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
         host=FINAL_URL))
