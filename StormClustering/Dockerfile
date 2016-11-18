@@ -18,6 +18,5 @@ RUN pip install -r /app/requirements.txt
 
 COPY . /app
 
-EXPOSE 5789
 ENTRYPOINT [ "python" ]
-CMD ["rabbit.py"]
+CMD ["rabbitq.py"]
