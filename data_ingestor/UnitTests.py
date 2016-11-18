@@ -1,5 +1,4 @@
 from nose.tools import assert_equal
-import app
 import json
 # test_app = app.app.test_client()
 
