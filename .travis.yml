@@ -42,9 +42,9 @@ deploy:
     bucket: sga-team-omega
     key: data-ingestor.zip
     bundle_type: zip
-    application: SGA_TeamOmega
-    deployment_group: SGA_TeamOmega
-    region: us-west-2
+    application: TeamOmega_east
+    deployment_group: Omega_microservices
+    region: us-east-2
     on:
       repo: airavata-courses/TeamOmega
       all_branches: true
