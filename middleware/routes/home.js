@@ -77,7 +77,7 @@ amqp.connect('amqp://'+process.env.IP, function(err, conn) {
   	console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
 	ch.consume(q, function(msg) {
 		msg = JSON.parse(msg.content)
-		console.log(" [x] Received: ", msg);
+		// console.log(" [x] Received: ", msg);
 		var curr_room = msg.room;
 		var status_msg = msg.msg;
 
@@ -142,7 +142,7 @@ function renderIndexPage(req, res, next) {
 function submitDate(req, res, next) {
 
 
-
+	console.log("here-------------------------------------------------------");
 
 	var curr_room = req.body.room;
 
@@ -164,9 +164,10 @@ function submitDate(req, res, next) {
 	// });
 	// //registry part over
 
+
 	var data = JSON.stringify({room:curr_room, date: req.body.date ,timest:req.body.timest,
 								type : req.body.type, req_no : req.body.req_no})
-	
+	console.log(data,"---------------------------------------------");
 	sendToRabbit(data, "dataIngestor");
 
 
