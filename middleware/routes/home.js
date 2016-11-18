@@ -45,7 +45,7 @@ amqp.connect('amqp://'+process.env.IP, function(err, conn) {
   conn.createChannel(function(err, ch) {
     var q = 'status';
 
-    //ch.assertQueue(q, {durable: false});
+    ch.assertQueue(q, {durable: true});
 
     console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
 	ch.consume(q, function(msg) {
@@ -73,7 +73,7 @@ amqp.connect('amqp://'+process.env.IP, function(err, conn) {
   conn.createChannel(function(err, ch) {
     var q = 'response';
     //ch.assertQueue(q, {durable: false});
-  	
+  	ch.assertQueue(q, {durable: true});
   	console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
 	ch.consume(q, function(msg) {
 		msg = JSON.parse(msg.content)
