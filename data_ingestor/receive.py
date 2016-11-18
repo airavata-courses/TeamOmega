@@ -2,9 +2,11 @@ import pika
 import time
 import json
 import msg_q
+from json import load
+from urllib2 import urlopen
 
+FINAL_URL = load(urlopen('https://api.ipify.org/?format=json'))['ip']
 
-FINAL_URL = "52.43.210.8"
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
         host=FINAL_URL))

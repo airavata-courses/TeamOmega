@@ -12,7 +12,6 @@ before_install:
 script:
   - nosetests UnitTests.py
   - docker build -t njetty/data_ingestor:latest .
-  - docker run -d -p 4000:4000 njetty/data_ingestor
 after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
   - docker push njetty/data_ingestor:latest

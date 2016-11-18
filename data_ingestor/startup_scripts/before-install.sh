@@ -18,6 +18,7 @@ fi
 sudo fuser -k 4000/tcp
 
 
+
 # python /data_ingestor/startup_scripts/check_gunicorn.py
 # if [[ $? = 0 ]]; then
 #     echo "gunicorn is already installed"
