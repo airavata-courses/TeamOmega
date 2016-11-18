@@ -23,17 +23,17 @@ after_success:
 
 before_deploy:
   - cd ..
-  - zip -r B1.zip middleware/startup_scripts appspec.yml  || true
-  - mkdir -p "B1_upload"
-  - mv B1.zip B1_upload/B1.zip || true
+  - zip -r API_Gateway.zip middleware/startup_scripts appspec.yml  || true
+  - mkdir -p "API_Gateway_upload"
+  - mv API_Gateway.zip API_Gateway_upload/API_Gateway.zip || true
 
 deploy:
   - provider: s3
     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
     secret_access_key: $AWS_SECRET_KEY
-    local_dir: B1_upload
-    bucket: sga-team-omega
-    region: us-west-2
+    local_dir: API_Gateway_upload
+    bucket: omega-m2
+    region: us-east-2
     skip_cleanup: true
     acl: public_read
     detect_encoding: true
@@ -43,12 +43,12 @@ deploy:
   - provider: codedeploy
     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
     secret_access_key: $AWS_SECRET_KEY
-    bucket: sga-team-omega
-    key: B1.zip
+    bucket: omega-m2
+    key: API_Gateway.zip
     bundle_type: zip
-    application: SGA_TeamOmega
-    deployment_group: SGA_TeamOmega
-    region: us-west-2
+    application: TeamOmega_east
+    deployment_group: Omega_App_Server
+    region: us-east-2
     on:
       repo: airavata-courses/TeamOmega
       all_branches: true
