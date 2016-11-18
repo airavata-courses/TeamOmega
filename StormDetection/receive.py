@@ -7,7 +7,7 @@ import msg_q
 
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(
-        host='localhost'))
+        host='52.43.210.8'))
 
 mq = msg_q.jobThread(connection)
 

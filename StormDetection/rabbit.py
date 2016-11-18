@@ -7,7 +7,7 @@ import json
 from threading import Thread
 
 
-FINAL_URL = 'localhost'
+FINAL_URL = '52.43.210.8'
 
 class jobThread(object):
 	"""docstring for jobThread"""

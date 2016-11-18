@@ -18,6 +18,5 @@ RUN pip install -r /app/requirements.txt
 
 COPY . /app
 
-EXPOSE 5678
 
 CMD ["python","rabbit.py"]
