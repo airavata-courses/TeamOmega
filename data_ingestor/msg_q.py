@@ -24,7 +24,7 @@ class jobThread(object):
 		print("Worker running for the task")
 		loc_url,timest,req_no, room,msg_time,ch,delivery_tag = req
 
-		wait_time = time.time()-req[3]
+		wait_time = time.time()
 		
 		if wait_time<self.sleep:
 			time.sleep(self.sleep-wait_time)
