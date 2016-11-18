@@ -22,7 +22,7 @@ class jobThread(object):
 
 	def worker(self,req):
 		print("Worker running for the task")
-		loc_url,timest,room,msg_time,ch,delivery_tag = req
+		loc_url,timest,req_no, room,msg_time,ch,delivery_tag = req
 
 		wait_time = time.time()-req[3]
 		
@@ -34,7 +34,8 @@ class jobThread(object):
 		"room" : room,
 		"final_url" : str(new_url),
 		"type" : "2",
-		"msg": "Data Ingestor processing complete.."
+		"msg": "Data Ingestor processing complete..",
+		"req_no" : req_no
 		}
 		try:
 			channel = self.connection.channel()
