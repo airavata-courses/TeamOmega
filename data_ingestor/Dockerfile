@@ -17,6 +17,5 @@ RUN pip install -r /app/requirements.txt
 
 COPY . /app
 
-EXPOSE 4000
 
-CMD ["python","wsgi.py"]
+CMD ["python","receive.py"]
