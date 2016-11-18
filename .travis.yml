@@ -28,8 +28,8 @@ deploy:
     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
     secret_access_key: $AWS_SECRET_KEY
     local_dir: dpl_cd_upload
-    bucket: sga-team-omega
-    region: us-west-2
+    bucket: omega-m3
+    region: us-east-2
     skip_cleanup: true
     acl: public_read
     detect_encoding: true
