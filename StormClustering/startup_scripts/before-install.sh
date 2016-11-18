@@ -24,6 +24,17 @@ fi
 echo 'Pulling a new image from docker'
 docker pull sagarkrkv/stormclustering
 
+echo 'Removing the previous image'
+sudo docker rmi $(sudo docker images | grep "^<none>" | awk '{print $3}')
+if  [ "$?" -ne 0 ]; then
+	echo ""
+fi
+
+echo 'Removing the previous images with exit status'
+if  [ "$(sudo docker ps -a | grep Exit  )" != "" ]; then
+	sudo docker ps -a | grep Exit | cut -d ' ' -f 1 | xargs sudo docker rm
+fi
+
 echo 'Checking consul status and installing if required'
 if [[ "$(docker ps -q --filter ancestor=gliderlabs/consul-server)" == "" ]]; then
         
@@ -43,6 +54,7 @@ if [[ "$(docker ps -q --filter ancestor=gliderlabs/registrator)" == "" ]]; then
         
      sudo docker run -d --name=registrator --net=host --volume=/var/run/docker.sock:/tmp/docker.sock gliderlabs/registrator:latest consul://localhost:8500
 fi
+
 
 
 
