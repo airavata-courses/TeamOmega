@@ -38,7 +38,7 @@ class jobThread(object):
 		}
 		try:
 			channel = self.connection.channel()
-			channel.queue_declare(queue='response')
+			channel.queue_declare(queue='response', durable=True)
 			channel.basic_publish(exchange='', routing_key='response', body=json.dumps(data), properties=pika.BasicProperties(delivery_mode = 2))
 			channel.close()
 			ch.basic_ack(delivery_tag=delivery_tag)	
@@ -51,8 +51,9 @@ class jobThread(object):
 		data = self.dt_run.parse_json(data)
 		data["msg"] = "Station codes from Data Ingestor"
 		data["room"] = room
+		data["type"] = "1"
 		channel = self.connection.channel()
-		channel.queue_declare(queue='response')
+		channel.queue_declare(queue='response', durable=True)
 		channel.basic_publish(exchange='', 
 								routing_key='response', 
 								body=json.dumps(data),

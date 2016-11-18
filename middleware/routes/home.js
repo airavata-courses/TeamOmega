@@ -77,20 +77,41 @@ amqp.connect('amqp://localhost', function(err, conn) {
   	console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
 	ch.consume(q, function(msg) {
 		msg = JSON.parse(msg.content)
-		console.log(" [x] Received: ", msg.msg);
+		console.log(" [x] Received: ", msg);
 		var curr_room = msg.room;
 		var status_msg = msg.msg;
 
-
-		delete msg.msg;
-		delete msg.room;
-
+		var type = msg.type;
 
 		io.to(curr_room).emit('message', status_msg);
 		io.to(curr_room).emit('status',1);
 
-		io.to(curr_room).emit('locations',JSON.stringify(msg));
 
+		if(type == 1){
+
+			delete msg.msg;
+			delete msg.room;
+			delete msg.type;
+			
+			io.to(curr_room).emit('locations',JSON.stringify(msg));
+
+		}
+		else if(type == 2){
+		
+			var data = JSON.stringify(msg);
+	
+			sendToRabbit(data, "stormDetection");
+		}
+		else if(type == 3){
+		
+			var data = JSON.stringify(msg);
+	
+			sendToRabbit(data, "stormClustering");
+		}
+		else if(type == 4){
+			io.to(room).emit('icon',msg["icon"]);
+
+		}
 
 	}, {noAck: true});
 
