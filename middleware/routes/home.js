@@ -109,7 +109,7 @@ amqp.connect('amqp://'+process.env.IP, function(err, conn) {
 			sendToRabbit(data, "stormClustering");
 		}
 		else if(type == 4){
-			io.to(room).emit('icon',msg["icon"]);
+			io.to(curr_room).emit('icon',msg["icon"]);
 
 		}
 
