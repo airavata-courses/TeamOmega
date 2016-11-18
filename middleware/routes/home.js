@@ -28,7 +28,7 @@ router.post('/submit', submitDate);
 
 function sendToRabbit(data, q){
 
-	amqp.connect('amqp://localhost', function(err, conn) {
+	amqp.connect('amqp://'+process.env.IP, function(err, conn) {
 	  conn.createChannel(function(err, ch) {
 	    ch.assertQueue(q, {durable: true});
 	    // Note: on Node 6 Buffer.from(msg) should be used
@@ -41,7 +41,7 @@ function sendToRabbit(data, q){
 
 
 
-amqp.connect('amqp://localhost', function(err, conn) {
+amqp.connect('amqp://'+process.env.IP, function(err, conn) {
   conn.createChannel(function(err, ch) {
     var q = 'status';
 
@@ -69,7 +69,7 @@ amqp.connect('amqp://localhost', function(err, conn) {
 
 
 
-amqp.connect('amqp://localhost', function(err, conn) {
+amqp.connect('amqp://'+process.env.IP, function(err, conn) {
   conn.createChannel(function(err, ch) {
     var q = 'response';
     //ch.assertQueue(q, {durable: false});
