@@ -9,8 +9,8 @@ before_install:
   - cd middleware
 
 install:
-  - npm install
-  
+  - npm install --silent
+
 cache:
   directories:
     - node_modules
