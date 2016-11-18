@@ -33,7 +33,8 @@ def callback(ch, method, properties, body):
 		loc_url = body['date']
 		timest = int(body['timest'])
 		room = body['room']
-		mq.process_data((loc_url,timest, room, time.time(), ch, method.delivery_tag))
+		req_no = body['req_no']
+		mq.process_data((loc_url,timest,req_no, room, time.time(), ch, method.delivery_tag))
 
 	print(" [x] Done", ch, method.delivery_tag)
 
