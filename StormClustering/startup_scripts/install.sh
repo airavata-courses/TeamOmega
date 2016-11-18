@@ -1,6 +1,6 @@
  #!/bin/bash
 echo 'Running the downloaded container'
-sudo docker run -d -P sagarkrkv/stormclustering
+sudo docker run -d -p 5000:5000 sagarkrkv/stormclustering
 # cd /home/ec2-user/TeamOmega/data_ingestor
 # echo pwd
 # pip install guincorn
