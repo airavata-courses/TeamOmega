@@ -5,9 +5,9 @@ import msg_q
 from json import load
 from urllib2 import urlopen
 
-FINAL_URL = load(urlopen('https://api.ipify.org/?format=json'))['ip']
+FINAL_URL = load(urlopen('http://api.ipify.org/?format=json'))['ip']
 
-
+print FINAL_URL
 connection = pika.BlockingConnection(pika.ConnectionParameters(
         host=FINAL_URL))
 
