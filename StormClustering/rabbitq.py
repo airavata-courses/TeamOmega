@@ -39,8 +39,8 @@ class jobThread(object):
 
 		wait_time = time.time()-msg_time
 		
-		# if wait_time<self.sleep:
-		# 	time.sleep(self.sleep-wait_time)
+		if wait_time<self.sleep:
+			time.sleep(self.sleep-wait_time)
 		
 		
 		kml,icon = self.sd_run.cluster(kml)
