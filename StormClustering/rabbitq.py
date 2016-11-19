@@ -13,7 +13,6 @@ FINAL_URL = load(urlopen('http://api.ipify.org/?format=json'))['ip']
 
 print FINAL_URL
 
-
 class jobThread(object):
 	"""docstring for jobThread"""
 	def __init__(self, connection, sleep=10):
