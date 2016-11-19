@@ -5,8 +5,13 @@ import random
 import pika
 import json
 from threading import Thread
+from json import load
 
-FINAL_URL = 'localhost'
+from urllib2 import urlopen
+
+FINAL_URL = load(urlopen('http://api.ipify.org/?format=json'))['ip']
+
+print FINAL_URL
 
 
 class jobThread(object):
