@@ -34,7 +34,11 @@ var getIP = function(callback){
 
 }
 
+var new_ip;
+
 getIP(function(ip_add){
+
+	new_ip = ip_add;
 
 	console.log("inside callback....", ip_add);
 
@@ -120,19 +124,6 @@ getIP(function(ip_add){
 	});
 
 
-	function sendToRabbit(data, q){
-
-		amqp.connect('amqp://'+ip_add, function(err, conn) {
-		  conn.createChannel(function(err, ch) {
-		    ch.assertQueue(q, {durable: true});
-		    // Note: on Node 6 Buffer.from(msg) should be used
-		    ch.sendToQueue(q, new Buffer(data), {persistent:true});
-		    console.log(" [x] Sent data");
-		  });
-		});
-
-	}
-
 
 
 });
@@ -144,6 +135,18 @@ getIP(function(ip_add){
 
 
 
+function sendToRabbit(data, q){
+
+		amqp.connect('amqp://'+new_ip, function(err, conn) {
+		  conn.createChannel(function(err, ch) {
+		    ch.assertQueue(q, {durable: true});
+		    // Note: on Node 6 Buffer.from(msg) should be used
+		    ch.sendToQueue(q, new Buffer(data), {persistent:true});
+		    console.log(" [x] Sent data");
+		  });
+		});
+
+	}
 
 
 
@@ -167,7 +170,7 @@ function renderIndexPage(req, res, next) {
 function submitDate(req, res, next) {
 
 
-	console.log("here-------------------------------------------------------");
+	console.log("here-------------------------------------------------------", new_ip);
 
 	var curr_room = req.body.room;
 
