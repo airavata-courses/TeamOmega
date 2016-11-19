@@ -6,8 +6,14 @@ import json
 
 from threading import Thread
 
+from json import load
 
-FINAL_URL = '52.43.210.8'
+from urllib2 import urlopen
+
+FINAL_URL = load(urlopen('http://api.ipify.org/?format=json'))['ip']
+
+print FINAL_URL
+
 
 class jobThread(object):
 	"""docstring for jobThread"""
