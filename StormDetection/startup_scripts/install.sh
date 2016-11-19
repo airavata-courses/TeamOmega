@@ -1,7 +1,8 @@
 #!/bin/bash
 
 echo 'Running the downloaded container'
-sudo docker run --restart unless-stopped -d -P sagarkrkv/stormdetection
+
+sudo docker run --restart unless-stopped -d -p 6000:6000 sagarkrkv/stormdetection
 
 # cd /home/ec2-user/TeamOmega/data_ingestor
 # echo pwd
