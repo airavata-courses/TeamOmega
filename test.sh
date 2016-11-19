@@ -1,34 +1,5 @@
 #!/bin/bash
 
-command_exists() {
-        command -v "$@" > /dev/null 2>&1
-}
-if command_exists docker; then
-                version="$(docker -v | awk -F '[ ,]+' '{ print $3 }')"
-                MAJOR_W=1
-                MINOR_W=10
-		echo 'Docker is already installed'
-
-else
-		echo 'Installing Docker'
-                sudo yum update -y
-                sudo yum install -y docker
-                sudo service docker start
-fi
-
-echo 'creating network between docker..'
-docker network create my-fancy-network
-
-echo 'creatinga a link between middleware and data_ingestor..'
-docker run -i -t --name sagarkrkv/middleware --link njetty/data_ingestor
-
-
-echo 'Killing any container of the old Docker image'
-docker rm $(docker stop $(docker ps -a -q --filter ancestor=sagarkrkv/middleware --format="{{.ID}}"))
-
-echo 'Pulling a new image from docker'
-docker pull sagarkrkv/middleware
-
 echo 'Removing the previous images with exit status'
 if  [ "$(sudo docker ps -a | grep Exit  )" != "" ]; then
 	sudo docker ps -a | grep Exit | cut -d ' ' -f 1 | xargs sudo docker rm
@@ -41,7 +12,7 @@ if [[ "$(docker ps -q --filter ancestor=gliderlabs/consul-server)" == "" ]]; the
 
 		alias wanip='dig +short myip.opendns.com @resolver1.opendns.com'
 
-		 sudo docker run -d -p 8300:8300 -p 8301:8301/tcp -p 8301:8301/udp -p 8312:8302/tcp -p 8302:8302/udp -p 8400:8400 -p 8500:8500 -p 53:53/udp -p 8600:8600  --name=consul -e SERVICE_IGNORE=true -h $(hostname) gliderlabs/consul-server -node=$(hostname)  -atlas=vkalvaku/dem -atlas-join -atlas-token=$ATLAS_TOKEN -advertise $(wanip)
+		 sudo docker run -d -p 8300:8300 -p 8301:8301/tcp -p 8301:8301/udp -p 8312:8302/tcp -p 8302:8302/udp -p 8400:8400 -p 8500:8500 -p 53:53/udp -p 8600:8600  --name=consul -e SERVICE_IGNORE=true -h $(hostname) gliderlabs/consul-server -node=$(hostname)  -atlas=vkalvaku/dem -atlas-join -atlas-token=$ATLAS_TOKEN -advertise $wanip
 	
 	if [[ "$(docker ps -a -q --filter ancestor=gliderlabs/registrator)" != "" ]]; then
 		docker rm $(docker stop $(docker ps -a -q --filter ancestor=gliderlabs/registrator --format="{{.ID}}"))
