@@ -29,7 +29,7 @@ class jobThread(object):
 		wait_time = time.time()-msg_time
 		
 		if wait_time<self.sleep:
-			time.sleep(self.sleep-wait_time)
+			self.connection.sleep(self.sleep-wait_time)
 
 		new_url = self.dt_run.timeparse(loc_url,timest=msg_time)
 		data = {

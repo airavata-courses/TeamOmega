@@ -28,7 +28,17 @@ print(' [*] Waiting for messages. To exit press CTRL+C')
 
 def callback(ch, method, properties, body):
 	body = json.loads(body)
-	print(body)
+	statusMessage = {
+		"room": body["room"],
+		"msg" : "DataIngestor is processing the request number {}".format(body["req_no"])
+	}
+
+	message = json.dumps(statusMessage)
+	statusChannel.basic_publish(exchange='',
+	                      routing_key='status',
+	                      body=message)
+	print(" [x] Sent Status message")
+
 	if int(body['type'])== 0:
 		loc_url = body['date']
 		mq.get_loc(body["room"],loc_url, ch, method.delivery_tag)
@@ -43,16 +53,7 @@ def callback(ch, method, properties, body):
 
 	#sending status message....
 
-	statusMessage = {
-		"room": body["room"],
-		"msg" : "DataIngestor is processing the request number {}".format(body["req_no"])
-	}
 
-	message = json.dumps(statusMessage)
-	statusChannel.basic_publish(exchange='',
-	                      routing_key='status',
-	                      body=message)
-	print(" [x] Sent message")
 
 
 
