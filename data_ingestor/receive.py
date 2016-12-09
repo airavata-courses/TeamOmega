@@ -8,6 +8,7 @@ from urllib2 import urlopen
 FINAL_URL = load(urlopen('http://api.ipify.org/?format=json'))['ip']
 
 print FINAL_URL
+FINAL_URL = "52.15.165.201"
 connection = pika.BlockingConnection(pika.ConnectionParameters(
         host=FINAL_URL))
 
@@ -36,7 +37,7 @@ def callback(ch, method, properties, body):
 		timest = int(body['timest'])
 		room = body['room']
 		req_no = body['req_no']
-		mq.process_data((loc_url,timest,req_no, room, time.time(), ch, method.delivery_tag))
+		mq.worker((loc_url,timest,req_no, room, time.time(), ch, method.delivery_tag))
 
 	print(" [x] Done", ch, method.delivery_tag)
 

@@ -14,6 +14,8 @@ class jobThread(object):
 		self.dt_run = data_parser.DataIngestor()
 		self.dt_run.start()
 		self.connection = connection
+		self.send_channel = connection.channel() 
+		self.send_channel.queue_declare(queue='response', durable=True)
 
 	def process_data(self,req_data):
 		print "here",req_data
@@ -37,14 +39,9 @@ class jobThread(object):
 		"msg": "Data Ingestor processing complete..",
 		"req_no" : req_no
 		}
-		try:
-			channel = self.connection.channel()
-			channel.queue_declare(queue='response', durable=True)
-			channel.basic_publish(exchange='', routing_key='response', body=json.dumps(data), properties=pika.BasicProperties(delivery_mode = 2))
-			channel.close()
-			ch.basic_ack(delivery_tag=delivery_tag)	
-		except:
-			print "Node server not reachable.."
+		self.send_channel.basic_publish(exchange='', routing_key='response', body=json.dumps(data), properties=pika.BasicProperties(delivery_mode = 2))
+		ch.basic_ack(delivery_tag=delivery_tag)	
+		print "Msg sent"
 		return 1
 
 	def get_loc(self, room, loc_url,ch,delivery_tag):
@@ -53,13 +50,10 @@ class jobThread(object):
 		data["msg"] = "Station codes from Data Ingestor"
 		data["room"] = room
 		data["type"] = "1"
-		channel = self.connection.channel()
-		channel.queue_declare(queue='response', durable=True)
-		channel.basic_publish(exchange='', 
+		self.send_channel.basic_publish(exchange='', 
 								routing_key='response', 
 								body=json.dumps(data),
 								properties=pika.BasicProperties(delivery_mode = 2,)
 							)
-		channel.close()	
 		ch.basic_ack(delivery_tag=delivery_tag)
 
