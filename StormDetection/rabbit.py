@@ -12,17 +12,20 @@ from urllib2 import urlopen
 
 FINAL_URL = load(urlopen('http://api.ipify.org/?format=json'))['ip']
 
+# FINAL_URL = "52.15.165.201"
 print FINAL_URL
 
 
 class jobThread(object):
 	"""docstring for jobThread"""
-	def __init__(self, connection,sleep=10):
+	def __init__(self, connection,sleep=7):
 		self.sleep = sleep
 		self.sd_run = storm_detector.StormDetection()
 		self.sd_run.start()
 		self.count = 0
 		self.connection = connection
+		self.send_channel = connection.channel()
+		self.send_channel.queue_declare(queue='response', durable=True)
 
 	def process_data(self,req_data):
 		if self.count < 5:
@@ -39,7 +42,7 @@ class jobThread(object):
 
 		wait_time = time.time()-msg_time
 		if wait_time<self.sleep:
-			time.sleep(self.sleep-wait_time)
+			self.connection.sleep(self.sleep-wait_time)
 		print "thread woke up"
 		kml = self.sd_run.detection(final_url)
 		data = {
@@ -49,15 +52,9 @@ class jobThread(object):
 		"msg": "Storm Detection processing complete..",
 		"req_no" : req_no
 		}
-		try:
-			channel = self.connection.channel()
-			channel.queue_declare(queue='response', durable=True)
-			channel.basic_publish(exchange='', routing_key='response', body=json.dumps(data), properties=pika.BasicProperties(delivery_mode = 2))
-			channel.close()
-			ch.basic_ack(delivery_tag=delivery_tag) 	
-		except Exception, e:
-			print "server not reachable", e
-		self.count -= 1
+		self.send_channel.basic_publish(exchange='', routing_key='response', body=json.dumps(data), properties=pika.BasicProperties(delivery_mode = 2))
+		ch.basic_ack(delivery_tag=delivery_tag) 	
+		
 		return 1
 
 
@@ -91,15 +88,6 @@ if __name__ == '__main__':
 		room = body['room']
 		req_no = body['req_no']
 
-
-		print("received message")
-
-		jb.process_data((final_url,room, req_no, time.time(), ch, method.delivery_tag))
-
-		print(" [x] Done", ch, method.delivery_tag)
-
-		#sending status message....
-
 		statusMessage = {
 			"room": body["room"],
 			"msg" : "Storm Detection is processing the request number {}".format(body["req_no"])
@@ -109,7 +97,15 @@ if __name__ == '__main__':
 		statusChannel.basic_publish(exchange='',
 		                      routing_key='status',
 		                      body=message)
-		print(" [x] Sent message")
+		print(" [x] Sent Status message")
+
+		jb.worker((final_url,room, req_no, time.time(), ch, method.delivery_tag))
+
+		print(" [x] Done", ch, method.delivery_tag)
+
+		#sending status message....
+
+
 
 
 
