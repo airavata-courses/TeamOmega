@@ -48,3 +48,5 @@ if [[ "$(docker ps -q --filter ancestor=gonkulatorlabs/rabbitmq)" == "" ]]; then
      sleep 50       
      sudo docker run -d --net=host --name rabbitmq -e SERVICE_IGNORE=true -e AUTOCLUSTER_TYPE=consul -e AUTOCLUSTER_LOG_LEVEL=debug -e CONSUL_HOST=localhost gonkulatorlabs/rabbitmq
 fi
+
+docker pull njetty/data_ingestor
