@@ -8,7 +8,7 @@ from urllib2 import urlopen
 FINAL_URL = load(urlopen('http://api.ipify.org/?format=json'))['ip']
 
 print FINAL_URL
-FINAL_URL = "52.15.165.201"
+# FINAL_URL = "52.15.165.201"
 connection = pika.BlockingConnection(pika.ConnectionParameters(
         host=FINAL_URL))
 
@@ -50,6 +50,15 @@ def callback(ch, method, properties, body):
 		mq.worker((loc_url,timest,req_no, room, time.time(), ch, method.delivery_tag))
 
 	print(" [x] Done", ch, method.delivery_tag)
+	statusMessage = {
+		"room": body["room"],
+		"msg" : "DataIngestor has completed processing the request number {}".format(body["req_no"])
+	}
+
+	message = json.dumps(statusMessage)
+	statusChannel.basic_publish(exchange='',
+	                      routing_key='status',
+	                      body=message)
 
 	#sending status message....
 

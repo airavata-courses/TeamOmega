@@ -16,7 +16,8 @@ class jobThread(object):
 		self.connection = connection
 		self.send_channel = connection.channel() 
 		self.send_channel.queue_declare(queue='response', durable=True)
-
+		self.stormChannel = connection.channel()
+		self.stormChannel.queue_declare(queue='stormDetection', durable=True)
 	def process_data(self,req_data):
 		print "here",req_data
 		t = Thread(target=self.worker, args=(req_data,))
@@ -26,10 +27,10 @@ class jobThread(object):
 		print("Worker running for the task")
 		loc_url,timest,req_no, room,msg_time,ch,delivery_tag = req
 
-		wait_time = time.time()-msg_time
+		# wait_time = time.time()-msg_time
 		
-		if wait_time<self.sleep:
-			self.connection.sleep(self.sleep-wait_time)
+		# if wait_time<self.sleep:
+		self.connection.sleep(7)
 
 		new_url = self.dt_run.timeparse(loc_url,timest=msg_time)
 		data = {
@@ -39,7 +40,7 @@ class jobThread(object):
 		"msg": "Data Ingestor processing complete..",
 		"req_no" : req_no
 		}
-		self.send_channel.basic_publish(exchange='', routing_key='response', body=json.dumps(data), properties=pika.BasicProperties(delivery_mode = 2))
+		self.stormChannel.basic_publish(exchange='', routing_key='stormDetection', body=json.dumps(data), properties=pika.BasicProperties(delivery_mode = 2))
 		ch.basic_ack(delivery_tag=delivery_tag)	
 		print "Msg sent"
 		return 1
