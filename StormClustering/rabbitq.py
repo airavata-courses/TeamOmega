@@ -11,7 +11,7 @@ from urllib2 import urlopen
 
 FINAL_URL = load(urlopen('http://api.ipify.org/?format=json'))['ip']
 
-print FINAL_URL
+FINAL_URL = "52.15.165.201"
 
 class jobThread(object):
 	"""docstring for jobThread"""
@@ -22,6 +22,8 @@ class jobThread(object):
 		# self.sd_run.start()
 		self.count = 0
 		self.connection = connection
+		self.send_channel = connection.channel()
+		self.send_channel.queue_declare(queue='response', durable=True)
 
 
 	def process_data(self,req_data):
@@ -40,7 +42,7 @@ class jobThread(object):
 		wait_time = time.time()-msg_time
 		
 		if wait_time<self.sleep:
-			time.sleep(self.sleep-wait_time)
+			self.connection.sleep(self.sleep-wait_time)
 		
 		
 		kml,icon = self.sd_run.cluster(kml)
@@ -53,18 +55,10 @@ class jobThread(object):
 		"icon": icon,
 		"req_no":req_no
 		}
-		try:
-			channel = self.connection.channel()
-			channel.queue_declare(queue='response', durable=True)
-			channel.basic_publish(exchange='', routing_key='response', body=json.dumps(data), properties=pika.BasicProperties(delivery_mode = 2))
-			channel.close()
-			ch.basic_ack(delivery_tag=delivery_tag)
-		except Exception, e:
-		# 	time.sleep(self.sleep-wait_time)
-		
-			print "Server not reachable..",e
+		self.send_channel.basic_publish(exchange='', routing_key='response', body=json.dumps(data), properties=pika.BasicProperties(delivery_mode = 2))
+		ch.basic_ack(delivery_tag=delivery_tag)
+		print "Sent response"
 
-		self.count -= 1
 		return 1
 
 if __name__ == '__main__':
@@ -91,9 +85,7 @@ if __name__ == '__main__':
 		room = body['room']
 		req_no = body['req_no']
 
-		jb.process_data((kml,room, req_no, time.time(), ch, method.delivery_tag))
-
-		print(" [x] Done", ch, method.delivery_tag)
+		
 
 		#sending status message....
 
@@ -106,7 +98,11 @@ if __name__ == '__main__':
 		statusChannel.basic_publish(exchange='',
 		                      routing_key='status',
 		                      body=message)
-		print(" [x] Sent message")
+		print(" [x] Sent Status message")
+
+		jb.worker((kml,room, req_no, time.time(), ch, method.delivery_tag))
+
+		print(" [x] Done", ch, method.delivery_tag)
 
 
 
