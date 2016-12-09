@@ -25,7 +25,7 @@ class jobThread(object):
 		self.count = 0
 		self.connection = connection
 		self.send_channel = connection.channel()
-		self.send_channel.queue_declare(queue='response', durable=True)
+		self.send_channel.queue_declare(queue='stormClustering', durable=True)
 
 	def process_data(self,req_data):
 		if self.count < 5:
@@ -52,7 +52,7 @@ class jobThread(object):
 		"msg": "Storm Detection processing complete..",
 		"req_no" : req_no
 		}
-		self.send_channel.basic_publish(exchange='', routing_key='response', body=json.dumps(data), properties=pika.BasicProperties(delivery_mode = 2))
+		self.send_channel.basic_publish(exchange='', routing_key='stormClustering', body=json.dumps(data), properties=pika.BasicProperties(delivery_mode = 2))
 		ch.basic_ack(delivery_tag=delivery_tag) 	
 		
 		return 1
@@ -102,6 +102,16 @@ if __name__ == '__main__':
 		jb.worker((final_url,room, req_no, time.time(), ch, method.delivery_tag))
 
 		print(" [x] Done", ch, method.delivery_tag)
+
+		statusMessage = {
+			"room": body["room"],
+			"msg" : "Storm Detection successfully processed the request # {}".format(body["req_no"])
+		}
+
+		message = json.dumps(statusMessage)
+		statusChannel.basic_publish(exchange='',
+		                      routing_key='status',
+		                      body=message)
 
 		#sending status message....
 
