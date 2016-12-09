@@ -20,7 +20,7 @@ router.get('/', renderIndexPage);
 /* submit date and get response from the server.. */
 router.post('/submit', submitDate);
 
-
+var dataingestor_ch;
 
 var getIP = function(callback){
 
@@ -43,7 +43,18 @@ getIP(function(ip_add){
 	console.log("inside callback....", ip_add);
 
 
+
 	amqp.connect('amqp://'+ip_add, function(err, conn) {
+
+
+	 conn.createChannel(function(err, ch) {
+	    var q = 'dataIngestor';
+
+	    ch.assertQueue(q, {durable: true});
+
+	    dataingestor_ch = ch;
+
+	});
 
 	  conn.createChannel(function(err, ch) {
 	    var q = 'status';
@@ -67,12 +78,7 @@ getIP(function(ip_add){
 
 
 	  });
-	});
-
-
-
-
-	amqp.connect('amqp://'+ip_add, function(err, conn) {
+	
 
 	  conn.createChannel(function(err, ch) {
 	    var q = 'response';
@@ -137,14 +143,11 @@ getIP(function(ip_add){
 
 function sendToRabbit(data, q){
 
-		amqp.connect('amqp://'+new_ip, function(err, conn) {
-		  conn.createChannel(function(err, ch) {
-		    ch.assertQueue(q, {durable: true});
+		
 		    // Note: on Node 6 Buffer.from(msg) should be used
-		    ch.sendToQueue(q, new Buffer(data), {persistent:true});
-		    console.log(" [x] Sent data");
-		  });
-		});
+		dataingestor_ch.sendToQueue(q, new Buffer(data), {persistent:true});
+		console.log(" [x] Sent data");
+		
 
 	}
 
