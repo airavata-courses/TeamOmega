@@ -10,5 +10,5 @@ hooks:
       timeout: 300
   ApplicationStart:
     - location: middleware/startup_scripts/dock_install.sh
+      timeout: 3601
       runas: root
-timeout: 240
