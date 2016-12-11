@@ -1,59 +1,63 @@
-# language: python
-# python:
-#   - "2.7"
-# cache: pip
-# sudo: true
-# install: true
-# services: 
-#   - docker
-# before_install:
-#   - cd data_ingestor
-#   - pip install -r requirements.txt
-# script:
-#   - nosetests UnitTests.py
-#   - docker build -t njetty/data_ingestor:latest .
-#   - docker run -d -p 4000:4000 njetty/data_ingestor
-# after_success:
-#   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-#   - docker push njetty/data_ingestor:latest
-# before_deploy:
-#   - docker images
-#   - ls -al
-#   - cd ..
-#   - zip -r data-ingestor.zip scripts appspec.yml || true
-#   - mkdir -p "dpl_cd_upload"
-#   - mv data-ingestor.zip dpl_cd_upload/data-ingestor.zip || true
-# deploy:
-#   - provider: s3
-#     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
-#     secret_access_key: $AWS_SECRET_KEY
-#     local_dir: dpl_cd_upload
-#     bucket: sga-team-omega
-#     region: us-west-2
-#     skip_cleanup: true
-#     acl: public_read
-#     detect_encoding: true
-#     on:
-#       repo: airavata-courses/TeamOmega
-#       all_branches: true
-#   - provider: codedeploy
-#     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
-#     secret_access_key: $AWS_SECRET_KEY
-#     bucket: sga-team-omega
-#     key: data-ingestor.zip
-#     bundle_type: zip
-#     application: SGA_TeamOmega
-#     deployment_group: SGA_TeamOmega
-#     region: us-west-2
-#     on:
-#       repo: airavata-courses/TeamOmega
-#       all_branches: true
-# after_deploy:
-#   - echo "Performing after deploy procedures..."
-# notifications:
-#   email:
-#     recipients:
-#       - vkalvaku@iu.edu
-#       - ssongire@iu.edu
-#   slack:
-#     secure: cE1uKN6FAfMdBAiRWHMOHVLo/DQqosbxNkYI2CAHMR34FVnrFBjYB49qfh8BuF+S4XmiuEBACJCqQvdSFwc4S6wp+jWsPhKmB5W+VsC+QDdCAiegRW3/h45ZMoupefOHNDF6iGmGu5Ck7xDNiJDxCdNaVqxYTsuaWlKC9ur4mutM5FNJGxXaH00qVHFl91jSq84EXSy4wfxRj/uc1PBRHzgpF9RE58O+5dZkhWYqFfrxGpiy3U6DqA49jKzJeRnVlqTagTJCMQqEMAx0AXieuJTPK69ZsTQ0aM3ouy/rZ0Vblw2GpB7FSBiYk7hybVhu568cM/+ZzCsKC9ZUtUaA0g+N8huvFigKvObrvwU7p/YpBcBFdxzVfiyRSPccPQ7myV4ibImxPF1JI0OMqvbzN85Mcp9rnpDcSxVEFFXPW+PUhCVtfbWhmEq8xCNCoMx95lzdxxhIRmVxNtJcpL7gaGliyiZm8YZIutevVCd9WdpH+fddToRV5XAhYO2HzTeGB0JImZczTf20rwbrKaqUXpMG2EGMk3mEJPBtfA7iU4WG5x1CiTQ00gW/0T6U9AxXwiFzu/X7+s2y7H9Xp3VcTfrTJXkJXLkYX0tAk12X1ksHp4weiRUhL955jz2fTUpFzlcS+AcOge7sXIMxgqq1NBm2omt1JavuerZok8zADfk=
+language: node_js
+node_js:
+  - "4.4.2"
+sudo: true
+
+services: 
+  - docker
+before_install:
+  - cd middleware
+
+install:
+  - npm install --silent
+ 
+cache:
+  directories:
+    - node_modules
+
+after_success:
+
+  - docker build -t sagarkrkv/middleware:latest .
+  - docker login -e="$DOCKER_EMAIL" -u="$DOCK_UNAME" -p="$DOCK_PWD"
+  - docker push sagarkrkv/middleware:latest
+
+before_deploy:
+  - cd ..
+  - zip -r API_Gateway.zip middleware/startup_scripts appspec.yml  || true
+  - mkdir -p "API_Gateway_upload"
+  - mv API_Gateway.zip API_Gateway_upload/API_Gateway.zip || true
+
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
+    secret_access_key: $AWS_SECRET_KEY
+    local_dir: API_Gateway_upload
+    bucket: omega-m2
+    region: us-east-2
+    skip_cleanup: true
+    acl: public_read
+    detect_encoding: true
+    on:
+      repo: airavata-courses/TeamOmega
+      all_branches: true
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: omega-m2
+    key: API_Gateway.zip
+    bundle_type: zip
+    application: TeamOmega_east
+    deployment_group: Omega_App_Server
+    region: us-east-2
+    on:
+      repo: airavata-courses/TeamOmega
+      all_branches: true
+after_deploy:
+  - echo "Performing after deploy procedures..."
+notifications:
+  email:
+    recipients:
+      - vkalvaku@iu.edu
+      - ssongire@iu.edu
+  slack:
+secure: cE1uKN6FAfMdBAiRWHMOHVLo/DQqosbxNkYI2CAHMR34FVnrFBjYB49qfh8BuF+S4XmiuEBACJCqQvdSFwc4S6wp+jWsPhKmB5W+VsC+QDdCAiegRW3/h45ZMoupefOHNDF6iGmGu5Ck7xDNiJDxCdNaVqxYTsuaWlKC9ur4mutM5FNJGxXaH00qVHFl91jSq84EXSy4wfxRj/uc1PBRHzgpF9RE58O+5dZkhWYqFfrxGpiy3U6DqA49jKzJeRnVlqTagTJCMQqEMAx0AXieuJTPK69ZsTQ0aM3ouy/rZ0Vblw2GpB7FSBiYk7hybVhu568cM/+ZzCsKC9ZUtUaA0g+N8huvFigKvObrvwU7p/YpBcBFdxzVfiyRSPccPQ7myV4ibImxPF1JI0OMqvbzN85Mcp9rnpDcSxVEFFXPW+PUhCVtfbWhmEq8xCNCoMx95lzdxxhIRmVxNtJcpL7gaGliyiZm8YZIutevVCd9WdpH+fddToRV5XAhYO2HzTeGB0JImZczTf20rwbrKaqUXpMG2EGMk3mEJPBtfA7iU4WG5x1CiTQ00gW/0T6U9AxXwiFzu/X7+s2y7H9Xp3VcTfrTJXkJXLkYX0tAk12X1ksHp4weiRUhL955jz2fTUpFzlcS+AcOge7sXIMxgqq1NBm2omt1JavuerZok8zADfk=

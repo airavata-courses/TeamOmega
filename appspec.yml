@@ -2,16 +2,13 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ec2-user
+    destination: /home/ec2-user/TeamOmega
 hooks:
-  BeforeInstall:
-    - location: scripts/before-install.sh
+  BeforeInstall: 
+    - location: middleware/startup_scripts/dock_before_install.sh
       runas: root
+      timeout: 300
   ApplicationStart:
-    - location: scripts/install.sh
+    - location: middleware/startup_scripts/dock_install.sh
       timeout: 3601
-      runas: root
-  ValidateService:
-    - location: scripts/validate_service.sh
-      timeout: 180
       runas: root

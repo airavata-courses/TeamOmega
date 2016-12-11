@@ -10,115 +10,146 @@ var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 var amqp = require('amqplib/callback_api');
 
 
+var http = require('http');
 
 var io;		//this variable to get the socket object from the module.exports at bottom of this code..
 
-console.log(process.env.IP);
 /* Initial index page for weather report. */
 router.get('/', renderIndexPage);
 
 /* submit date and get response from the server.. */
 router.post('/submit', submitDate);
 
-//posting from a microservice
+var dataingestor_ch;
 
-//router.post('/service-response', process_response);
+var getIP = function(callback){
 
-
-
-function sendToRabbit(data, q){
-
-	amqp.connect('amqp://localhost', function(err, conn) {
-	  conn.createChannel(function(err, ch) {
-	    ch.assertQueue(q, {durable: true});
-	    // Note: on Node 6 Buffer.from(msg) should be used
-	    ch.sendToQueue(q, new Buffer(data), {persistent:true});
-	    console.log(" [x] Sent data");
+	http.get({'host': 'api.ipify.org', 'port': 80, 'path': '/'}, function(resp) {
+		console.log("coming here....");
+	  return resp.on('data', function(ip) {
+	    console.log("My public IP address is: " + ip);
+	    callback(ip.toString());
 	  });
 	});
 
 }
 
+var new_ip;
 
+getIP(function(ip_add){
 
-amqp.connect('amqp://localhost', function(err, conn) {
-  conn.createChannel(function(err, ch) {
-    var q = 'status';
+	new_ip = ip_add;
 
-    //ch.assertQueue(q, {durable: false});
-
-    console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
-	ch.consume(q, function(msg) {
-		msg = JSON.parse(msg.content)
-		console.log(" [x] Received: ", msg.msg);
-		var curr_room = msg.room;
-		var status_msg = msg.msg;
-		
-
-		io.to(curr_room).emit('message', status_msg);
-		io.to(curr_room).emit('status',1);
-
-	}, {noAck: true});
+	console.log("inside callback....", ip_add);
 
 
 
-
-  });
-});
+	amqp.connect('amqp://'+ip_add, function(err, conn) {
 
 
+	 conn.createChannel(function(err, ch) {
+	    var q = 'dataIngestor';
 
+	    ch.assertQueue(q, {durable: true});
 
-amqp.connect('amqp://localhost', function(err, conn) {
-  conn.createChannel(function(err, ch) {
-    var q = 'response';
-    //ch.assertQueue(q, {durable: false});
-  	
-  	console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
-	ch.consume(q, function(msg) {
-		msg = JSON.parse(msg.content)
-		console.log(" [x] Received: ", msg);
-		var curr_room = msg.room;
-		var status_msg = msg.msg;
+	    dataingestor_ch = ch;
 
-		var type = msg.type;
+	});
 
-		io.to(curr_room).emit('message', status_msg);
-		io.to(curr_room).emit('status',1);
+	  conn.createChannel(function(err, ch) {
+	    var q = 'status';
 
+	    ch.assertQueue(q, {durable: true});
 
-		if(type == 1){
-
-			delete msg.msg;
-			delete msg.room;
-			delete msg.type;
+	    console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
+		ch.consume(q, function(msg) {
+			msg = JSON.parse(msg.content)
+			console.log(" [x] Received: ", msg.msg);
+			var curr_room = msg.room;
+			var status_msg = msg.msg;
 			
-			io.to(curr_room).emit('locations',JSON.stringify(msg));
 
-		}
-		else if(type == 2){
-		
-			var data = JSON.stringify(msg);
+			io.to(curr_room).emit('message', status_msg);
+			io.to(curr_room).emit('status',1);
+
+		}, {noAck: true});
+
+
+
+
+	  });
 	
-			sendToRabbit(data, "stormDetection");
-		}
-		else if(type == 3){
+
+	  conn.createChannel(function(err, ch) {
+	    var q = 'response';
+	    //ch.assertQueue(q, {durable: false});
+	  	ch.assertQueue(q, {durable: true});
+	  	console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
+		ch.consume(q, function(msg) {
+			msg = JSON.parse(msg.content)
+			// console.log(" [x] Received: ", msg);
+			var curr_room = msg.room;
+			var status_msg = msg.msg;
+
+			var type = msg.type;
+
+			io.to(curr_room).emit('message', status_msg);
+			io.to(curr_room).emit('status',1);
+
+
+			if(type == 1){
+
+				delete msg.msg;
+				delete msg.room;
+				delete msg.type;
+				
+				io.to(curr_room).emit('locations',JSON.stringify(msg));
+
+			}
+			else if(type == 2){
+			
+				var data = JSON.stringify(msg);
 		
-			var data = JSON.stringify(msg);
-	
-			sendToRabbit(data, "stormClustering");
-		}
-		else if(type == 4){
-			io.to(room).emit('icon',msg["icon"]);
+				sendToRabbit(data, "stormDetection");
+			}
+			else if(type == 3){
+			
+				var data = JSON.stringify(msg);
+		
+				sendToRabbit(data, "stormClustering");
+			}
+			else if(type == 4){
+				io.to(curr_room).emit('icon',msg["icon"]);
 
-		}
+			}
 
-	}, {noAck: true});
+		}, {noAck: true});
 
 
-  });
+	  });
+	});
+
+
+
+
 });
 
+
+
+
+
+
+
+
+function sendToRabbit(data, q){
+
+		
+		    // Note: on Node 6 Buffer.from(msg) should be used
+		dataingestor_ch.sendToQueue(q, new Buffer(data), {persistent:true});
+		console.log(" [x] Sent data");
+		
+
+	}
 
 
 
@@ -142,7 +173,7 @@ function renderIndexPage(req, res, next) {
 function submitDate(req, res, next) {
 
 
-
+	console.log("here-------------------------------------------------------", new_ip);
 
 	var curr_room = req.body.room;
 
@@ -151,164 +182,21 @@ function submitDate(req, res, next) {
 	io.to(curr_room).emit('status',0);
 	
 
-	// var insert_data = {
-	//   "username" : req.cookies.email,
-	//   "timestamp" : new Date().getTime(),
-	//   "description" : desc
-	// }
-
-	// console.log(desc)
-	// //log the process
-	// db.insertDB(insert_data, function(res){
-	//   console.log("response received..."+res)
-	// });
-	// //registry part over
-
 	var data = JSON.stringify({room:curr_room, date: req.body.date ,timest:req.body.timest,
 								type : req.body.type, req_no : req.body.req_no})
-	
+	console.log(data,"---------------------------------------------");
 	sendToRabbit(data, "dataIngestor");
 
 
-	// fetch('http://'+process.env.IP+':4000/'+suff,{method: "POST",  headers: {
-	// 'Accept': 'application/json',
-	// 'Content-Type': 'application/json'
-	// },
-	// 	body: JSON.stringify({room:curr_room, date: req.body.date ,timest:req.body.timest, hostIp: process.env.IP})
-	// })
-	// .then(function(res) {
-	// 	return res.text();
-	// }).then(function(body) {
 
-	// 	var body1= JSON.parse(body);
-	// 	console.log("Received response from data ingestor", body1["msg"]);
-	// 	io.to(curr_room).emit('message',body1["msg"]);
-	// 	res.send(body);   
-	// }).catch(function(error) {
-	//   // Treat network errors without responses as 500s.
-	//   // const status = error.response ? error.response.status : 500
-	//   // if (status === 404) {
-	//   //   // Not found handler.
-	//   // } else {
-	//   //   // Other errors.
-	//   // }
-
-	//   	//console.log("error response from data ingestor: ", res.status);
-	// 	io.to(curr_room).emit('message',"Error response from Data Ingestor....");
-	// 	io.to(curr_room).emit('status',-1);
-	// 	res.send("Error response from Data Ingestor....");
-	// });
-
-	
 	
 }
 
 
-/*
-
-//new function to accept the response from the microservice
-
-function process_response(req , res){
-
-
-		//var body1= JSON.parse(req.body);
-		var room = req.body.room;
-		var type = req.body.type;
-		// console.log(room);
-		var msg = req.body["msg"];
-		var service = "Null";
-		io.to(room).emit('status',1);
-		io.to(room).emit('message',msg);
-
-
-		if(type == 4){
-			io.to(room).emit('icon',req.body["icon"]);
-			res.sendStatus(200);
-
-		}
-
-		else{
-
-
-		// //implement JWT methods here
-		if(type == 2){
-			var suff = ":5678/get_kml";
-			service = "storm detection";			//for strom detector
-			var desc = "Response received from: "+ service;  
-			console.log("Type 2 Body:", req.body);
-
-			var insert_data1 = {
-			  "username" : req.room,
-			  "timestamp" : new Date().getTime(),
-			  "description" : desc
-			}
-
-
-			console.log(suff)
-		}
-		else {
-		 	var suff = ":5789/get_kml"
-		 	service = "storm clustering";			//for storm clustering
-		 	var desc = "Request sent to: "+ service;  
-			console.log("Type 3 Body:", req.body);
-		
-
-			var insert_data2 = {
-			  "username" : req.room,
-			  "timestamp" : new Date().getTime(),
-			  "description" : desc
-			}
-
-		}
-
-		// console.log(insert_data1.description);
-
-		// console.log(insert_data2.description);
-		
-		//log the process		
-		// db.insertDB(insert_data1, function(res){
-		//   console.log("response received..."+res)
-		// });
-		// db.insertDB(insert_data2, function(res){
-		//   console.log("response received..."+res)
-		// });
-
-		
-		
-		// //passing first response to next request
-	    fetch('http://'+process.env.IP+suff,{method: "POST",  headers: {
-		'Accept': 'application/json',
-		'Content-Type': 'application/json'
-		},
-			body: JSON.stringify(req.body)
-		})
-		.then(function(res) {
-			
-			return res.text();
-		})
-		.then(function(body) {
-
-			var body2 = JSON.parse(body);
-			io.to(room).emit('message',body2["msg"]);
-			res.sendStatus(200);
-
-
-		}).catch(function(error) {
-		  	
-		  	//console.log("error response from: ", error);
-			io.to(room).emit('message',"Error response from ", service);
-			io.to(room).emit('status',-1);
-			
-			res.sendStatus(500);
-			
-		});
-
-	}
-}
 
 
 
-*/
+
 
 //accepting the io object
 module.exports = function(io1){

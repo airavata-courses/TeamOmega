@@ -210,8 +210,8 @@ class DatePickerIn extends React.Component {
           time1+=(String(item));
         }
       }
-      req_no += 1;
-    fetch('/home/submit',{ method: "POST", credentials: 'same-origin', headers: {
+
+       fetch('/home/submit',{method: "POST", credentials: 'same-origin', headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
   },
@@ -220,11 +220,10 @@ class DatePickerIn extends React.Component {
  })
     .then(function(res) {
         return res.text();
-
     }).then(function(body) {
-        console.log(body);
-        
+          
     });
+   
     
 
   }
