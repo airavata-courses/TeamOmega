@@ -12,7 +12,7 @@ from urllib2 import urlopen
 
 FINAL_URL = load(urlopen('http://api.ipify.org/?format=json'))['ip']
 
-FINAL_URL = "52.15.165.201"
+# FINAL_URL = "52.15.165.201"
 print FINAL_URL
 
 
@@ -91,6 +91,7 @@ if __name__ == '__main__':
 
 		statusMessage = {
 			"room": body["room"],
+			"status" : "0",
 			"msg" : "StormDetection is processing the request number {}".format(body["req_no"])
 		}
 
@@ -106,6 +107,7 @@ if __name__ == '__main__':
 
 		statusMessage = {
 			"room": body["room"],
+			"status" : "1",
 			"msg" : "StormDetection has completed the request number  {}".format(body["req_no"])
 		}
 
