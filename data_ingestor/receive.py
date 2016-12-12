@@ -31,6 +31,7 @@ def callback(ch, method, properties, body):
 	body = json.loads(body)
 	statusMessage = {
 		"room": body["room"],
+        "status" : "0",
 		"msg" : "DataIngestor is processing the request number {}".format(body["req_no"])
 	}
 
@@ -52,6 +53,7 @@ def callback(ch, method, properties, body):
 
 	statusMessage = {
 		"room": body["room"],
+        "status" : "1",
 		"msg" : "DataIngestor has completed processing the request number {}".format(body["req_no"])
 	}
 
