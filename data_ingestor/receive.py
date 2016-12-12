@@ -9,7 +9,7 @@ FINAL_URL = load(urlopen('http://api.ipify.org/?format=json'))['ip']
 
 print FINAL_URL
 
-FINAL_URL = "52.15.165.201"
+# FINAL_URL = "52.15.165.201"
 connection = pika.BlockingConnection(pika.ConnectionParameters(
         host=FINAL_URL))
 
@@ -22,7 +22,7 @@ statusChannel = connection.channel()
 
 receiveChannel.queue_declare(queue='dataIngestor', durable=True)
 
-statusChannel.queue_declare(queue='status', durable=True)
+statusChannel.exchange_declare(exchange='status', type='fanout')
 
 
 print ' [*] Waiting for messages. To exit press CTRL+C'
@@ -35,8 +35,8 @@ def callback(ch, method, properties, body):
 	}
 
 	message = json.dumps(statusMessage)
-	statusChannel.basic_publish(exchange='',
-	                      routing_key='status',
+	statusChannel.basic_publish(exchange='status',
+	                      routing_key='',
 	                      body=message)
 	print(" [x] Sent Status message")
 
@@ -56,8 +56,8 @@ def callback(ch, method, properties, body):
 	}
 
 	message = json.dumps(statusMessage)
-	statusChannel.basic_publish(exchange='',
-	                      routing_key='status',
+	statusChannel.basic_publish(exchange='status,
+	                      routing_key='',
 	                      body=message)
 	print "DataIngestor has completed processing the request number {}".format(body["req_no"])
 
