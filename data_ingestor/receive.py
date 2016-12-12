@@ -58,7 +58,7 @@ def callback(ch, method, properties, body):
 	}
 
 	message = json.dumps(statusMessage)
-	statusChannel.basic_publish(exchange='status,
+	statusChannel.basic_publish(exchange='status',
 	                      routing_key='',
 	                      body=message)
 	print "DataIngestor has completed processing the request number {}".format(body["req_no"])
