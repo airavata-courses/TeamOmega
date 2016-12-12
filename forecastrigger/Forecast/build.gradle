@@ -1,0 +1,19 @@
+group 'TeamOmega'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile 'com.rabbitmq:amqp-client:4.0.0'
+    compile 'org.apache.thrift:libthrift:0.9.3'
+    compile  'org.json:json:20160212'
+    compile 'com.googlecode.json-simple:json-simple:1.1'
+    compile 'commons-io:commons-io:2.5'
+}
