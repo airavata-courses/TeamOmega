@@ -76,28 +76,46 @@ public class AuroraThrift {
         }
     }
 
-    public static void createJob() throws Exception {
+    public static void createJob(String req_no) throws Exception {
         JobKeyBean jobKey = new JobKeyBean("devel", "team-omega", "omega_test_job_1");
         IdentityBean owner = new IdentityBean("team-omega");
 
-		/*ProcessBean proc1 = new ProcessBean("process_1", "docker run "
-												+ "-it --volumes-from wpsgeog "
-												+ "--volumes-from wrfinputsandy "
-												+ "-v ~/wrfoutput:/wrfoutput "
-												+ "--name omega-ncarwrfsandy-" + "02"
-												+ " bigwxwrf/ncar-wrf /wrf/run-wrf", false);
-		ProcessBean proc2 = new ProcessBean("process_2", "docker run -it "
-														+ "--rm=true "
-														+ "-v ~/wrfoutput:/wrfoutput "
-														+ "--name omega-postproc-" + "02"
-														+ " bigwxwrf/ncar-ncl", false);*/
+        String proc1_name = "omega-ncarwrfsandy-" + req_no;
+        String proc2_name = "omega-postproc-" +req_no;
 
-        ProcessBean proc1 = new ProcessBean("process_11", "docker run -i --volumes-from wpsgeog --volumes-from wrfinputsandy -v ~/wrfoutput:/wrfoutput --name omega-ncarwrfsandy-03 bigwxwrf/ncar-wrf /wrf/run-wrf", false);
-        ProcessBean proc2 = new ProcessBean("process_12", "docker run -i --rm=true -v ~/wrfoutput:/wrfoutput --name omega-postproc-03 bigwxwrf/ncar-ncl", false);
+        ProcessBean proc1 = new ProcessBean("process_1", "docker run "
+                + "-i --volumes-from wpsgeog "
+                + "--volumes-from wrfinputsandy "
+                + "-v ~/wrfoutput:/wrfoutput "
+                + "--name "+proc1_name
+                + " bigwxwrf/ncar-wrf /wrf/run-wrf", false);
+        ProcessBean proc2 = new ProcessBean("process_2", "docker run -i "
+                + "--rm=true "
+                + "-v ~/wrfoutput:/wrfoutput "
+                + "--name " + proc2_name
+                + " bigwxwrf/ncar-ncl", false);
+
+        ProcessBean proc3 = new ProcessBean("remove containers ", "docker rm -f "+proc1_name +" && "
+                + "docker rm -f "+proc2_name, false);
+        //
+//        ProcessBean proc1 = new ProcessBean("process_11", "docker run -i --volumes-from wpsgeog --volumes-from wrfinputsandy -v ~/wrfoutput:/wrfoutput --name omega-ncarwrfsandy-03 bigwxwrf/ncar-wrf /wrf/run-wrf", false);
+//        ProcessBean proc2 = new ProcessBean("process_12", "docker run -i --rm=true -v ~/wrfoutput:/wrfoutput --name omega-postproc-03 bigwxwrf/ncar-ncl", false);
 
         Set<ProcessBean> processes = new HashSet<>();
         processes.add(proc1);
         processes.add(proc2);
+        processes.add(proc3);
+
+
+
+
+
+//        ProcessBean proc1 = new ProcessBean("process_11", "docker run -i --volumes-from wpsgeog --volumes-from wrfinputsandy -v ~/wrfoutput:/wrfoutput --name omega-ncarwrfsandy-03 bigwxwrf/ncar-wrf /wrf/run-wrf", false);
+//        ProcessBean proc2 = new ProcessBean("process_12", "docker run -i --rm=true -v ~/wrfoutput:/wrfoutput --name omega-postproc-03 bigwxwrf/ncar-ncl", false);
+//
+//        Set<ProcessBean> processes = new HashSet<>();
+//        processes.add(proc1);
+//        processes.add(proc2);
 
         ResourceBean resources = new ResourceBean(0.3, 200, 100);
 
@@ -129,8 +147,10 @@ public class AuroraThrift {
             AuroraThrift.getJobSummary(auroraSchedulerClient);
 
             // create sample job
-//			
-            AuroraThrift.createJob();
+
+
+
+            AuroraThrift.createJob("1234567891011");
             ThriftClient client = ThriftClient.getAuroraThriftClient(Constants.AURORA_SCHEDULER_PROP_FILE);
             ResponseBean response = client.getPendingReasonForJob(new JobKeyBean("devel", "team-omega", "hello_pending"));
             System.out.println(response);
