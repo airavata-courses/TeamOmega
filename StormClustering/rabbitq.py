@@ -90,6 +90,7 @@ if __name__ == '__main__':
 
 		statusMessage = {
 			"room": body["room"],
+			"status" : "0",
 			"msg" : "StormClustering is processing the request number {}".format(body["req_no"])
 		}
 
@@ -102,6 +103,7 @@ if __name__ == '__main__':
 		jb.worker((kml,room, req_no, time.time(), ch, method.delivery_tag))
 		statusMessage = {
 			"room": body["room"],
+			"status" : "1",
 			"msg" : "StormClustering has completed the request number {}".format(body["req_no"])
 		}
 
