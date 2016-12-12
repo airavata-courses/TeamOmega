@@ -12,7 +12,7 @@ from urllib2 import urlopen
 
 FINAL_URL = load(urlopen('http://api.ipify.org/?format=json'))['ip']
 
-# FINAL_URL = "52.15.165.201"
+FINAL_URL = "52.15.165.201"
 print FINAL_URL
 
 
@@ -34,7 +34,7 @@ class jobThread(object):
 			t.start()
 			return 1
 		return 0
-		
+
 
 	def worker(self,req):
 		print("Worker running for the task")
@@ -53,8 +53,8 @@ class jobThread(object):
 		"req_no" : req_no
 		}
 		self.send_channel.basic_publish(exchange='', routing_key='stormClustering', body=json.dumps(data), properties=pika.BasicProperties(delivery_mode = 2))
-		ch.basic_ack(delivery_tag=delivery_tag) 	
-		
+		ch.basic_ack(delivery_tag=delivery_tag)
+
 		return 1
 
 
@@ -68,7 +68,7 @@ if __name__ == '__main__':
 
 	jb = jobThread(connection)
 
-	
+
 	receiveChannel = connection.channel()
 
 	statusChannel = connection.channel()
@@ -76,7 +76,8 @@ if __name__ == '__main__':
 
 	receiveChannel.queue_declare(queue='stormDetection', durable=True)
 
-	statusChannel.queue_declare(queue='status', durable=True)
+	statusChannel.exchange_declare(exchange='status',type='fanout')
+
 
 
 	print(' [*] Waiting for messages. To exit press CTRL+C')
@@ -90,12 +91,12 @@ if __name__ == '__main__':
 
 		statusMessage = {
 			"room": body["room"],
-			"msg" : "Storm Detection is processing the request number {}".format(body["req_no"])
+			"msg" : "StormDetection is processing the request number {}".format(body["req_no"])
 		}
 
 		message = json.dumps(statusMessage)
-		statusChannel.basic_publish(exchange='',
-		                      routing_key='status',
+		statusChannel.basic_publish(exchange='status',
+		                      routing_key='',
 		                      body=message)
 		print(" [x] Sent Status message")
 
@@ -105,12 +106,12 @@ if __name__ == '__main__':
 
 		statusMessage = {
 			"room": body["room"],
-			"msg" : "Storm Detection successfully processed the request # {}".format(body["req_no"])
+			"msg" : "StormDetection has completed the request number  {}".format(body["req_no"])
 		}
 
 		message = json.dumps(statusMessage)
-		statusChannel.basic_publish(exchange='',
-		                      routing_key='status',
+		statusChannel.basic_publish(exchange='status',
+		                      routing_key='',
 		                      body=message)
 
 		#sending status message....
