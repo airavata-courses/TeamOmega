@@ -23,7 +23,7 @@ class jobThread(object):
 		self.count = 0
 		self.connection = connection
 		self.send_channel = connection.channel()
-		self.send_channel.queue_declare(queue='response', durable=True)
+		self.send_channel.queue_declare(queue='ForecastTrigger', durable=True)
 
 
 	def process_data(self,req_data):
@@ -33,20 +33,20 @@ class jobThread(object):
 			t.start()
 			return 1
 		return 0
-		
+
 
 	def worker(self,req):
 		print("Worker running for the task")
 		kml,room,req_no,msg_time,ch,delivery_tag = req
 
 		wait_time = time.time()-msg_time
-		
+
 		if wait_time<self.sleep:
 			self.connection.sleep(self.sleep-wait_time)
-		
-		
+
+
 		kml,icon = self.sd_run.cluster(kml)
-		
+
 		data = {
 		"room" : room,
 		"kml" : str(kml),
@@ -55,14 +55,14 @@ class jobThread(object):
 		"icon": icon,
 		"req_no":req_no
 		}
-		self.send_channel.basic_publish(exchange='', routing_key='response', body=json.dumps(data), properties=pika.BasicProperties(delivery_mode = 2))
+		self.send_channel.basic_publish(exchange='', routing_key='ForecastTrigger', body=json.dumps(data), properties=pika.BasicProperties(delivery_mode = 2))
 		ch.basic_ack(delivery_tag=delivery_tag)
 		print "Sent response"
 
 		return 1
 
 if __name__ == '__main__':
-	
+
 	connection = pika.BlockingConnection(pika.ConnectionParameters(host=FINAL_URL))
 
 	jb = jobThread(connection)
@@ -73,8 +73,7 @@ if __name__ == '__main__':
 
 
 	receiveChannel.queue_declare(queue='stormClustering', durable=True)
-
-	statusChannel.queue_declare(queue='status', durable=True)
+	statusChannel.exchange_declare(exchange='status',type='fanout')
 
 
 	print(' [*] Waiting for messages. To exit press CTRL+C')
@@ -85,22 +84,31 @@ if __name__ == '__main__':
 		room = body['room']
 		req_no = body['req_no']
 
-		
+
 
 		#sending status message....
 
 		statusMessage = {
 			"room": body["room"],
-			"msg" : "StormCluster is processing the request number {}".format(body["req_no"])
+			"msg" : "StormClustering is processing the request number {}".format(body["req_no"])
 		}
 
 		message = json.dumps(statusMessage)
-		statusChannel.basic_publish(exchange='',
-		                      routing_key='status',
+		statusChannel.basic_publish(exchange='status',
+		                      routing_key='',
 		                      body=message)
 		print(" [x] Sent Status message")
 
 		jb.worker((kml,room, req_no, time.time(), ch, method.delivery_tag))
+		statusMessage = {
+			"room": body["room"],
+			"msg" : "StormClustering has completed the request number {}".format(body["req_no"])
+		}
+
+		message = json.dumps(statusMessage)
+		statusChannel.basic_publish(exchange='status',
+		                      routing_key='',
+		                      body=message)
 
 		print(" [x] Done", ch, method.delivery_tag)
 
