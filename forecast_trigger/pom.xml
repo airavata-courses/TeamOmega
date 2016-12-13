@@ -42,7 +42,7 @@
 
     </dependencies>
     <build>
-        <finalName>SGA_Aurora_Client</finalName>
+        <finalName>Forecast_Trigger</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
