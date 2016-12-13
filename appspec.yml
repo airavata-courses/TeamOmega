@@ -1,0 +1,14 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ec2-user/TeamOmega
+hooks:
+  BeforeInstall:
+    - location: forecast_trigger/startup_scripts/before_install.sh
+      runas: root
+      timeout: 3000
+  ApplicationStart:
+    - location: forecast_trigger/startup_scripts/install.sh
+      timeout: 3601
+      runas: root

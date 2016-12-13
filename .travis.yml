@@ -1,37 +1,32 @@
-language: node_js
-node_js:
-  - "4.4.2"
-sudo: true
-
-services: 
+language: java
+jdk:
+  - oraclejdk8
+sudo: false
+install: true
+services:
   - docker
 before_install:
-  - cd middleware
+  - cd forecast_trigger
 
 install:
-  - npm install --silent
- 
-cache:
-  directories:
-    - node_modules
+  - true
 
 after_success:
-
-  - docker build -t sagarkrkv/middleware:latest .
+  - docker build -t sagarkrkv/forecast_trigger:latest .
   - docker login -e="$DOCKER_EMAIL" -u="$DOCK_UNAME" -p="$DOCK_PWD"
-  - docker push sagarkrkv/middleware:latest
+  - docker push sagarkrkv/forecast_trigger:latest
 
 before_deploy:
   - cd ..
-  - zip -r API_Gateway.zip middleware/startup_scripts appspec.yml  || true
-  - mkdir -p "API_Gateway_upload"
-  - mv API_Gateway.zip API_Gateway_upload/API_Gateway.zip || true
+  - zip -r Forecast_trigger.zip forecast_trigger/startup_scripts appspec.yml  || true
+  - mkdir -p "Forecast_trigger_upload"
+  - mv Forecast_trigger.zip Forecast_trigger_upload/Forecast_trigger.zip || true
 
 deploy:
   - provider: s3
     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
     secret_access_key: $AWS_SECRET_KEY
-    local_dir: API_Gateway_upload
+    local_dir: Forecast_trigger_upload
     bucket: omega-m2
     region: us-east-2
     skip_cleanup: true
@@ -44,7 +39,7 @@ deploy:
     access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
     secret_access_key: $AWS_SECRET_KEY
     bucket: omega-m2
-    key: API_Gateway.zip
+    key: Forecast_trigger.zip
     bundle_type: zip
     application: TeamOmega_east
     deployment_group: Omega_App_Server
