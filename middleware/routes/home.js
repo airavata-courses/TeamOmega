@@ -3,6 +3,10 @@ var router = express.Router();
 var path = require('path');
 var fetch = require('node-fetch');
 var db = require("./dboperations");
+var formidable = require('formidable');
+var util = require('util');
+var fs = require('fs');
+
 
 var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 
@@ -20,6 +24,7 @@ router.get('/', renderIndexPage);
 /* submit date and get response from the server.. */
 router.post('/submit', submitDate);
 
+router.route('/proc1/:room/:req_no').get(emitstatus);
 
 router.post('/final', processGif);
 
@@ -40,9 +45,9 @@ var getIP = function(callback){
 }
 
 var new_ip;
+var emit_q;
 
 getIP(function(ip_add){
-	ip_add = "52.15.165.201"
 	new_ip = ip_add;
 
 	console.log("inside callback....", ip_add);
@@ -60,28 +65,35 @@ getIP(function(ip_add){
 	    dataingestor_ch = ch;
 
 	});
+	conn.createChannel(function(err, ch) {
+    var ex = 'status';
+
+    ch.assertExchange(ex, 'fanout', {durable: false});
+		emit_q = ch;
+  });
+
 
 	  conn.createChannel(function(err, ch) {
-	    var q = 'status';
-
-	    ch.assertQueue(q, {durable: true});
-
-	    console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q);
-		ch.consume(q, function(msg) {
-			msg = JSON.parse(msg.content)
-			console.log(" [x] Received: ", msg.msg);
-			var curr_room = msg.room;
-			var status_msg = msg.msg;
 
 
-			io.to(curr_room).emit('message', status_msg);
-			io.to(curr_room).emit('status',1);
+			ch.assertExchange('status', 'fanout', {durable: false});
 
-		}, {noAck: true});
+			ch.assertQueue('', {exclusive: true}, function(err, q) {
+
+				console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
+				ch.bindQueue(q.queue, 'status', '');
+			  ch.consume(q.queue, function(msg) {
+						msg = JSON.parse(msg.content)
+						console.log(" [x] Received: ", msg.msg);
+						var curr_room = msg.room;
+						var status_msg = msg.msg;
 
 
+						io.to(curr_room).emit('message', status_msg);
+						io.to(curr_room).emit('status',1);
 
-
+					}, {noAck: true});
+  		});
 	  });
 
 
@@ -193,10 +205,17 @@ function submitDate(req, res, next) {
 	sendToRabbit(data, "dataIngestor");
 
 }
+function emitstatus(req, res){
+	// console.log(req.params.room);
+	console.log("ForecastTrigger completed process 1/2 of request # "+req.params.req_no);
+	// var data = JSON.stringify({msg:"ForecastTrigger completed process 1/2 of request # "+req.params.req_no,
+	//  status:1, room:req.params.room })
+	 io.to(req.params.room).emit('message', "ForecastTrigger completed processing 1/2 of request # "+req.params.req_no);
+	 io.to(req.params.room).emit('status',1);
+	//  emit_q.publish('status', '', new Buffer(data));
+	 	res.send("Success");
+}
 
-var formidable = require('formidable');
-var util = require('util');
-var fs = require('fs');
 
 
 function renderImages(req, res){
@@ -232,8 +251,10 @@ form.on('end', function(fields, files) {
 			new_f = splitf[0]+"Gif_Files/"+req_no+splitf[1];
 			fnames.push(req_no+splitf[1]);
 			fs.rename(tmp_fname,new_f);
-			console.log(splitf);
+
 	}
+	var data = JSON.stringify({msg:"ForecastTrigger completed processing 2/2 of request # "+req_no, status:1, room:room });
+	emit_q.publish('status', '', new Buffer(data));
 	io.to(room).emit('image',fnames);
 
 });

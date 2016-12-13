@@ -148,7 +148,8 @@ var Soc = React.createClass({
 
 
 class DatePickerIn extends React.Component {
-  state = {gps:{lat:39.1703827,lng:-86.5164435} ,fct1: '',date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: '',loading:0, forecast: 0,locArray:{},img1:"",img2:""}
+  state = {gps:{lat:39.1703827,lng:-86.5164435} ,fct1: '',date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: '',loading:
+''  , forecast: 0,locArray:{},img1:"",img2:""}
 
   handleDateChange = (value) => {
 
@@ -198,7 +199,7 @@ class DatePickerIn extends React.Component {
 
   addimageArray = (value) => {
     console.log(value);
-    this.setState({img1:value[0],img2:value[1]});
+    this.setState({img1:value[0],img2:value[1]},loading:"");
   }
 
   handleTimeChange = (time) => {
@@ -296,8 +297,8 @@ class DatePickerIn extends React.Component {
           <div style={{ height: `400px` }} />
         }
       />
-      {this.state.img1  ? <img src={"/home/Gif_Files/"+this.state.img1} />}
-      {this.state.img2  ? <img src={"/home/Gif_Files/"+this.state.img2} />}
+      {this.state.loading  ? null : <img src={"/home/Gif_Files/"+this.state.img1} /> }
+      {this.state.loading  ? null : <img src={"/home/Gif_Files/"+this.state.img2}/> }
       </section>
       );
   }

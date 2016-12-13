@@ -18,11 +18,9 @@ const UserModel = {
     title: 'Date'},
 		status: {type: String}
 };
-
-const users = [
-  {location: 'New York',  birthdate: new Date(1980, 3, 11), status: 'Completed'},
-  {location: 'Javi Velasco', birthdate: new Date(1987, 1, 1), status:'Running'}
-];
+// {location: 'New York',  birthdate: new Date(1980, 3, 11), status: 'Completed'},
+// {location: 'Javi Velasco', birthdate: new Date(1987, 1, 1), status:'Running'}
+const users = [];
 
 class TableTest extends React.Component {
   state = { selected: [], source: users };
@@ -53,7 +51,7 @@ class TableTest extends React.Component {
 }
 class TabsTest extends React.Component {
   state = {
-    fixedIndex: 1,
+    fixedIndex: 0,
   };
 
   handleTabChange = (index) => {
