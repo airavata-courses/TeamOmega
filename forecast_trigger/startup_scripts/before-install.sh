@@ -19,7 +19,7 @@ fi
 echo 'Killing any container of the old Docker image'
 
 if  [ "$(docker ps -a -q --filter ancestor=sagarkrkv/forecast_trigger --format="{{.ID}}")" != ""]; then
-	echo ""
+	echo "removing old running containers"
   docker rm $(docker stop $(docker ps -a -q --filter ancestor=sagarkrkv/forecast_trigger --format="{{.ID}}"))
 fi
 

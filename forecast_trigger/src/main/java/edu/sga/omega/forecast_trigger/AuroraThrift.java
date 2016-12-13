@@ -91,7 +91,8 @@ public class AuroraThrift {
                 + "--volumes-from wrfinputsandy "
                 + "-v ~/wrfoutput:/wrfoutput "
                 + "--name "+proc1_name
-                + " bigwxwrf/ncar-wrf /wrf/run-wrf", false);
+                + " bigwxwrf/ncar-wrf /wrf/run-wrf "
+                + " && curl 52.15.165.201:3000/home/proc1/"+room+"/"+req_no, false);
         ProcessBean proc2 = new ProcessBean("process_2", "docker run -i "
                 + "--rm=true "
                 + "-v ~/wrfoutput:/wrfoutput "
@@ -123,7 +124,7 @@ public class AuroraThrift {
 //        processes.add(proc1);
 //        processes.add(proc2);
 
-        ResourceBean resources = new ResourceBean(0.4, 800, 800);
+        ResourceBean resources = new ResourceBean(0.4, 500, 400);
 
         TaskConfigBean taskConfig = new TaskConfigBean("omega_forecast", processes, resources);
         JobConfigBean jobConfig = new JobConfigBean(jobKey, owner, taskConfig, "example");
