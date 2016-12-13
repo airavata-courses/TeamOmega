@@ -253,7 +253,7 @@ form.on('end', function(fields, files) {
 			fs.rename(tmp_fname,new_f);
 
 	}
-	var data = JSON.stringify({msg:"ForecastTrigger completed processing 2/2 of request # "+req_no, status:1, room:room });
+	var data = JSON.stringify({msg:"Forecast Trigger completed processing 2/2 of request # "+req_no, status:1, room:room });
 	emit_q.publish('status', '', new Buffer(data));
 	io.to(room).emit('image',fnames);
 
