@@ -5,7 +5,7 @@ files:
     destination: /home/ec2-user/TeamOmega
 hooks:
   BeforeInstall:
-    - location: forecast_trigger/startup_scripts/before_install.sh
+    - location: forecast_trigger/startup_scripts/before-install.sh
       runas: root
       timeout: 3000
   ApplicationStart:
