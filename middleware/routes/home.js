@@ -20,6 +20,11 @@ router.get('/', renderIndexPage);
 /* submit date and get response from the server.. */
 router.post('/submit', submitDate);
 
+
+router.post('/final', processGif);
+
+router.route('/Gif_Files/:fname').get(renderImages);
+
 var dataingestor_ch;
 
 var getIP = function(callback){
@@ -37,7 +42,7 @@ var getIP = function(callback){
 var new_ip;
 
 getIP(function(ip_add){
-
+	ip_add = "52.15.165.201"
 	new_ip = ip_add;
 
 	console.log("inside callback....", ip_add);
@@ -67,7 +72,7 @@ getIP(function(ip_add){
 			console.log(" [x] Received: ", msg.msg);
 			var curr_room = msg.room;
 			var status_msg = msg.msg;
-			
+
 
 			io.to(curr_room).emit('message', status_msg);
 			io.to(curr_room).emit('status',1);
@@ -78,7 +83,7 @@ getIP(function(ip_add){
 
 
 	  });
-	
+
 
 	  conn.createChannel(function(err, ch) {
 	    var q = 'response';
@@ -102,20 +107,20 @@ getIP(function(ip_add){
 				delete msg.msg;
 				delete msg.room;
 				delete msg.type;
-				
+
 				io.to(curr_room).emit('locations',JSON.stringify(msg));
 
 			}
 			else if(type == 2){
-			
+
 				var data = JSON.stringify(msg);
-		
+
 				sendToRabbit(data, "stormDetection");
 			}
 			else if(type == 3){
-			
+
 				var data = JSON.stringify(msg);
-		
+
 				sendToRabbit(data, "stormClustering");
 			}
 			else if(type == 4){
@@ -143,11 +148,11 @@ getIP(function(ip_add){
 
 function sendToRabbit(data, q){
 
-		
+
 		    // Note: on Node 6 Buffer.from(msg) should be used
 		dataingestor_ch.sendToQueue(q, new Buffer(data), {persistent:true});
 		console.log(" [x] Sent data");
-		
+
 
 	}
 
@@ -159,7 +164,7 @@ function renderIndexPage(req, res, next) {
 	console.log("coming here",req.session.isAuthenticated);
 	if(req.session.isAuthenticated){
 		var index_page = path.join(__dirname, '../src/www/index.html');
-	
+
 		res.sendFile(index_page);
 
 	}
@@ -169,7 +174,7 @@ function renderIndexPage(req, res, next) {
 
 }
 
-/* submit date and get response from the server.. */	
+/* submit date and get response from the server.. */
 function submitDate(req, res, next) {
 
 
@@ -180,18 +185,60 @@ function submitDate(req, res, next) {
 
 	io.to(curr_room).emit("Request sent to Data Ingestor");
 	io.to(curr_room).emit('status',0);
-	
+
 
 	var data = JSON.stringify({room:curr_room, date: req.body.date ,timest:req.body.timest,
 								type : req.body.type, req_no : req.body.req_no})
 	console.log(data,"---------------------------------------------");
 	sendToRabbit(data, "dataIngestor");
 
-
-
-	
 }
 
+var formidable = require('formidable');
+var util = require('util');
+var fs = require('fs');
+
+
+function renderImages(req, res){
+	console.log(req.params.fname);
+	iname = path.join(__dirname, '../Gif_Files/') + req.params.fname;
+	res.sendFile(iname);
+}
+
+function processGif(req, res, next){
+
+	console.log("In processGif");
+	console.log(req.form)
+	var room,req_no;
+	var filepath = [];
+	var form = new formidable.IncomingForm();
+    form.parse(req, function(err, fields, files) {
+			req_no = fields.req_no;
+			room = fields.room;
+      console.log(req_no,room);
+    });
+
+form.on('fileBegin', function(name, file) {
+
+		file.path = path.join(__dirname, '../Gif_Files/') + file.name;
+		console.log(file.path.split("Gif_Files/"))
+		filepath.push(file.path);
+});
+form.on('end', function(fields, files) {
+	var fnames = [];
+	for (var i = 0; i < filepath.length; i++) {
+			var tmp_fname = filepath[i];
+			var splitf = tmp_fname.split("Gif_Files/");
+			new_f = splitf[0]+"Gif_Files/"+req_no+splitf[1];
+			fnames.push(req_no+splitf[1]);
+			fs.rename(tmp_fname,new_f);
+			console.log(splitf);
+	}
+	io.to(room).emit('image',fnames);
+
+});
+		res.send("Success");
+}
 
 
 
@@ -203,13 +250,13 @@ module.exports = function(io1){
 	io = io1;
 	io.sockets.on('connection', function(socket){
 	  console.log('a user connected in export module');
-	 
+
 	  socket.on('room', function(room) {
         socket.join(room);
         io.to(room).emit('room',room);
     	});
-	  
+
 	});
-	
+
 	return router;
 };

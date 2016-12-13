@@ -42,7 +42,7 @@ public class Rabbitq {
                 send_channel.queueDeclare("response", true, false, false, null);
             }
             status_channel = connection.createChannel();
-            status_channel.queueDeclare("status", true, false, false, null);
+            status_channel.exchangeDeclare("status", "fanout");
 
         } catch (Exception e) {
             System.out.println(e);
@@ -74,7 +74,7 @@ public class Rabbitq {
         System.out.println(message);
 
         try {
-            status_channel.basicPublish("", "status", null, message.getBytes());
+            status_channel.basicPublish("status", "", null, message.getBytes());
         } catch (Exception e) {
             System.out.println("Cannot publish status msg" + e);
         }

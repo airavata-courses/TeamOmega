@@ -30,6 +30,8 @@
     "express-request-id": "^1.1.0",
     "express-session": "^1.14.1",
     "extract-text-webpack-plugin": "~1.0.1",
+    "formidable": "^1.0.17",
+    "fs": "0.0.1-security",
     "immutability-helper": "^2.0.0",
     "internal-ip": "~1.2.0",
     "ipify": "^1.1.0",

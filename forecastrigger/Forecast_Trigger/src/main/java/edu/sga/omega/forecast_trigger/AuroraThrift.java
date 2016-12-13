@@ -8,6 +8,7 @@ import org.apache.thrift.TException;
 
 import java.text.MessageFormat;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Properties;
 import java.util.Set;
 
@@ -76,8 +77,10 @@ public class AuroraThrift {
         }
     }
 
-    public static void createJob(String req_no) throws Exception {
-        JobKeyBean jobKey = new JobKeyBean("devel", "team-omega", "omega_test_job_1");
+
+
+    public static void createJob(String req_no, String room) throws Exception {
+        JobKeyBean jobKey = new JobKeyBean("devel", "team-omega", "omega_Forecast_job");
         IdentityBean owner = new IdentityBean("team-omega");
 
         String proc1_name = "omega-ncarwrfsandy-" + req_no;
@@ -95,13 +98,16 @@ public class AuroraThrift {
                 + "--name " + proc2_name
                 + " bigwxwrf/ncar-ncl", false);
 
-        ProcessBean proc3 = new ProcessBean("remove containers ", "docker rm -f "+proc1_name +" && "
-                + "docker rm -f "+proc2_name, false);
+
+
+        ProcessBean proc3 = new ProcessBean("remove containers ", "docker rm -f "+proc1_name + "  && cd ~/wrfoutput && " +
+                "curl   -F room=" +room+" -F req_no="+req_no+" -F image=@Surface_multi.gif  -F image=@Precip_total.gif  68.45.15.183:3000/home/final", false);
         //
 //        ProcessBean proc1 = new ProcessBean("process_11", "docker run -i --volumes-from wpsgeog --volumes-from wrfinputsandy -v ~/wrfoutput:/wrfoutput --name omega-ncarwrfsandy-03 bigwxwrf/ncar-wrf /wrf/run-wrf", false);
 //        ProcessBean proc2 = new ProcessBean("process_12", "docker run -i --rm=true -v ~/wrfoutput:/wrfoutput --name omega-postproc-03 bigwxwrf/ncar-ncl", false);
 
-        Set<ProcessBean> processes = new HashSet<>();
+        Set<ProcessBean> processes = new LinkedHashSet<>();
+
         processes.add(proc1);
         processes.add(proc2);
         processes.add(proc3);
@@ -150,7 +156,7 @@ public class AuroraThrift {
 
 
 
-            AuroraThrift.createJob("1234567891011");
+            AuroraThrift.createJob("1234567891011","a@a.com-23qrwa");
             ThriftClient client = ThriftClient.getAuroraThriftClient(Constants.AURORA_SCHEDULER_PROP_FILE);
             ResponseBean response = client.getPendingReasonForJob(new JobKeyBean("devel", "team-omega", "hello_pending"));
             System.out.println(response);

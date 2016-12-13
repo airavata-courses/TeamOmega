@@ -6,7 +6,7 @@ import theme from './timepicker_fix.scss';
 // And then just use global variable.
 import React from 'react';
 import ReactDOM from 'react-dom';
-
+var path = require('path');
 import io from 'socket.io-client';
 
 
@@ -29,7 +29,6 @@ var locationsArray = { };
 // fetch.Promise = require('bluebird');
 
 // plain text or html
-
 
 const datetime = new Date();
 var time = new Date();
@@ -73,10 +72,10 @@ function getCookie(cname) {
 
 // Wrap all `react-google-maps` components with `withGoogleMap` HOC
 var SimpleMapExampleGoogleMap = withGoogleMap(props => (
- 
+
   <GoogleMap
     zoom={5}
-    
+
     center={props.center}
     >
     <Circle
@@ -121,9 +120,15 @@ var Soc = React.createClass({
       _this.props.addLocArray(comment);
     });
 
-  
+    this.socket.on('image', function(image_array) {
+      // Connected, let's sign-up for to receive messages for this room
+        console.log(image_array);
+        _this.props.addimageArray(image_array);
+      });
+
+
     this.socket.on('icon', function(comment){
-    
+
     icon_url = icon_prefix+comment;
     _this.setState({forecast:icon_url,predict:comment});
     });
@@ -143,7 +148,7 @@ var Soc = React.createClass({
 
 
 class DatePickerIn extends React.Component {
-  state = {gps:{lat:39.1703827,lng:-86.5164435} ,fct1: '',date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: '',loading:0, forecast: 0,locArray:{}}
+  state = {gps:{lat:39.1703827,lng:-86.5164435} ,fct1: '',date2: '',date_url: '', locDisabled: '', location: '', timeDisabled: '', time, submitDisabled: '',loading:0, forecast: 0,locArray:{},img1:"",img2:""}
 
   handleDateChange = (value) => {
 
@@ -170,10 +175,10 @@ class DatePickerIn extends React.Component {
     .then(function(res) {
         return res.text();
     }).then(function(body) {
-          
+
     });
-    
-    
+
+
 
   }
 
@@ -183,12 +188,17 @@ class DatePickerIn extends React.Component {
 
       var body = JSON.parse(value);
       for (var key in body) {
-        if (body.hasOwnProperty(key)) {
+        if (body.hasOwnProperty(key))  {
           gps_coord[key] = {lat:parseFloat(body[key][1]),lng:parseFloat(body[key][0]) };
           locationsArray[key]=body[key][3];
         }
       }
     this.setState({locDisabled:"false",locArray:locationsArray});
+  }
+
+  addimageArray = (value) => {
+    console.log(value);
+    this.setState({img1:value[0],img2:value[1]});
   }
 
   handleTimeChange = (time) => {
@@ -221,10 +231,10 @@ class DatePickerIn extends React.Component {
     .then(function(res) {
         return res.text();
     }).then(function(body) {
-          
+
     });
-   
-    
+
+
 
   }
 
@@ -238,14 +248,14 @@ class DatePickerIn extends React.Component {
   render () {
     return (
       <section >
-      
-        <DatePicker 
-          label='Select a Date' 
-          sundayFirstDayOfWeek 
-          minDate={min_datetime} 
-          maxDate={datetime} 
-          onChange={this.handleDateChange} 
-          value={this.state.date2} 
+
+        <DatePicker
+          label='Select a Date'
+          sundayFirstDayOfWeek
+          minDate={min_datetime}
+          maxDate={datetime}
+          onChange={this.handleDateChange}
+          value={this.state.date2}
         />
         <TimePicker
           theme={theme}
@@ -256,7 +266,7 @@ class DatePickerIn extends React.Component {
           onChange={this.handleTimeChange}
           value={this.state.time}
         />
-        
+
        <Autocomplete
                   direction="down"
                   label="Select Location"
@@ -271,13 +281,13 @@ class DatePickerIn extends React.Component {
           raised
           primary
           disabled = {!this.state.submitDisabled}
-          label = "Submit" 
+          label = "Submit"
           onClick={this.handleSubmit}
         />
 
         {this.state.loading  ? <Loading type='cylon' color='#00796B' /> : null }
 
-        <Soc addLocArray={this.addLocArray} />
+        <Soc addLocArray={this.addLocArray} addimageArray={this.addimageArray}/>
           <SimpleMapExampleGoogleMap center={this.state.gps}
         containerElement={
           <div style={{ height: `400px` }} />
@@ -286,6 +296,8 @@ class DatePickerIn extends React.Component {
           <div style={{ height: `400px` }} />
         }
       />
+      {this.state.img1  ? <img src={"/home/Gif_Files/"+this.state.img1} />}
+      {this.state.img2  ? <img src={"/home/Gif_Files/"+this.state.img2} />}
       </section>
       );
   }

@@ -20,6 +20,8 @@ public class Forecast {
 
         System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
 
+        final AuroraThrift thriftapi = new AuroraThrift();
+
         final Rabbitq rabq = new Rabbitq(true);
         Consumer consumer = new DefaultConsumer(rabq.receive_channel) {
             @Override
@@ -34,21 +36,21 @@ public class Forecast {
                 rabq.sendStatus(room, req_no, true);
 
                 System.out.println(" [x] Received '" + jobject.toString() + "'");
-//            try {
-//
-//                //sleep 5 seconds
+            try {
+
+                //sleep 5 seconds
 //                Thread.sleep(25000);
-//
-//
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+              thriftapi.createJob(req_no,room);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
                 System.out.println("Woke up");
 
                 rabq.receive_channel.basicAck(envelope.getDeliveryTag(), false);
             }
         };
-        rabq.receive_channel.basicConsume("test", false, consumer);
+        rabq.receive_channel.basicConsume("ForecastTrigger", false, consumer);
     }
 }
 
