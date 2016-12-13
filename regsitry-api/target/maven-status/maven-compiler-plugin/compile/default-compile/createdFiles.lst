@@ -1,0 +1,7 @@
+com/sga/registrymq/Database.class
+com/sga/registrymq/App.class
+com/sga/registrymq/RestEntryPoint.class
+com/sga/registrymq/Log.class
+com/sga/registrymq/DecodedLog.class
+com/sga/registrymq/TestSender.class
+com/sga/registrymq/App$1.class
