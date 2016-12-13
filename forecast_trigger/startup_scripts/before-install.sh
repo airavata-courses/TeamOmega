@@ -18,11 +18,12 @@ fi
 
 echo 'Killing any container of the old Docker image'
 
-if  [ "$(docker ps -a -q --filter ancestor=sagarkrkv/forecast_trigger --format="{{.ID}}")" != ""]; then
-	echo "removing old running containers"
-  docker rm $(docker stop $(docker ps -a -q --filter ancestor=sagarkrkv/forecast_trigger --format="{{.ID}}"))
+docker rm $(docker stop $(docker ps -a -q --filter ancestor=sagarkrkv/forecast_trigger --format="{{.ID}}"))
+if  [ "$?" -ne 0 ]; then
+	echo ""
 fi
 
+sudo fuser -k 9000/tcp
 echo 'Pulling a new image from docker'
 docker pull sagarkrkv/forecast_trigger
 
