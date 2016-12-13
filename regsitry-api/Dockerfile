@@ -15,8 +15,8 @@ RUN ["mvn", "verify"]
 ADD src /code/src
 
 # Exposing before package because of UTCs
-EXPOSE 4567
+EXPOSE 8080
 RUN ["mvn", "package", "-Dmaven.test.skip=true"]
 
-#EXPOSE 4567
+#EXPOSE 8080
 CMD ["mvn", "exec:java"]
