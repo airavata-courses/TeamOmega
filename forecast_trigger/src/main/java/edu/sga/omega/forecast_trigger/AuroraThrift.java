@@ -92,7 +92,7 @@ public class AuroraThrift {
                 + "-v ~/wrfoutput:/wrfoutput "
                 + "--name "+proc1_name
                 + " bigwxwrf/ncar-wrf /wrf/run-wrf "
-                + " && curl 52.15.165.201:3000/home/proc1/"+room+"/"+req_no, false);
+                + " && curl http://52.15.165.201:3000/home/proc1/"+room+"/"+req_no, false);
         ProcessBean proc2 = new ProcessBean("process_2", "docker run -i "
                 + "--rm=true "
                 + "-v ~/wrfoutput:/wrfoutput "
@@ -102,7 +102,7 @@ public class AuroraThrift {
 
 
         ProcessBean proc3 = new ProcessBean("remove containers ", "docker rm -f "+proc1_name + "  && cd ~/wrfoutput && echo posting gif files using curl &&" +
-                "curl   -F room=" +room+" -F req_no="+req_no+" -F image=@Surface_multi.gif  -F image=@Precip_total.gif  52.15.165.201:3000/home/final", false);
+                "curl -F \"room="+room+"\" -F \"req_no="+req_no +"\" -F \"image=@Surface_multi.gif\"  -F \"image=@Precip_total.gif\"  http://52.15.165.201:3000/home/final", false);
         //
 //        ProcessBean proc1 = new ProcessBean("process_11", "docker run -i --volumes-from wpsgeog --volumes-from wrfinputsandy -v ~/wrfoutput:/wrfoutput --name omega-ncarwrfsandy-03 bigwxwrf/ncar-wrf /wrf/run-wrf", false);
 //        ProcessBean proc2 = new ProcessBean("process_12", "docker run -i --rm=true -v ~/wrfoutput:/wrfoutput --name omega-postproc-03 bigwxwrf/ncar-ncl", false);
@@ -157,7 +157,7 @@ public class AuroraThrift {
 
 
 
-            AuroraThrift.createJob("1234567891011","a@a.com-23qrwa");
+            AuroraThrift.createJob("123","a@a.com-23qrwa");
             ThriftClient client = ThriftClient.getAuroraThriftClient(Constants.AURORA_SCHEDULER_PROP_FILE);
             ResponseBean response = client.getPendingReasonForJob(new JobKeyBean("devel", "team-omega", "hello_pending"));
             System.out.println(response);
