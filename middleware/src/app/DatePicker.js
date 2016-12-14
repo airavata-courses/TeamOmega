@@ -44,7 +44,7 @@ var gps_coord = {};
 
 ///generate unique uuid
 function guid() {
-  return email +"-"+ s4() + s4() + s4() + s4();
+  return email +"-123";
 }
 
 function s4() {
@@ -169,6 +169,7 @@ class DatePickerIn extends React.Component {
     var date_format = d.getFullYear()+"/"+month+"/"+day+"/";
     this.setState({forecast:0,date2: d, date_url: date_format,location: '',submitDisabled: '',locDisabled:'', forecast:'',locArray:{}});
     console.log(date_format);
+
     fetch('/home/submit',{method: "POST", credentials: 'same-origin', headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
@@ -216,7 +217,8 @@ class DatePickerIn extends React.Component {
      var location = this.state.date_url+this.state.location+"/";
      var timestamp = [this.state.time.getHours(), this.state.time.getSeconds(), this.state.time.getMinutes()];
      var time1 = '';
-      for (var item in timestamp){
+      for (var k =0 ; k <3 ;k++){
+        var item = parseInt(timestamp[k])
         if (item < 10){
           time1+=("0"+String(item));
         }
@@ -224,6 +226,7 @@ class DatePickerIn extends React.Component {
           time1+=(String(item));
         }
       }
+      console.log(time1)
 
        fetch('/home/submit',{method: "POST", credentials: 'same-origin', headers: {
     'Accept': 'application/json',

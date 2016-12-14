@@ -50,7 +50,7 @@ var new_ip;
 var emit_q;
 
 getIP(function(ip_add){
-	// ip_add = "52.15.165.201"
+	ip_add = "52.15.165.201"
 	new_ip = ip_add;
 
 	console.log("inside callback....", ip_add);

@@ -5,6 +5,7 @@ import { Button } from 'react-toolbox/lib/button'; // Bundled component import
 import { Card, CardMedia, CardTitle, CardText, CardActions } from 'react-toolbox/lib/card';
 import DatePickerIn from './DatePicker.js';
 import SubmitButton from './SubmitButton.js'
+var Linkify = require('react-linkify');
 
 
 
@@ -23,7 +24,8 @@ const UserModel = {
     sec: {type: Number},
     process: {type: String},
 		status: {type: String},
-    last_updated: {type: String}
+    last_updated: {type: String},
+    url: {type:String}
 };
 // {location: 'New York',  birthdate: new Date(1980, 3, 11), status: 'Completed'},
 // {location: 'Javi Velasco', birthdate: new Date(1987, 1, 1), status:'Running'}
@@ -48,9 +50,9 @@ class TableTest extends React.Component {
   state = { selected: [], submitDisabled: "" };
 
   handleChange = (row, key, value) => {
-    const source = this.state.source;
+    const source = this.props.source;
     source[row][key] = value;
-    this.setState({source});
+    this.props.upd(source);
   };
 
   handleSelect = (selected) => {
@@ -58,7 +60,8 @@ class TableTest extends React.Component {
     console.log()
   };
   handleSubmit = () => {
- for (var i = 0; i < this.state.selected.length; i++){
+ for (var k = 0; k < this.state.selected.length; k++){
+   var i = this.state.selected[k]
     var d = this.props.source[i].birthdate;
     var month = d.getMonth();
     var day = d.getDate();
@@ -87,7 +90,7 @@ class TableTest extends React.Component {
  'Accept': 'application/json',
  'Content-Type': 'application/json'
 },
-body: JSON.stringify({room:email+"-resubmit", date:date_format , type:1,timest:time1, req_no : this.props.source[i].req_no})
+body: JSON.stringify({room:email+"-123", date:date_format , type:1,timest:time1, req_no : this.props.source[i].req_no})
 
 })
  .then(function(res) {
@@ -139,6 +142,9 @@ class TabsTest extends React.Component {
     this.setState({fixedIndex: index});
   };
 
+  upd = (source) => {
+    this.setState({source})
+  };
 
   handleActive = () => {
     console.log('/home/history/'+email);
@@ -149,12 +155,15 @@ class TabsTest extends React.Component {
 				return res.text()
 			}).then(function(body) {
         var s = JSON.parse(body)
-              for (var i = 1; i < s.processes.length; i++) {
+              for (var i = 0; i < s.processes.length; i++) {
         var new_s = {};
       new_s.req_no = s.processes[i]._id
       new_s.process = s.processes[i].process;
       new_s.last_updated = s.processes[i].last_updated;
       new_s.status = s.processes[i].status;
+      if (new_s.process == "Forecast" && new_s.status =="Completed"){
+        new_s.url = "http://52.15.165.201:3000/home/Gif_Files/"+new_s.req_no+"Precip_total.gif   \n" + "http://52.15.165.201:3000/home/Gif_Files/"+new_s.req_no+"Surface_multi.gif"
+      }
       var dt = s.processes[i].req_date.split("/")
       new_s.birthdate =new Date(parseInt(dt[0]), parseInt(dt[1])-1, parseInt(dt[2]))
       new_s.location = s.processes[i].req_loc
@@ -183,7 +192,7 @@ class TabsTest extends React.Component {
 
         <Tabs index={this.state.fixedIndex} onChange={this.handleFixedTabChange} fixed>
           <Tab label='Weather Forecast'><DatePickerIn /></Tab>
-          <Tab label='History' onActive={this.handleActive}><TableTest source={this.state.source} /><SubmitButton
+          <Tab label='History' onActive={this.handleActive}><TableTest source={this.state.source} upd={this.upd} /><SubmitButton
             accent
             raised
             primary
@@ -205,7 +214,7 @@ class TabsTest extends React.Component {
 const SearchCards = () => (
 	<div className="mdl-grid">
    		<div className="mdl-layout-spacer"></div>
-   			<div className="mdl-cell mdl-cell--8-col">
+   			<div className="mdl-cell mdl-cell--10-col">
  			  <Card raised={true} style={{width: "auto"}}>
         <CardTitle title="Search service"  subtitle="Select the date and location"/>
     <CardText><TabsTest /></CardText>
