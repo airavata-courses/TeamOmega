@@ -162,10 +162,11 @@ public class App
 		boolean valid = true;
 		try {
 			Matcher m = Pattern.compile("\\b[0-9]+\\b").matcher(msg);
-			if (m.find()) {
+			while (m.find()) {
 				String value = m.group();
 				procNumber = Long.valueOf(value);
-			} else {
+			} 
+			if (procNumber == 0) {
 				System.out.println("Process Number is not found");
 				valid = false;
 			}
