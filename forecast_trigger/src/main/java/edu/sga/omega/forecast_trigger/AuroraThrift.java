@@ -7,7 +7,6 @@ import edu.sga.omega.forecast_trigger.util.Constants;
 import org.apache.thrift.TException;
 
 import java.text.MessageFormat;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -79,7 +78,7 @@ public class AuroraThrift {
 
 
 
-    public static void createJob(String req_no, String room) throws Exception {
+    public static boolean createJob(String req_no, String room) throws Exception {
         JobKeyBean jobKey = new JobKeyBean("devel", "team-omega", "omega_Forecast_job");
         IdentityBean owner = new IdentityBean("team-omega");
 
@@ -114,7 +113,9 @@ public class AuroraThrift {
         processes.add(proc3);
 
 
-
+//        ProcessBean test = new ProcessBean("test", " echo test", false);
+//
+//        processes.add(test);
 
 
 //        ProcessBean proc1 = new ProcessBean("process_11", "docker run -i --volumes-from wpsgeog --volumes-from wrfinputsandy -v ~/wrfoutput:/wrfoutput --name omega-ncarwrfsandy-03 bigwxwrf/ncar-wrf /wrf/run-wrf", false);
@@ -135,6 +136,8 @@ public class AuroraThrift {
         ThriftClient client = ThriftClient.getAuroraThriftClient(Constants.AURORA_SCHEDULER_PROP_FILE);
         ResponseBean response = client.createJob(jobConfig);
         System.out.println(response);
+        System.out.println(response.CheckStatus());
+        return response.CheckStatus();
     }
 
     /**

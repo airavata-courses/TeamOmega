@@ -66,8 +66,8 @@ public class Rabbitq {
             msg.addProperty("msg", "Forecast Trigger is processing req # " + req_no);
             msg.addProperty("status", "0");
         } else {
-            msg.addProperty("msg", "Forecast Trigger has completed processing req # " + req_no);
-            msg.addProperty("status", "1");
+            msg.addProperty("msg", "Forecast Trigger has error, retrying processing req # " + req_no);
+            msg.addProperty("status", "4");
         }
         msg.addProperty("room", "" + room);
         String message = msg.toString();

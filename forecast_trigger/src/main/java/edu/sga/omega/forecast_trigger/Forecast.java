@@ -33,21 +33,27 @@ public class Forecast {
                 String room = jobject.get("room").toString();
                 room = room.replaceAll("^\"|\"$", "");
                 String req_no = jobject.get("req_no").toString();
-                rabq.sendStatus(room, req_no, true);
+
 
                 System.out.println(" [x] Received '" + jobject.toString() + "'");
             try {
 
                 //sleep 5 seconds
 //                Thread.sleep(25000);
-              thriftapi.createJob(req_no,room);
+              if (thriftapi.createJob(req_no,room)){
+                  rabq.sendStatus(room, req_no, true);
+                  rabq.receive_channel.basicAck(envelope.getDeliveryTag(), false);
+              }else{
+                  rabq.sendStatus(room, req_no, false);
+                  rabq.receive_channel.basicNack(envelope.getDeliveryTag(), false,true);
+              }
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
                 System.out.println("Woke up");
 
-                rabq.receive_channel.basicAck(envelope.getDeliveryTag(), false);
+
             }
         };
         rabq.receive_channel.basicConsume("ForecastTrigger", false, consumer);

@@ -50,6 +50,11 @@ public class ResponseBean {
         return serverInfo;
     }
 
+
+    public boolean CheckStatus(){
+        String tmp = responseCode.toString();
+        return tmp.equals("OK"); }
+
     /**
      * Sets the server info.
      *
