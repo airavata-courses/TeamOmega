@@ -202,13 +202,14 @@ public class App
 	private static void upsertDoc(String process, long procNumber, String status, String username, String req_time, String req_loc, String req_date) {
 
 		Date date = new Date();
+		String dateString = date.toString();
 
 		Document insDoc = new Document();
 		insDoc.append("process_id",procNumber)
 				.append("username",username)
 				.append("process",process)
 				.append("status",status)
-				.append("last_updated", date);
+				.append("last_updated", dateString);
 		//
 		Bson filter = Filters.eq("_id", procNumber);
 		Bson update = new Document("$set",
@@ -216,16 +217,19 @@ public class App
 						.append("username", username)
 						.append("process", process)
 						.append("status", status)
-						.append("last_updated", date));
+						.append("last_updated", dateString));
 		UpdateOptions options = new UpdateOptions().upsert(true);
 
 		if (process.equalsIgnoreCase("DataIngestor") && status.equalsIgnoreCase("Started")) {
+			if (req_loc == null) req_loc = "No Location";
+			if (req_date == null) req_date = "No Date";
+			if (req_time == null) req_time = "No Time";
 			update = new Document("$set",
 					new Document()
 							.append("username", username)
 							.append("process", process)
 							.append("status", status)
-							.append("last_updated", date)
+							.append("last_updated", dateString)
 							.append("req_loc",req_loc)
 							.append("req_date",req_date)
 							.append("req_time",req_time));

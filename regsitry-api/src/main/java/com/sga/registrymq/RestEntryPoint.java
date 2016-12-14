@@ -54,7 +54,10 @@ public class RestEntryPoint {
         }
         result.put("processes",jsonArray);
         System.out.println(documents);
-        return Response.status(200).entity(result.toJSONString()).type(MediaType.APPLICATION_JSON_TYPE).build();
+        return Response.status(200).entity(result.toJSONString()).type(MediaType.APPLICATION_JSON_TYPE)
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
+                .allow("OPTIONS").build();
     }
 
     @GET
@@ -66,7 +69,10 @@ public class RestEntryPoint {
         JSONObject result = new JSONObject();
         for(Document doc: documents) jsonArray.add(doc);
         result.put("process",jsonArray);
-        return Response.status(200).entity(result.toJSONString()).type(MediaType.APPLICATION_JSON_TYPE).build();
+        return Response.status(200).entity(result.toJSONString()).type(MediaType.APPLICATION_JSON_TYPE)
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
+                .allow("OPTIONS").build();
     }
 
 }
