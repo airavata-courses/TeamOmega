@@ -185,6 +185,7 @@ public class App
 		String stat = null;
 		if (status == 0) stat = "Started";
 		else if (status == 1) stat = "Completed";
+		else if (status == 4) stat = "Errored, Retrying";
 		else { System.out.println("Unidentified status"); valid = false; }
 
 		String req_date = log.getReq_date();
