@@ -30,6 +30,8 @@ router.post('/final', processGif);
 
 router.route('/Gif_Files/:fname').get(renderImages);
 
+router.route('/history/:email').get(history);
+
 var dataingestor_ch;
 
 var getIP = function(callback){
@@ -48,6 +50,7 @@ var new_ip;
 var emit_q;
 
 getIP(function(ip_add){
+	ip_add = "52.15.165.201"
 	new_ip = ip_add;
 
 	console.log("inside callback....", ip_add);
@@ -148,12 +151,21 @@ getIP(function(ip_add){
 
 
 
-
 });
 
 
 
-
+function history(request, response){
+	console.log(request.params.email)
+	var email =  request.params.email
+	var email_1 = email.replace("%40","@")
+		fetch('http://52.42.119.121:8080/userprocesses/'+email_1)	.then(function(res) {
+				return res.text()
+			}).then(function(body) {
+		    console.log(body)
+				response.send(body)
+		  })
+}
 
 
 
@@ -188,6 +200,7 @@ function renderIndexPage(req, res, next) {
 
 /* submit date and get response from the server.. */
 function submitDate(req, res, next) {
+
 
 
 	console.log("here-------------------------------------------------------", new_ip);

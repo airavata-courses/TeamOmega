@@ -104,6 +104,9 @@ var Soc = React.createClass({
   },
   componentDidMount: function(){
 
+
+
+
     this.socket = io();
     var _this=this;
     this.socket.on('connect', function() {
@@ -199,7 +202,7 @@ class DatePickerIn extends React.Component {
 
   addimageArray = (value) => {
     console.log(value);
-    this.setState({img1:value[0],img2:value[1]},loading:"");
+    this.setState({img1:value[0],img2:value[1],loading:""});
   }
 
   handleTimeChange = (time) => {
@@ -297,7 +300,7 @@ class DatePickerIn extends React.Component {
           <div style={{ height: `400px` }} />
         }
       />
-      {this.state.loading  ? null : <img src={"/home/Gif_Files/"+this.state.img1} /> }
+      {this.state.loading  ? null : <img src={"home/Gif_Files/"+this.state.img1} /> }
       {this.state.loading  ? null : <img src={"/home/Gif_Files/"+this.state.img2}/> }
       </section>
       );
