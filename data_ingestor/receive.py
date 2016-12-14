@@ -7,6 +7,9 @@ from urllib2 import urlopen
 
 FINAL_URL = load(urlopen('http://api.ipify.org/?format=json'))['ip']
 
+with open('data.json') as f:
+	station_data = json.load(f)
+
 print FINAL_URL
 
 # FINAL_URL = "52.15.165.201"
@@ -29,9 +32,13 @@ print ' [*] Waiting for messages. To exit press CTRL+C'
 
 def callback(ch, method, properties, body):
 	body = json.loads(body)
+	if int(body['type'])==0:
+		x="3"
+	else:
+		x="0"
 	statusMessage = {
 		"room": body["room"],
-        "status" : "0",
+        "status" : x,
 		"msg" : "DataIngestor is processing the request number {}".format(body["req_no"])
 	}
 
@@ -41,6 +48,9 @@ def callback(ch, method, properties, body):
 	                      body=message)
 	print(" [x] Sent Status message")
 
+	location = ""
+
+
 	if int(body['type'])== 0:
 		loc_url = body['date']
 		mq.get_loc(body["room"],loc_url, ch, method.delivery_tag)
@@ -49,13 +59,22 @@ def callback(ch, method, properties, body):
 		timest = int(body['timest'])
 		room = body['room']
 		req_no = body['req_no']
+		x="1"
+		loc_code = list(loc_url.split("/"))[3]
+		location = station_data.get(loc_code.upper(),[None,None,None,None])[3]
+		if location:
+			location = " ".join(location.split("_")).title()
 		mq.worker((loc_url,timest,req_no, room, time.time(), ch, method.delivery_tag))
 
 	statusMessage = {
 		"room": body["room"],
-        "status" : "1",
-		"msg" : "DataIngestor has completed processing the request number {}".format(body["req_no"])
+        "status" : x,
+		"msg" : "DataIngestor has completed processing the request number {}".format(body["req_no"]),
+		"req_date" : loc_url,
+		"req_time" : timest,
+		"req_loc" : location
 	}
+
 
 	message = json.dumps(statusMessage)
 	statusChannel.basic_publish(exchange='status',
