@@ -220,7 +220,7 @@ public class App
 						.append("last_updated", dateString));
 		UpdateOptions options = new UpdateOptions().upsert(true);
 
-		if (process.equalsIgnoreCase("DataIngestor") && status.equalsIgnoreCase("Started")) {
+		if (process.equalsIgnoreCase("DataIngestor") && status.equalsIgnoreCase("Completed")) {
 			if (req_loc == null) req_loc = "No Location";
 			if (req_date == null) req_date = "No Date";
 			if (req_time == null) req_time = "No Time";
