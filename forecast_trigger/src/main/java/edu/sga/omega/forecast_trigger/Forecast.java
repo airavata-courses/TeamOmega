@@ -42,11 +42,11 @@ public class Forecast {
 //                Thread.sleep(25000);
               if (thriftapi.createJob(req_no,room)){
                   rabq.sendStatus(room, req_no, true);
-                  rabq.receive_channel.basicAck(envelope.getDeliveryTag(), false);
+                  
               }else{
                   rabq.sendStatus(room, req_no, false);
-                  rabq.receive_channel.basicNack(envelope.getDeliveryTag(), false,true);
               }
+              rabq.receive_channel.basicAck(envelope.getDeliveryTag(), false);
 
             } catch (Exception e) {
                 e.printStackTrace();
