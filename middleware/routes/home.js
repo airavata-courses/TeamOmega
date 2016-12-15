@@ -126,22 +126,7 @@ getIP(function(ip_add){
 				io.to(curr_room).emit('locations',JSON.stringify(msg));
 
 			}
-			else if(type == 2){
-
-				var data = JSON.stringify(msg);
-
-				sendToRabbit(data, "stormDetection");
-			}
-			else if(type == 3){
-
-				var data = JSON.stringify(msg);
-
-				sendToRabbit(data, "stormClustering");
-			}
-			else if(type == 4){
-				io.to(curr_room).emit('icon',msg["icon"]);
-
-			}
+			
 
 		}, {noAck: true});
 
